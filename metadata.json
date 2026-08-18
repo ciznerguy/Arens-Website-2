@@ -1,0 +1,6 @@
+{
+  "name": "GitHub App Runner",
+  "description": "הורדה והרצה של קוד מ-GitHub בסביבת AI Studio",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
