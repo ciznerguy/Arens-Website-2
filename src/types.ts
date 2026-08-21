@@ -100,6 +100,8 @@ export interface StaffMember {
   id: string;
   name: string;
   role: string;
+  roleDescription?: string;
+  email?: string;
   bio: string;
   imageUrl: string;
   isManagement: boolean;
@@ -161,6 +163,18 @@ export interface TeacherEvent {
   autoSyncGoogleSheets?: boolean;
 }
 
+export interface SchoolMajorSubPage {
+  id: string;
+  title: string;
+  subtitle?: string;
+  content: string[];
+  pdfFiles?: {
+    name: string;
+    url: string;
+    size?: string;
+  }[];
+}
+
 export interface SchoolMajor {
   id: string;
   title: string;
@@ -171,10 +185,25 @@ export interface SchoolMajor {
   highlights: string[];
   targetGrades: string; // e.g. "שכבות ז'-ט'" או "שכבות י'-יב'"
   contactPerson?: string;
+  coordinatorName?: string;
+  coordinatorContact?: string;
   hoursPerWeek?: string;
   isFeatured?: boolean;
   prerequisites?: string;
   syllabusLink?: string;
+  content?: string[];
+  sections?: {
+    title: string;
+    text?: string | string[];
+    badge?: string;
+    list?: string[];
+  }[];
+  pdfFiles?: {
+    name: string;
+    url: string;
+    size?: string;
+  }[];
+  subPages?: SchoolMajorSubPage[];
 }
 
 

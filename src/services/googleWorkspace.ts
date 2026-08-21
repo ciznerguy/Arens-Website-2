@@ -285,9 +285,19 @@ export const appendRegistrationToGoogleSheet = async (
   spreadsheetId: string,
   event: TeacherEvent,
   reg: WorkshopRegistration,
-  token?: string
-): Promise<void> => {
-  const accessToken = token || (await requestGoogleAccessToken());
+  token?: string,
+  silentOnly: boolean = false
+): Promise<boolean> => {
+  let accessToken = token || getStoredAccessToken();
+  if (!accessToken) {
+    if (silentOnly) {
+      // In silent mode (e.g. general teacher registering), do not pop up Google sign-in
+      return false;
+    }
+    accessToken = await requestGoogleAccessToken();
+  }
+  if (!accessToken) return false;
+
   const workshop = event.workshops.find(w => w.id === reg.workshopId);
 
   const row = [
@@ -320,7 +330,9 @@ export const appendRegistrationToGoogleSheet = async (
   if (!response.ok) {
     const err = await response.text();
     console.warn('Auto-append row warning:', err);
+    return false;
   }
+  return true;
 };
 
 // ==========================================

@@ -32,8 +32,10 @@ import {
 } from 'lucide-react';
 import { getInternalPage, INTERNAL_PAGES, InternalPage, getInternalPageOverrides, getGradeClassesOverrides } from '../data/internalPages';
 import { gradesData } from '../data';
+import { allTeachersList } from '../data/teachersList';
+import { getHebrewInitials, getAvatarColor } from '../utils/avatarUtils';
 import { getStoredMajors } from '../services/majorsStorage';
-import { SchoolMajor } from '../types';
+import { SchoolMajor, StaffMember } from '../types';
 
 // Helper to check if this page is a grade main page
 const isGradeMainPage = (url: string): boolean => {
@@ -442,16 +444,70 @@ export default function InternalPageViewer({
             {/* LEFT SIDE: NAVIGATION, COORDINATOR & PDFS (col-span-4) */}
             <div className="lg:col-span-4 space-y-6">
 
-              {/* Coordinator Card */}
-              <div className="bg-gradient-to-br from-school-panel2 to-school-panel border border-school-line rounded-3xl p-6 text-center space-y-3 shadow-md relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-20 h-20 bg-[radial-gradient(circle_at_100%_0%,rgba(34,211,238,0.06),transparent_70%)] pointer-events-none" />
-                <div className="w-16 h-16 bg-school-cyan/10 rounded-full flex items-center justify-center mx-auto text-school-cyan border border-school-cyan/20 shadow-inner">
-                  <User className="w-8 h-8" />
-                </div>
-                <div>
-                  <h3 className="font-black text-base text-school-text">{gradeCoordinator}</h3>
-                </div>
-              </div>
+              {/* Coordinator / Leadership Card */}
+              {(() => {
+                // Find all matching staff members for this grade
+                const coordinatorsList: StaffMember[] = [];
+                const names = gradeCoordinator.split(/ ו|&|,/).map(n => n.trim()).filter(Boolean);
+                
+                names.forEach(name => {
+                  const match = allTeachersList.find(t => t.name.includes(name) || name.includes(t.name));
+                  if (match) {
+                    coordinatorsList.push(match);
+                  } else {
+                    coordinatorsList.push({
+                      id: `temp-${name}`,
+                      name: name,
+                      role: `הנהלת שכבה ${currentGrade}`,
+                      bio: `הנהלת וריכוז שכבה ${currentGrade}`,
+                      imageUrl: '',
+                      isManagement: true
+                    });
+                  }
+                });
+
+                return (
+                  <div className="bg-gradient-to-br from-school-panel2 to-school-panel border border-school-line rounded-3xl p-6 text-center space-y-4 shadow-md relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-[radial-gradient(circle_at_100%_0%,rgba(34,211,238,0.08),transparent_70%)] pointer-events-none" />
+                    
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-school-cyan/10 border border-school-cyan/20 text-[10px] font-extrabold text-school-cyan">
+                      <span>הנהלת וריכוז שכבה {currentGrade}</span>
+                    </div>
+
+                    <div className="space-y-4">
+                      {coordinatorsList.map((coord, cIdx) => (
+                        <div key={cIdx} className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-school-bg/40 border border-school-line/50">
+                          {/* Avatar with Hebrew initials or uploaded photo */}
+                          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-school-cyan/40 shadow-sm flex items-center justify-center">
+                            {coord.imageUrl && !coord.imageUrl.includes('unsplash.com') && !coord.imageUrl.includes('placeholder') ? (
+                              <img 
+                                src={coord.imageUrl} 
+                                alt={coord.name} 
+                                className="w-full h-full object-cover"
+                                referrerPolicy="no-referrer"
+                              />
+                            ) : (
+                              <div className={`w-full h-full bg-gradient-to-br ${getAvatarColor(coord.name).bg} flex items-center justify-center text-white select-none`}>
+                                <span className={`text-xl font-black ${getAvatarColor(coord.name).text}`}>
+                                  {getHebrewInitials(coord.name)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="space-y-0.5">
+                            <h3 className="font-black text-sm text-school-text">{coord.name}</h3>
+                            <p className="text-[11px] text-school-cyan font-bold">{coord.role || `רכז/ת שכבה ${currentGrade}`}</p>
+                            {coord.email && (
+                              <p className="text-[10px] text-school-muted mt-1 select-all hover:text-white transition-colors">{coord.email}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Sub-sites & Info pages */}
               {subPages.length > 0 && (

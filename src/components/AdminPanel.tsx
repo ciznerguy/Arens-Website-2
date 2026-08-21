@@ -1,7 +1,7 @@
-import { saveStaffMember, deleteStaffMember, resetStaffToDefaults, getStoredStaffMembers } from '../services/staffStorage';
+import { saveStaffMember, deleteStaffMember, resetStaffToDefaults, getStoredStaffMembers, subscribeToStaffMembers } from '../services/staffStorage';
 import { saveNewsArticle, deleteNewsArticle, resetNewsToDefaults, getStoredNews, saveSetting } from '../services/cmsStorage';
 import { syncPageOverrideToCloud, syncGradeClassesToCloud } from '../services/pagesStorage';
-import { syncAdminConfigToCloud } from '../services/adminStorage';
+import { syncAdminConfigToCloud, subscribeToAdminSettings, fetchAdminConfigFromCloud, getStoredEditors } from '../services/adminStorage';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -35,6 +35,7 @@ import {
   FilePlus,
   RefreshCw,
   Search,
+  CheckCircle,
   CheckCircle2,
   Lock,
   ChevronLeft,
@@ -52,7 +53,8 @@ import {
   Compass,
   FileDown,
   Info,
-  FileSpreadsheet
+  FileSpreadsheet,
+  AlertCircle
 } from 'lucide-react';
 import { TeacherEventsAdmin } from './TeacherEventsAdmin';
 import { MajorsAdmin } from './MajorsAdmin';
@@ -66,10 +68,12 @@ import {
   deleteInternalPagePermanently,
   getAllPagesMap,
   getGradeClassesOverrides,
-  saveGradeClassesOverride
+  saveGradeClassesOverride,
+  getInternalPage
 } from '../data/internalPages';
 import { schoolNewsArticles, NewsArticle, defaultStaffMembers, gradesData } from '../data';
 import { StaffMember, QuickLink } from '../types';
+import { getHebrewInitials, getAvatarColor } from '../utils/avatarUtils';
 import { SITE_THEMES, DESIGN_TRENDS } from '../data/themes';
 import { getQuickLinks, saveQuickLink, deleteQuickLink } from '../data/quickLinks';
 
@@ -179,6 +183,9 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     localStorage.setItem('arens_homepage_settings', JSON.stringify(settings));
     localStorage.setItem('arens_hero_balls', JSON.stringify([settings.ball1, settings.ball2, settings.ball3]));
     
+    syncAdminConfigToCloud('homepageSettings', settings);
+    syncAdminConfigToCloud('heroBalls', [settings.ball1, settings.ball2, settings.ball3]);
+
     window.dispatchEvent(new Event('homepage_settings_updated'));
     window.dispatchEvent(new Event('hero_balls_updated'));
     
@@ -228,7 +235,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   });
 
   // Editors Management state
-  const [editors, setEditors] = useState<Editor[]>([]);
+  const [editors, setEditors] = useState<Editor[]>(() => getStoredEditors());
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteName, setInviteName] = useState('');
   const [inviteRole, setInviteRole] = useState('עורך תוכן');
@@ -314,6 +321,27 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
   const isGradeCoordinator = (role: string) => {
     return role.startsWith('רכז שכבה') || role.startsWith('רכז/ת שכבה') || role.includes('רכז שכבה') || role.includes('רכז/ת שכבה');
+  };
+
+  const isMajorCoordinator = (role: string) => {
+    return role.startsWith('רכז מגמת') || role.startsWith('רכז/ת מגמת') || role.includes('רכז מגמת') || role.includes('רכז/ת מגמת') || role.includes('רכז מגמה');
+  };
+
+  const getMajorIdFromCoordinatorRole = (role: string): string | null => {
+    if (!isMajorCoordinator(role)) return null;
+    const r = role.toLowerCase();
+    if (r.includes('דאטה') || r.includes('data')) return 'major-data-analyst';
+    if (r.includes('תיאטרון') || r.includes('מחזות')) return 'major-theater-musicals';
+    if (r.includes('פיזיקה')) return 'major-physics';
+    if (r.includes('גיאוגרפיה') || r.includes('סייבר גיאוגרפיה')) return 'major-cyber-geography';
+    if (r.includes('מנהל') || r.includes('כלכלה')) return 'major-business-econ';
+    if (r.includes('ערבית')) return 'major-arabic';
+    if (r.includes('מדעי החברה') || r.includes('חברה')) return 'major-social-sciences';
+    if (r.includes('כימיה')) return 'major-chemistry';
+    if (r.includes('תוכנה') || r.includes('הנדסת תוכנה') || r.includes('מחשבים')) return 'major-software-eng';
+    if (r.includes('חנ"ג') || r.includes('חינוך גופני') || r.includes('ספורט')) return 'major-pe';
+    if (r.includes('ביולוגיה')) return 'major-biology';
+    return null;
   };
 
   const getGradeFromCoordinatorRole = (role: string): string | null => {
@@ -414,6 +442,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [editingStaffId, setEditingStaffId] = useState<string | null>(null); // 'new' or actual id
   const [staffName, setStaffName] = useState('');
   const [staffRole, setStaffRole] = useState('');
+  const [staffRoleDescription, setStaffRoleDescription] = useState('');
+  const [staffEmail, setStaffEmail] = useState('');
   const [staffBio, setStaffBio] = useState('');
   const [staffImageUrl, setStaffImageUrl] = useState('');
   const [staffIsManagement, setStaffIsManagement] = useState(false);
@@ -461,6 +491,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
   // Save feedback state
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+  const [pageSaveError, setPageSaveError] = useState<string | null>(null);
   const [classSaveStatus, setClassSaveStatus] = useState<boolean>(false);
 
   // Load configuration on mount
@@ -473,23 +504,14 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       setCurrentUser(JSON.parse(savedUser));
     }
 
-    // Load Editors
-    const storedEditors = localStorage.getItem('arens_cms_editors');
-    if (storedEditors) {
-      let parsed = JSON.parse(storedEditors);
-      // Ensure 1003045545@taded.org.il is the chief administrator
-      const targetEmail = '1003045545@taded.org.il';
-      const hasChiefAdmin = parsed.some((ed: any) => ed.email.toLowerCase() === targetEmail.toLowerCase() && ed.role === 'מנהל ראשי');
-      if (!hasChiefAdmin) {
-        parsed = parsed.filter((ed: any) => ed.email.toLowerCase() !== 'admin@arens.school' && ed.email.toLowerCase() !== targetEmail.toLowerCase());
-        parsed.push({ email: targetEmail, name: 'מנהל ראשי', role: 'מנהל ראשי' });
-        localStorage.setItem('arens_cms_editors', JSON.stringify(parsed));
+    // Load Editors from Firestore cloud & local cache
+    const initialEditors = getStoredEditors();
+    setEditors(initialEditors);
+    fetchAdminConfigFromCloud().then((cloudData) => {
+      if (cloudData && cloudData.editors && Array.isArray(cloudData.editors) && cloudData.editors.length > 0) {
+        setEditors(cloudData.editors);
       }
-      setEditors(parsed);
-    } else {
-      setEditors(DEFAULT_EDITORS);
-      localStorage.setItem('arens_cms_editors', JSON.stringify(DEFAULT_EDITORS));
-    }
+    });
 
     // Load Pages including overrides
     refreshPagesMap();
@@ -503,13 +525,12 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     }
 
     // Load Staff Members
-    const savedStaff = localStorage.getItem('arens_cms_staff');
-    if (savedStaff) {
-      setStaffMembers(JSON.parse(savedStaff));
-    } else {
-      setStaffMembers(defaultStaffMembers);
-      localStorage.setItem('arens_cms_staff', JSON.stringify(defaultStaffMembers));
-    }
+    setStaffMembers(getStoredStaffMembers());
+
+    // Subscribe to live staff updates
+    const unsubStaff = subscribeToStaffMembers((liveStaff) => {
+      setStaffMembers(liveStaff);
+    });
 
     // Load Socials
     const savedSocials = localStorage.getItem('arens_cms_socials');
@@ -527,13 +548,19 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       setSocialInstagram('https://www.instagram.com/arens_school_pt');
       setSocialYoutube('https://www.youtube.com/@ArensSchool');
     }
+
+    return () => {
+      unsubStaff();
+    };
   }, []);
 
-  // Automatically select relevant tab for grade coordinators
+  // Automatically select relevant tab for grade coordinators or major coordinators
   useEffect(() => {
     if (isLoggedIn) {
       if (isGradeCoordinator(effectiveRole)) {
         setActiveTab('my-grade');
+      } else if (isMajorCoordinator(effectiveRole)) {
+        setActiveTab('majors');
       }
     }
   }, [isLoggedIn, effectiveRole]);
@@ -581,6 +608,11 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   useEffect(() => {
     refreshPagesMap();
     refreshQuickLinks();
+    fetchAdminConfigFromCloud();
+
+    const unsubAdmin = subscribeToAdminSettings((liveEditors) => {
+      setEditors(liveEditors);
+    });
 
     const handleUpdate = () => {
       refreshPagesMap();
@@ -589,11 +621,27 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       refreshQuickLinks();
     };
 
+    const handleEditorsUpdate = (e: any) => {
+      if (e?.detail && Array.isArray(e.detail)) {
+        setEditors(e.detail);
+        return;
+      }
+      const stored = localStorage.getItem('arens_cms_editors');
+      if (stored) {
+        try {
+          setEditors(JSON.parse(stored));
+        } catch (err) {}
+      }
+    };
+
     window.addEventListener('internal_pages_updated', handleUpdate);
     window.addEventListener('quick_links_updated', handleQuickLinksUpdate);
+    window.addEventListener('arens_cms_editors_updated', handleEditorsUpdate);
     return () => {
+      unsubAdmin();
       window.removeEventListener('internal_pages_updated', handleUpdate);
       window.removeEventListener('quick_links_updated', handleQuickLinksUpdate);
+      window.removeEventListener('arens_cms_editors_updated', handleEditorsUpdate);
     };
   }, []);
 
@@ -833,6 +881,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       const updated = [...editors, matched];
       setEditors(updated);
       localStorage.setItem('arens_cms_editors', JSON.stringify(updated));
+      syncAdminConfigToCloud('editors', updated);
     }
   };
 
@@ -863,6 +912,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     const updatedEditors = [...editors, newEditor];
     setEditors(updatedEditors);
     localStorage.setItem('arens_cms_editors', JSON.stringify(updatedEditors));
+    syncAdminConfigToCloud('editors', updatedEditors);
 
     // Generate dynamic shareable invite link
     const baseUrl = window.location.origin + window.location.pathname;
@@ -905,6 +955,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
         const updated = editors.filter(ed => ed.email !== email);
         setEditors(updated);
         localStorage.setItem('arens_cms_editors', JSON.stringify(updated));
+        syncAdminConfigToCloud('editors', updated);
         setSaveSuccess('העורך הוסר בהצלחה');
         setTimeout(() => setSaveSuccess(null), 3000);
       },
@@ -966,8 +1017,9 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   const handleSaveGradeSubPage = () => {
-    if (!subPageTitle) {
-      alert('נא להזין כותרת לדף');
+    if (!subPageTitle.trim()) {
+      setPageSaveError('נא להזין כותרת לדף');
+      setTimeout(() => setPageSaveError(null), 4000);
       return;
     }
 
@@ -985,8 +1037,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     if (!targetUrl) return;
 
     const pageObj: InternalPage = {
-      title: subPageTitle,
-      subtitle: subPageSubtitle,
+      title: subPageTitle.trim(),
+      subtitle: subPageSubtitle.trim(),
       category: `שכבה ${cleanActiveGrade}`,
       icon: 'FileText',
       content: subPageContent.split('\n').map(line => line.trim()).filter(Boolean),
@@ -994,13 +1046,20 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       sections: []
     };
 
+    setPageSaveError(null);
     saveInternalPageOverride(targetUrl, pageObj);
     refreshPagesMap();
     setSaveSuccess(isCreatingSubPage ? 'דף משנה חדש נוצר בהצלחה!' : 'השינויים נשמרו בהצלחה!');
     setTimeout(() => setSaveSuccess(null), 3000);
 
+    // Keep active editor open with newly saved data
+    setSubPageUrl(targetUrl);
+    setSubPageTitle(pageObj.title);
+    setSubPageSubtitle(pageObj.subtitle || '');
+    setSubPageContent((pageObj.content || []).join('\n'));
+    setSubPagePdfFiles(pageObj.pdfFiles || []);
     setIsCreatingSubPage(false);
-    setIsEditingSubPage(false);
+    setIsEditingSubPage(true);
   };
 
   const handleDeleteGradeSubPage = (url: string) => {
@@ -1124,6 +1183,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     const updated = [...editors.filter(ed => ed.email.toLowerCase() !== coordInviteEmail.toLowerCase()), newEd];
     setEditors(updated);
     localStorage.setItem('arens_cms_editors', JSON.stringify(updated));
+    syncAdminConfigToCloud('editors', updated);
 
     const baseUrl = window.location.origin + window.location.pathname;
     const link = `${baseUrl}?invite=true&email=${encodeURIComponent(newEd.email)}&name=${encodeURIComponent(newEd.name)}&role=${encodeURIComponent(newEd.role)}`;
@@ -1137,10 +1197,10 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     setSelectedPageKey(key);
     setIsCreatingNewPage(false);
     
-    const page = allPagesMap[key];
+    const page = allPagesMap[key] || getInternalPage(key);
     if (page) {
-      setPageTitle(page.title);
-      setPageCategory(page.category);
+      setPageTitle(page.title || '');
+      setPageCategory(page.category || 'חט"ב');
       setPageSubtitle(page.subtitle || '');
       setPageIcon(page.icon || 'BookOpen');
       setPageAudience(page.audience || 'כללי');
@@ -1344,14 +1404,16 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     setSaveSuccess(null);
     let targetKey = isCreatingNewPage ? newPageKey : selectedPageKey;
     if (!targetKey) {
-      alert('שגיאה: לא נבחר דף או כתובת URL חוקית');
+      setPageSaveError('שגיאה: לא נבחר דף או כתובת URL חוקית');
+      setTimeout(() => setPageSaveError(null), 4000);
       return;
     }
 
     // Clean up key
     targetKey = targetKey.replace(/^\/+|\/+$/g, "").trim();
     if (!targetKey) {
-      alert('נא להזין כתובת URL חוקית לדף');
+      setPageSaveError('נא להזין כתובת URL חוקית לדף');
+      setTimeout(() => setPageSaveError(null), 4000);
       return;
     }
 
@@ -1361,13 +1423,15 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       try {
         finalPageObj = JSON.parse(rawJsonStr);
       } catch (e: any) {
-        alert('לא ניתן לשמור: קוד ה-JSON אינו תקין. תקן את השגיאות המוצגות באדום.');
+        setPageSaveError('לא ניתן לשמור: קוד ה-JSON אינו תקין. תקן את השגיאות המוצגות באדום.');
+        setTimeout(() => setPageSaveError(null), 5000);
         return;
       }
     } else {
       // Visual mode assembly
       if (!pageTitle.trim()) {
-        alert('נא להזין כותרת לדף');
+        setPageSaveError('נא להזין כותרת לדף');
+        setTimeout(() => setPageSaveError(null), 4000);
         return;
       }
       finalPageObj = {
@@ -1388,20 +1452,33 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       };
     }
 
+    // Clear error
+    setPageSaveError(null);
+
     // Save
     saveInternalPageOverride(targetKey, finalPageObj);
-    
-    // Feedback
-    setSaveSuccess(`הדף "${finalPageObj.title}" נשמר וסונכרן בהצלחה!`);
     
     // Refresh lists
     refreshPagesMap();
     
-    // Switch to editing the newly saved page if was creating
-    if (isCreatingNewPage) {
-      setIsCreatingNewPage(false);
-      setSelectedPageKey(targetKey);
-    }
+    // Keep the current page selected and active in the editor
+    setSelectedPageKey(targetKey);
+    setIsCreatingNewPage(false);
+
+    // Sync active editor inputs with final saved object
+    setPageTitle(finalPageObj.title);
+    setPageCategory(finalPageObj.category);
+    setPageSubtitle(finalPageObj.subtitle || '');
+    setPageIcon(finalPageObj.icon || 'BookOpen');
+    setPageAudience(finalPageObj.audience || 'כללי');
+    setPageShowInMenu(!!finalPageObj.showInMenu);
+    setPageContent(finalPageObj.content && finalPageObj.content.length > 0 ? [...finalPageObj.content] : ['']);
+    setPageSections(finalPageObj.sections ? JSON.parse(JSON.stringify(finalPageObj.sections)) : []);
+    setPagePdfFiles(finalPageObj.pdfFiles ? JSON.parse(JSON.stringify(finalPageObj.pdfFiles)) : []);
+    setRawJsonStr(JSON.stringify(finalPageObj, null, 2));
+
+    // Feedback
+    setSaveSuccess(`הדף "${finalPageObj.title}" נשמר וסונכרן בהצלחה!`);
 
     setTimeout(() => setSaveSuccess(null), 4000);
   };
@@ -1620,6 +1697,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       id: editingStaffId === 'new' ? 'staff-' + Date.now() : (editingStaffId || 'staff-' + Date.now()),
       name: staffName.trim(),
       role: staffRole.trim(),
+      roleDescription: staffRoleDescription.trim(),
+      email: staffEmail.trim() || undefined,
       bio: staffBio.trim(),
       imageUrl: staffImageUrl || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
       isManagement: staffIsManagement
@@ -1632,7 +1711,6 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     }
 
     setStaffMembers(updatedStaff);
-    localStorage.setItem('arens_cms_staff', JSON.stringify(updatedStaff));
     saveStaffMember(member);
     
     // Dispatch synchronization event so Home page staff list updates immediately too!
@@ -1646,7 +1724,6 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const handleDeleteStaff = (id: string) => {
     const updated = staffMembers.filter(s => s.id !== id);
     setStaffMembers(updated);
-    localStorage.setItem('arens_cms_staff', JSON.stringify(updated));
     deleteStaffMember(id);
     window.dispatchEvent(new Event('internal_pages_updated'));
     setDeleteConfirmId(null);
@@ -1655,12 +1732,11 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   const handleResetStaffToDefault = () => {
-    localStorage.setItem('arens_cms_staff', JSON.stringify(defaultStaffMembers));
     setStaffMembers(defaultStaffMembers);
     resetStaffToDefaults();
     window.dispatchEvent(new Event('internal_pages_updated'));
     setShowResetStaffConfirm(false);
-    setSaveSuccess('רשימת אנשי הצוות שוחזרה לברירת המחדל.');
+    setSaveSuccess('רשימת אנשי הצוות שוחזרה לברירת המחדל (136 מורים).');
     setTimeout(() => setSaveSuccess(null), 3000);
   };
 
@@ -1895,12 +1971,27 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         className="w-full bg-school-bg border border-school-line/60 rounded-lg py-1 px-1.5 text-[10px] text-white focus:outline-none focus:border-school-cyan cursor-pointer"
                       >
                         <option value="">מנהל ראשי (תצוגה רגילה)</option>
-                        <option value="רכז שכבה ז'">רכז שכבה ז'</option>
-                        <option value="רכז שכבה ח'">רכז שכבה ח'</option>
-                        <option value="רכז שכבה ט'">רכז שכבה ט'</option>
-                        <option value="רכז שכבה י'">רכז שכבה י'</option>
-                        <option value="רכז שכבה יא'">רכז שכבה יא'</option>
-                        <option value="רכז שכבה יב'">רכז שכבה יב'</option>
+                        <optgroup label="רכזי שכבות">
+                          <option value="רכז שכבה ז'">רכז שכבה ז'</option>
+                          <option value="רכז שכבה ח'">רכז שכבה ח'</option>
+                          <option value="רכז שכבה ט'">רכז שכבה ט'</option>
+                          <option value="רכז שכבה י'">רכז שכבה י'</option>
+                          <option value="רכז שכבה יא'">רכז שכבה יא'</option>
+                          <option value="רכז שכבה יב'">רכז שכבה יב'</option>
+                        </optgroup>
+                        <optgroup label="רכזי 11 המגמות">
+                          <option value="רכז מגמת דאטה אנליסט">רכז מגמת דאטה אנליסט</option>
+                          <option value="רכז מגמת תיאטרון ומחזות זמר">רכז מגמת תיאטרון ומחזות זמר</option>
+                          <option value="רכז מגמת פיזיקה">רכז מגמת פיזיקה</option>
+                          <option value="רכז מגמת סייבר גיאוגרפיה">רכז מגמת סייבר גיאוגרפיה</option>
+                          <option value="רכז מגמת מנהל וכלכלה">רכז מגמת מנהל וכלכלה</option>
+                          <option value="רכז מגמת ערבית">רכז מגמת ערבית</option>
+                          <option value="רכז מגמת מדעי החברה">רכז מגמת מדעי החברה</option>
+                          <option value="רכז מגמת כימיה">רכז מגמת כימיה</option>
+                          <option value="רכז מגמת הנדסת תוכנה">רכז מגמת הנדסת תוכנה</option>
+                          <option value="רכז מגמת חנ&quot;ג">רכז מגמת חנ"ג</option>
+                          <option value="רכז מגמת ביולוגיה">רכז מגמת ביולוגיה</option>
+                        </optgroup>
                       </select>
                     </div>
                   )}
@@ -1920,6 +2011,20 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                       <span className="flex items-center gap-2">
                         <GraduationCap className="w-4 h-4 text-school-cyan" />
                         <span>ניהול השכבה שלי ({getGradeFromCoordinatorRole(effectiveRole)})</span>
+                      </span>
+                    </button>
+                  ) : isMajorCoordinator(effectiveRole) ? (
+                    <button 
+                      onClick={() => { setActiveTab('majors'); }}
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                        activeTab === 'majors' 
+                          ? 'bg-school-cyan/15 text-white border border-school-cyan/30' 
+                          : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <Award className="w-4 h-4 text-amber-400" />
+                        <span>ניהול המגמה שלי ({effectiveRole.replace('רכז מגמת ', '').replace('רכז/ת מגמת ', '')})</span>
                       </span>
                     </button>
                   ) : (
@@ -2932,6 +3037,21 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                             </div>
                           )}
 
+                          {/* Save feedback & error banners */}
+                          {pageSaveError && (
+                            <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-xl text-xs font-bold flex items-center gap-2 mb-3 animate-pulse">
+                              <AlertCircle className="w-4 h-4 shrink-0" />
+                              <span>{pageSaveError}</span>
+                            </div>
+                          )}
+
+                          {saveSuccess && (
+                            <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-3 rounded-xl text-xs font-bold flex items-center gap-2 mb-3">
+                              <CheckCircle className="w-4 h-4 shrink-0" />
+                              <span>{saveSuccess}</span>
+                            </div>
+                          )}
+
                           {/* Save & Reset buttons */}
                           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-school-line/60 pt-4">
                             <div className="flex items-center gap-3">
@@ -3678,13 +3798,30 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
                           <button
                             onClick={handleSaveGradeMainPage}
-                            className="w-full btn py-3 rounded-xl font-extrabold bg-gradient-to-r from-school-cyan to-cyan-400 text-slate-950 shadow-md hover:-translate-y-0.5 transition-all text-xs flex items-center justify-center gap-2 cursor-pointer"
+                            className={`w-full btn py-3 rounded-xl font-extrabold shadow-md hover:-translate-y-0.5 transition-all text-xs flex items-center justify-center gap-2 cursor-pointer ${
+                              saveSuccess?.includes('שכבת') 
+                                ? 'bg-emerald-500 text-slate-950 ring-2 ring-emerald-400' 
+                                : 'bg-gradient-to-r from-school-cyan to-cyan-400 text-slate-950'
+                            }`}
                           >
-                            <Save className="w-4 h-4" />
-                            <span>שמירת כל השינויים</span>
+                            {saveSuccess?.includes('שכבת') ? <CheckCircle2 className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+                            <span>{saveSuccess?.includes('שכבת') ? 'השינויים נשמרו בהצלחה!' : 'שמור שינויים'}</span>
                           </button>
                         </div>
                       </div>
+
+                      {/* Inline feedback for grade main page */}
+                      {saveSuccess && (
+                        <div className="p-3.5 bg-emerald-500/20 border border-emerald-500/40 rounded-xl flex items-center justify-between text-emerald-300 font-bold text-xs shadow-md">
+                          <div className="flex items-center gap-2.5">
+                            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                            <span>{saveSuccess}</span>
+                          </div>
+                          <button type="button" onClick={() => setSaveSuccess(null)} className="text-emerald-400 hover:text-white p-1 cursor-pointer">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -3915,15 +4052,22 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                               <div className="space-y-2">
                                 <button
                                   onClick={handleSaveGradeSubPage}
-                                  className="w-full btn py-2.5 rounded-xl font-extrabold bg-gradient-to-r from-school-cyan to-cyan-400 text-slate-950 text-xs shadow-md cursor-pointer"
+                                  className="w-full btn py-2.5 rounded-xl font-extrabold bg-gradient-to-r from-school-cyan to-cyan-400 text-slate-950 text-xs shadow-md cursor-pointer flex items-center justify-center gap-2"
                                 >
-                                  שמור דף משנה
+                                  <Save className="w-4 h-4" />
+                                  <span>שמור שינויים</span>
                                 </button>
+                                {saveSuccess && (
+                                  <div className="p-2.5 bg-emerald-500/20 border border-emerald-500/40 rounded-xl flex items-center gap-2 text-emerald-300 font-bold text-xs">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                    <span>{saveSuccess}</span>
+                                  </div>
+                                )}
                                 <button
                                   onClick={() => { setIsEditingSubPage(false); setIsCreatingSubPage(false); }}
                                   className="w-full btn py-2.5 rounded-xl font-bold bg-white/5 border border-school-line hover:bg-white/10 text-white text-xs cursor-pointer"
                                 >
-                                  ביטול
+                                  חזרה לרשימת הדפים
                                 </button>
                               </div>
                             </div>
@@ -4300,6 +4444,38 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           </div>
 
                           <div className="space-y-1.5">
+                            <label className="text-xs text-white font-bold block">
+                              תיאור תפקיד מפורט (טקסטואלי)
+                            </label>
+                            <input 
+                              type="text"
+                              value={staffRoleDescription}
+                              onChange={(e) => setStaffRoleDescription(e.target.value)}
+                              placeholder='לדוגמה: מחנכת י&apos;2 מורה לכימיה חט"ע רכזת שכבה י&apos; ורכזת מגמה כימיה'
+                              className="w-full bg-[#080d19] border border-school-line/60 rounded-xl py-2.5 px-4 text-xs text-white focus:outline-none focus:border-school-cyan transition-colors"
+                            />
+                            <p className="text-[10px] text-school-muted">
+                              פירוט מלא של תפקידי ההוראה, החינוך והריכוז (למשל: &quot;סגן מנהל חט&quot;נ ומחנך כתה ט4 חט&quot;נ&quot;).
+                            </p>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <label className="text-xs text-white font-bold block">
+                              כתובת אימייל (ליצירת קשר עם המורה)
+                            </label>
+                            <input 
+                              type="email"
+                              value={staffEmail}
+                              onChange={(e) => setStaffEmail(e.target.value)}
+                              placeholder="לדוגמה: teacher@arens.org.il או teacher@gmail.com"
+                              className="w-full bg-[#080d19] border border-school-line/60 rounded-xl py-2.5 px-4 text-xs text-white focus:outline-none focus:border-school-cyan transition-colors text-left dir-ltr"
+                            />
+                            <p className="text-[10px] text-school-muted">
+                              כתובת זו תאפשר לתלמידים ולהורים לשלוח פנייה ישירה למורה.
+                            </p>
+                          </div>
+
+                          <div className="space-y-1.5">
                             <label className="text-xs text-white font-bold block">ביוגרפיה קצרה (יוצג בפופאפ בלחיצה)</label>
                             <textarea 
                               rows={4}
@@ -4340,7 +4516,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                                 : 'border-school-line/60 hover:border-school-cyan/55 bg-[#080d19]'
                             }`}
                           >
-                            {staffImageUrl ? (
+                            {staffImageUrl && !staffImageUrl.includes('unsplash.com') && !staffImageUrl.includes('placeholder') ? (
                               <div className="space-y-3 w-full">
                                 <img 
                                   src={staffImageUrl} 
@@ -4350,16 +4526,20 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                                 <button 
                                   type="button"
                                   onClick={() => setStaffImageUrl('')}
-                                  className="text-[10px] text-red-400 hover:text-red-300 font-bold underline"
+                                  className="text-[10px] text-red-400 hover:text-red-300 font-bold underline cursor-pointer"
                                 >
-                                  הסרת תמונה
+                                  הסרת תמונה וחזרה לאוואטר ראשי תיבות
                                 </button>
                               </div>
                             ) : (
-                              <div className="space-y-2 pointer-events-none">
-                                <UploadCloud className="w-8 h-8 text-school-muted mx-auto" />
-                                <p className="text-[11px] text-white font-bold">גררו תמונה לכאן או לחצו לבחירה</p>
-                                <p className="text-[9px] text-school-muted">קבצי תמונה בלבד, מומלץ ריבועית</p>
+                              <div className="space-y-2 pointer-events-none flex flex-col items-center">
+                                <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${getAvatarColor(staffName || 'צוות').bg} flex items-center justify-center border ${getAvatarColor(staffName || 'צוות').border} shadow-sm mb-1`}>
+                                  <span className={`text-xl font-black ${getAvatarColor(staffName || 'צוות').text}`}>
+                                    {getHebrewInitials(staffName || 'צוות')}
+                                  </span>
+                                </div>
+                                <p className="text-[11px] text-white font-bold">העלאת תמונה אמיתית (מחליפה את האוואטר)</p>
+                                <p className="text-[9px] text-school-muted">לחצו לבחירת תמונה מקומית או גררו קובץ לכאן</p>
                               </div>
                             )}
 
@@ -4454,6 +4634,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                               setEditingStaffId('new');
                               setStaffName('');
                               setStaffRole('');
+                              setStaffRoleDescription('');
+                              setStaffEmail('');
                               setStaffBio('');
                               setStaffImageUrl('');
                               setStaffIsManagement(false);
@@ -4521,25 +4703,42 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                                     setEditingStaffId(member.id);
                                     setStaffName(member.name);
                                     setStaffRole(member.role);
+                                    setStaffRoleDescription(member.roleDescription || '');
+                                    setStaffEmail(member.email || '');
                                     setStaffBio(member.bio);
                                     setStaffImageUrl(member.imageUrl);
                                     setStaffIsManagement(member.isManagement);
                                     setStaffFormError(null);
                                   }}
                                 >
-                                  <img 
-                                    src={member.imageUrl} 
-                                    alt={member.name} 
-                                    className="w-11 h-11 rounded-full object-cover border border-school-line/60"
-                                  />
+                                  <div className="w-11 h-11 rounded-full overflow-hidden border border-school-line/60 shrink-0 flex items-center justify-center">
+                                    {member.imageUrl && !member.imageUrl.includes('unsplash.com') && !member.imageUrl.includes('placeholder') ? (
+                                      <img 
+                                        src={member.imageUrl} 
+                                        alt={member.name} 
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <div className={`w-full h-full bg-gradient-to-br ${getAvatarColor(member.name).bg} flex items-center justify-center select-none`}>
+                                        <span className={`text-xs font-black ${getAvatarColor(member.name).text}`}>
+                                          {getHebrewInitials(member.name)}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
                                   <div className="space-y-0.5">
                                     <div className="flex items-center gap-2">
                                       <span className="text-xs font-bold text-white group-hover:text-school-cyan transition-colors">{member.name}</span>
+                                      {member.email && (
+                                        <span className="text-[9px] bg-school-cyan/10 text-school-cyan border border-school-cyan/20 px-1.5 py-0.2 rounded font-mono dir-ltr">{member.email}</span>
+                                      )}
                                       {member.isManagement && (
                                         <span className="text-[9px] bg-amber-400/10 text-amber-300 border border-amber-400/20 px-2 py-0.5 rounded-full font-bold">תפקיד ניהול / דף הבית</span>
                                       )}
                                     </div>
-                                    <p className="text-[11px] text-school-muted line-clamp-1">{member.role}</p>
+                                    <p className="text-[11px] text-school-muted line-clamp-1">
+                                      {member.roleDescription ? `${member.role} • ${member.roleDescription}` : member.role}
+                                    </p>
                                   </div>
                                 </div>
 
@@ -4689,6 +4888,18 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                             <option value="רכז שכבה י'">רכז שכבה י' (ניהול דפי שכבה י' בלבד)</option>
                             <option value="רכז שכבה יא'">רכז שכבה יא' (ניהול דפי שכבה יא' בלבד)</option>
                             <option value="רכז שכבה יב'">רכז שכבה יב' (ניהול דפי שכבה יב' בלבד)</option>
+                            <option disabled className="text-school-muted font-bold pt-2">--- רכזי 11 המגמות (תשפ"ז) ---</option>
+                            <option value="רכז מגמת דאטה אנליסט">רכז מגמת דאטה אנליסט (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת תיאטרון ומחזות זמר">רכז מגמת תיאטרון ומחזות זמר (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת פיזיקה">רכז מגמת פיזיקה (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת סייבר גיאוגרפיה">רכז מגמת סייבר גיאוגרפיה (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת מנהל וכלכלה">רכז מגמת מנהל וכלכלה (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת ערבית">רכז מגמת ערבית (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת מדעי החברה">רכז מגמת מדעי החברה (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת כימיה">רכז מגמת כימיה (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת הנדסת תוכנה">רכז מגמת הנדסת תוכנה (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת חנ&quot;ג">רכז מגמת חנ"ג (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת ביולוגיה">רכז מגמת ביולוגיה (ניהול תוכן וסילבוס)</option>
                           </select>
                         </div>
 
@@ -5298,7 +5509,10 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               {/* 8.5. SCHOOL MAJORS & TRACKS (MIDDLE SCHOOL & HIGH SCHOOL) */}
               {activeTab === 'majors' && (
                 <div className="max-w-7xl mx-auto">
-                  <MajorsAdmin />
+                  <MajorsAdmin 
+                    restrictedMajorId={isMajorCoordinator(effectiveRole) ? getMajorIdFromCoordinatorRole(effectiveRole) : null}
+                    coordinatorRoleName={effectiveRole}
+                  />
                 </div>
               )}
 

@@ -366,28 +366,32 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
     subtitle: "מדריך מקיף לבחירת מגמות מורחבות (5 יח\"ל) בחטיבה העליונה",
     icon: "BookOpen",
     content: [
-      "החטיבה העליונה של שש-שנתי משה ארנס מציעה מגוון עשיר ומגוון של מגמות לימוד מורחבות (ברמת 5 יחידות לימוד בגרות) בחזית הטכנולוגיה, המדע והרוח.",
-      "חוברת המגמות שלהלן מפרטת את תנאי הקבלה, תכני הלימוד, הרכב בחינות הבגרות והאופק המקצועי של כל מגמה ומגמה.",
-      "אנו ממליצים לקרוא את החוברת בעיון רב יחד עם ההורים ולהתייעץ עם צוות הייעוץ והנהלת התיכון לצורך קבלת ההחלטה הטובה ביותר."
+      "החטיבה העליונה של שש-שנתי משה ארנס מציעה 11 מגמות לימוד מורחבות מובילות ברמת 5 יחידות לימוד בגרות בחזית המדע, הטכנולוגיה, הרוח, החברה והספורט.",
+      "חוברת המגמות שלהלן מפרטת את 11 המגמות הפועלות בבית הספר: דאטה אנליסט, תיאטרון ומחזות זמר, פיזיקה, סייבר גיאוגרפיה, מנהל וכלכלה, ערבית, מדעי החברה, כימיה, הנדסת תוכנה, חנ\"ג, וביולוגיה.",
+      "אנו ממליצים לקרוא את המידע בעיון רב יחד עם ההורים ולהתייעץ עם רכזי המגמות והנהלת התיכון לצורך קבלת ההחלטה הטובה ביותר."
     ],
     sections: [
       {
-        title: "סקירה מהירה של מגמות הלימוד המובילות",
-        text: "מגמות המדע והטכנולוגיה (STEM):",
+        title: "מגמות המדע, ההנדסה והטכנולוגיה",
+        text: "מגמות טכנולוגיות ומדעיות מתקדמות (5 יח\"ל):",
         list: [
-          "הנדסת תוכנה וסייבר - תכנות מתקדם, מבנה נתונים ואבטחת רשתות.",
-          "רובוטיקה ומערכות הנדסיות - שילוב של מכניקה, אלקטרוניקה ובקרת קוד.",
-          "פיזיקה ואווירונאוטיקה - חקר מערכות טיסה, חלל ומכניקת הגופים.",
-          "ביולוגיה וכימיה יישומית - עבודות מעבדה וחקר מערכות הגוף והטבע."
+          "דאטה אנליסט - ניתוח נתונים מתקדם, סטטיסטיקה יישומית ובינה מלאכותית.",
+          "הנדסת תוכנה - תכנות מונחה עצמים, אלגוריתמיקה מתקדמת, מבני נתונים וסייבר.",
+          "פיזיקה - מכניקה, אלקטרומגנטיות, קרינה וחומר וניסויי מעבדה מתקדמים.",
+          "כימיה - מבנה החומר, תגובות כימיות, ננו-טכנולוגיה ומעבדות חקר.",
+          "ביולוגיה - מערכות החיים, גנטיקה, אקולוגיה, פיזיולוגיה וביוטכנולוגיה.",
+          "סייבר גיאוגרפיה - מערכות GIS, מיפוי ממוחשב, חישה מרחוק וניתוח מרחבי."
         ]
       },
       {
-        title: "מגמות הרוח והחברה והספורט",
-        text: "מגמות יצירתיות ויישומיות:",
+        title: "מגמות הרוח, החברה, האמנות והספורט",
+        text: "מגמות עיוניות, יצירתיות ויישומיות (5 יח\"ל):",
         list: [
-          "מגמת תיאטרון ואומנויות הבמה - ביטוי אישי, בימוי והפקת מחזות מקוריים.",
-          "קולנוע ותקשורת חזותית - הפקה, צילום, עריכת סרטים ותקשורת המונים.",
-          "מגמת חינוך גופני - פיזיולוגיה, תזונה ואימונים ספורטיביים מקצועיים."
+          "תיאטרון ומחזות זמר - אמנויות הבמה, בימוי, משחק, שירה, תנועה והפקת מחזות זמר.",
+          "מנהל וכלכלה - יסודות הכלכלה, שוק ההון, ניהול עסקי, יזמות ושיווק.",
+          "מדעי החברה - פסיכולוגיה, סוציולוגיה, הבנת נפש האדם ומחקר מדעי יישומי.",
+          "ערבית - שפה ותקשורת, תרבות המזרח התיכון ואופק ליחידות מודיעין.",
+          "חנ\"ג - חינוך גופני מוגבר, פיזיולוגיה של המאמץ, אנטומיה ומנהיגות ספורטיבית."
         ]
       }
     ]
@@ -696,20 +700,35 @@ export function getDeletedPageKeys(): string[] {
   }
 }
 
+import { syncPageOverrideToCloud, syncGradeClassesToCloud } from '../services/pagesStorage';
+
 export function saveInternalPageOverride(key: string, page: InternalPage) {
   if (typeof window === 'undefined') return;
   try {
     const overrides = getInternalPageOverrides();
     const cleanKey = key.replace(/^\/+|\/+$/g, "");
     overrides[cleanKey] = page;
-    localStorage.setItem('internal_pages_overrides', JSON.stringify(overrides));
+    if (key !== cleanKey) {
+      overrides[key] = page;
+    }
+    try {
+      localStorage.setItem('internal_pages_overrides', JSON.stringify(overrides));
+    } catch (lsErr) {
+      console.warn('LocalStorage quota exceeded, proceeding with Firestore save:', lsErr);
+    }
 
     // Remove from deleted list if present
     const deleted = getDeletedPageKeys();
-    if (deleted.includes(cleanKey)) {
-      const updatedDeleted = deleted.filter(k => k !== cleanKey);
-      localStorage.setItem('internal_pages_deleted', JSON.stringify(updatedDeleted));
+    let updatedDeleted = deleted;
+    if (deleted.includes(cleanKey) || deleted.includes(key)) {
+      updatedDeleted = deleted.filter(k => k !== cleanKey && k !== key);
+      try {
+        localStorage.setItem('internal_pages_deleted', JSON.stringify(updatedDeleted));
+      } catch (e) {}
     }
+
+    // Cloud sync to Firestore
+    syncPageOverrideToCloud(overrides, updatedDeleted).catch(console.warn);
 
     window.dispatchEvent(new Event('internal_pages_updated'));
   } catch (e) {
@@ -723,14 +742,22 @@ export function deleteInternalPageOverride(key: string) {
     const overrides = getInternalPageOverrides();
     const cleanKey = key.replace(/^\/+|\/+$/g, "");
     delete overrides[cleanKey];
-    localStorage.setItem('internal_pages_overrides', JSON.stringify(overrides));
+    try {
+      localStorage.setItem('internal_pages_overrides', JSON.stringify(overrides));
+    } catch (e) {}
 
     // Remove from deleted list if resetting to default
     const deleted = getDeletedPageKeys();
+    let updatedDeleted = deleted;
     if (deleted.includes(cleanKey)) {
-      const updatedDeleted = deleted.filter(k => k !== cleanKey);
-      localStorage.setItem('internal_pages_deleted', JSON.stringify(updatedDeleted));
+      updatedDeleted = deleted.filter(k => k !== cleanKey);
+      try {
+        localStorage.setItem('internal_pages_deleted', JSON.stringify(updatedDeleted));
+      } catch (e) {}
     }
+
+    // Cloud sync to Firestore
+    syncPageOverrideToCloud(overrides, updatedDeleted).catch(console.warn);
 
     window.dispatchEvent(new Event('internal_pages_updated'));
   } catch (e) {
@@ -746,14 +773,21 @@ export function deleteInternalPagePermanently(key: string) {
     // 1. Remove from overrides
     const overrides = getInternalPageOverrides();
     delete overrides[cleanKey];
-    localStorage.setItem('internal_pages_overrides', JSON.stringify(overrides));
+    try {
+      localStorage.setItem('internal_pages_overrides', JSON.stringify(overrides));
+    } catch (e) {}
 
     // 2. Add to deleted list
     const deleted = getDeletedPageKeys();
     if (!deleted.includes(cleanKey)) {
       deleted.push(cleanKey);
-      localStorage.setItem('internal_pages_deleted', JSON.stringify(deleted));
+      try {
+        localStorage.setItem('internal_pages_deleted', JSON.stringify(deleted));
+      } catch (e) {}
     }
+
+    // Cloud sync to Firestore
+    syncPageOverrideToCloud(overrides, deleted).catch(console.warn);
 
     window.dispatchEvent(new Event('internal_pages_updated'));
   } catch (e) {
@@ -769,11 +803,15 @@ export function getAllPagesMap(): Record<string, InternalPage> {
   // Add overrides
   Object.entries(overrides).forEach(([key, val]) => {
     combined[key] = val;
+    const cleanKey = key.replace(/^\/+|\/+$/g, "");
+    combined[cleanKey] = val;
+    combined[`${cleanKey}/`] = val;
   });
 
   // Filter out deleted keys
   deletedKeys.forEach((k) => {
     delete combined[k];
+    delete combined[`${k}/`];
     Object.keys(combined).forEach((rawKey) => {
       if (rawKey.replace(/^\/+|\/+$/g, "") === k) {
         delete combined[rawKey];
@@ -911,7 +949,10 @@ export function saveGradeClassesOverride(grade: string, classes: any[]) {
     // Normalize grade key e.g. "ז'", "ז", "י'", "י"
     const cleanGrade = grade.replace(/'/g, '').trim();
     overrides[cleanGrade] = classes;
-    localStorage.setItem('grade_classes_overrides', JSON.stringify(overrides));
+    try {
+      localStorage.setItem('grade_classes_overrides', JSON.stringify(overrides));
+    } catch (e) {}
+    syncGradeClassesToCloud(overrides).catch(console.warn);
     window.dispatchEvent(new Event('grade_classes_updated'));
   } catch (e) {
     console.error('Failed to save grade classes override', e);

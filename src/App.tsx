@@ -1,4 +1,4 @@
-import { subscribeToStaffMembers } from './services/staffStorage';
+import { subscribeToStaffMembers, getStoredStaffMembers } from './services/staffStorage';
 import { subscribeToNews, subscribeToSettings } from './services/cmsStorage';
 import { subscribeToPageOverrides } from './services/pagesStorage';
 import { subscribeToAdminSettings } from './services/adminStorage';
@@ -58,6 +58,7 @@ import {
   defaultStaffMembers
 } from './data';
 import { StaffMember } from './types';
+import { getHebrewInitials, getAvatarColor } from './utils/avatarUtils';
 import FloatingHeroBalls from './components/FloatingHeroBalls';
 import InternalPageViewer from './components/InternalPageViewer';
 import AdminPanel from './components/AdminPanel';
@@ -65,6 +66,8 @@ import { RolePortalHomepage } from './components/RolePortalHomepage';
 import { TeacherEventRegistration } from './components/TeacherEventRegistration';
 import { TeacherEventsAdmin } from './components/TeacherEventsAdmin';
 import { MajorsExplorer } from './components/MajorsExplorer';
+import { HomepageMajorsSection } from './components/HomepageMajorsSection';
+import { MajorDedicatedPage } from './components/MajorDedicatedPage';
 import { getUpcomingTeacherEvents } from './services/eventsStorage';
 import { SITE_THEMES } from './data/themes';
 import SEOMeta from './components/SEOMeta';
@@ -128,6 +131,7 @@ export default function App() {
 
   const [isThemePickerOpen, setIsThemePickerOpen] = useState<boolean>(false);
   const [selectedInternalPageUrl, setSelectedInternalPageUrl] = useState<string | null>(null);
+  const [selectedMajorId, setSelectedMajorId] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [hoveredNavIndex, setHoveredNavIndex] = useState<number | null>(null);
   const navHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -218,12 +222,7 @@ export default function App() {
       }
     };
     const loadStaff = () => {
-      const savedStaff = localStorage.getItem('arens_cms_staff');
-      if (savedStaff) {
-        setStaffMembers(JSON.parse(savedStaff));
-      } else {
-        setStaffMembers(defaultStaffMembers);
-      }
+      setStaffMembers(getStoredStaffMembers());
     };
     const loadSocials = () => {
       const savedSocials = localStorage.getItem('arens_cms_socials');
@@ -424,6 +423,14 @@ export default function App() {
         } else if (hash.startsWith('teachers-events-admin') || pageParam === 'teachers-events-admin') {
           setActiveTab('teachers-events-admin');
           setSelectedInternalPageUrl(null);
+        } else if (hash.startsWith('major-')) {
+          const mId = hash.replace('major-', '');
+          setSelectedMajorId(mId);
+          setActiveTab('major-page');
+          setSelectedInternalPageUrl(null);
+        } else if (hash === 'majors' || pageParam === 'majors') {
+          setActiveTab('majors');
+          setSelectedInternalPageUrl(null);
         } else if (hash.startsWith('course/')) {
           setSelectedInternalPageUrl(hash);
           setActiveTab('internal-page');
@@ -581,13 +588,15 @@ export default function App() {
       tab: "students",
       sub: [
         { t: "לתלמידים 🎓", tab: "students" },
+        { t: "משוב תלמידים", externalUrl: "https://web.mashov.info/students/login" },
+        { t: "פורטל תלמידים ובוגרים", externalUrl: "https://students.education.gov.il/" },
+        { t: "Google Classroom", externalUrl: "https://classroom.google.com/" },
         { t: "כניסה לשכבות (ז'-יב')", isAnchor: true, anchor: "grades" },
         { t: "שישי אישי ומרכז הלמידה", url: "course/%d7%97%d7%98%d7%91/%d7%a9%d7%99%d7%a9%d7%99-%d7%90%d7%99%d7%a9%d7%99/" },
         { t: "חינוך חברתי חט\"ב", url: "course/%d7%97%d7%98%d7%91/%d7%97%d7%99%d7%a0%d7%95%d7%a5-%d7%97%d7%91%d7%a8%d7%aa%d7%99-%d7%97%d7%98%d7%91/" },
         { t: "מעורבות חברתית", url: "course/%d7%97%d7%98%d7%91/%d7%9e%d7%a2%d7%95%d7%a8%d7%91%d7%95%d7%aa-%d7%97%d7%91%d7%a8%d7%aa%d7%99-%d7%97%d7%91%d7%a8%d7%aa%d7%99-2/" },
         { t: "עבודות קיץ לעולים לכיתה ז'", url: "course/%d7%97%d7%98%d7%91/%d7%a2%d7%91%d7%95%d7%93%d7%95%d7%aa-%d7%a7%d7%99%d7%a5-%d7%9c%d7%a2%d7%95%d7%9c%d7%99%d7%9d-%d7%9c%d7%9b%d7%99%d7%aa%d7%94-%d7%96/" },
-        { t: "עבודות קיץ לעולים לכיתות ח-ט", url: "course/%d7%97%d7%98%d7%91/%d7%a2%d7%91%d7%95%d7%93%d7%95%d7%aa-%d7%a7%d7%99%d7%a5-%d7%9c%d7%a2%d7%95%d7%9c%d7%99%d7%9d-%d7%9c%d7%9b%d7%15%d7%aa-%d7%97-%d7%98/" },
-        { t: "פורטל התלמידים הלאומי", externalUrl: "https://students.education.gov.il/" }
+        { t: "עבודות קיץ לעולים לכיתות ח-ט", url: "course/%d7%97%d7%98%d7%91/%d7%a2%d7%91%d7%95%d7%93%d7%95%d7%aa-%d7%a7%d7%99%d7%a5-%d7%9c%d7%a2%d7%95%d7%9c%d7%99%d7%9d-%d7%9c%d7%9b%d7%15%d7%aa-%d7%97-%d7%98/" }
       ]
     },
     {
@@ -595,11 +604,12 @@ export default function App() {
       tab: "parents",
       sub: [
         { t: "להורים 👨‍👩‍👧", tab: "parents" },
+        { t: "משוב הורים", externalUrl: "https://web.mashov.info/parents/login" },
+        { t: "פורטל הורים", externalUrl: "https://parents.education.gov.il/" },
         { t: "תשלומי הורים חטיבה עליונה", url: "course/%d7%aa%d7%a9%d7%9c%d7%95%d7%9e%d7%99-%d7%94%d7%95%d7%a8%d7%99%d7%9d-%d7%97%d7%98%d7%91%d7%99%d7%a2%d7%95%d7%a0%d7%94/" },
         { t: "פרויקט השאלת ספרים תשפ\"ז", url: "course/%a4%d7%a8%d7%95%d7%99%d7%a7%d7%98-%d7%94%d7%a9%d7%a4%d7%9c%d7%aa-%d7%a1%d7%a4%d7%a8%d7%99%d7%9d-%d7%aa%d7%a9%d7%a4%d7%95/" },
         { t: "טפסים חשובים וטפסי רישום", url: "course/%d7%98%d7%a4%d7%a1%d7%99-%d7%a8%d7%99%d7%a9%d7%95%d7%9d/" },
-        { t: "מידעון בית הספר", url: "course/%d7%9e%d7%99%d7%93%d7%a2%d7%95%d7%9f-%d7%9e%d7%97%d7%a6%d7%99%d7%aa-%d7%90-%d7%aa%d7%a9%d7%a4%d7%94/" },
-        { t: "פורטל הורים - משרד החינוך", externalUrl: "https://parents.education.gov.il/" }
+        { t: "מידעון בית הספר", url: "course/%d7%9e%d7%99%d7%93%d7%a2%d7%95%d7%9f-%d7%9e%d7%97%d7%a6%d7%99%d7%aa-%d7%90-%d7%aa%d7%a9%d7%a4%d7%94/" }
       ]
     },
     {
@@ -607,13 +617,11 @@ export default function App() {
       tab: "teachers",
       sub: [
         { t: "למורים 🍎", tab: "teachers" },
+        { t: "משוב עובדי הוראה", externalUrl: "https://web.mashov.info/" },
+        { t: "פורטל עובדי הוראה", externalUrl: "https://pob.education.gov.il/" },
+        { t: "Google Classroom", externalUrl: "https://classroom.google.com/" },
         { t: "הרשמה לסדנאות ואירועי צוות 🌟", tab: "teachers-events" },
         { t: "ניהול אירועים וסדנאות (Google Sync) ⚙️", tab: "teachers-events-admin" },
-        { t: "מערכת משוב פדגוגי", externalUrl: "https://web.mashov.info/" },
-        { t: "פורטל עובדי הוראה", externalUrl: "https://pob.education.gov.il/" },
-        { t: "סביבת אופק למידה", externalUrl: "https://ofek.snunit.k12.il/" },
-        { t: "Google Classroom", externalUrl: "https://classroom.google.com/" },
-        { t: "ספריית כותר דיגיטלית", externalUrl: "https://www.kotar.co.il/" },
         { t: "טפסים ודיווחי משוב", url: "course/%d7%98%d7%a4%d7%a1%d7%99-%d7%a8%d7%99%d7%a9%d7%95%d7%9d/" }
       ]
     },
@@ -1198,6 +1206,23 @@ export default function App() {
                 </div>
               </section>
 
+              {/* HOMEPAGE MAJORS & TRACKS SECTION */}
+              <section id="homepage-majors" className="py-16 border-t border-school-line/30 bg-school-panel/30">
+                <div className="max-w-7xl mx-auto px-4 md:px-8">
+                  <HomepageMajorsSection 
+                    onExploreAll={() => {
+                      setActiveTab('majors');
+                      window.location.hash = 'majors';
+                    }}
+                    onSelectMajor={(majorId) => {
+                      setSelectedMajorId(majorId);
+                      setActiveTab('major-page');
+                      window.location.hash = `major-${majorId}`;
+                    }}
+                  />
+                </div>
+              </section>
+
               {/* STAFF SECTION */}
               <section id="staff" className="py-24 border-t border-school-line/30 bg-school-bg relative overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(34,211,238,0.03),transparent_60%)] pointer-events-none" />
@@ -1231,22 +1256,30 @@ export default function App() {
                             </span>
                           )}
 
-                          {/* Profile Photo */}
-                          <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-school-line/60 group-hover:border-school-cyan/50 transition-colors mb-5">
-                            <img 
-                              src={member.imageUrl} 
-                              alt={member.name} 
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              referrerPolicy="no-referrer"
-                            />
+                          {/* Profile Photo or Hebrew Initials Avatar */}
+                          <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-school-line/60 group-hover:border-school-cyan/50 transition-colors mb-5 shadow-inner">
+                            {member.imageUrl && !member.imageUrl.includes('unsplash.com') && !member.imageUrl.includes('placeholder') ? (
+                              <img 
+                                src={member.imageUrl} 
+                                alt={member.name} 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                referrerPolicy="no-referrer"
+                              />
+                            ) : (
+                              <div className={`w-full h-full bg-gradient-to-br ${getAvatarColor(member.name).bg} flex items-center justify-center text-white select-none`}>
+                                <span className={`text-2xl font-black tracking-wider ${getAvatarColor(member.name).text}`}>
+                                  {getHebrewInitials(member.name)}
+                                </span>
+                              </div>
+                            )}
                           </div>
 
                           {/* Info */}
                           <h3 className="text-base font-extrabold text-school-text group-hover:text-school-cyan transition-colors line-clamp-1">
                             {member.name}
                           </h3>
-                          <p className="text-xs text-school-muted font-semibold mt-1 mb-3 h-8 line-clamp-2">
-                            {member.role}
+                          <p className="text-xs text-school-muted font-semibold mt-1 mb-3 h-8 line-clamp-2" title={member.roleDescription || member.role}>
+                            {member.roleDescription || member.role}
                           </p>
 
                           <div className="mt-auto pt-3 border-t border-school-line/40 w-full text-[10px] text-school-cyan font-bold flex items-center justify-center gap-1 opacity-85 group-hover:opacity-100 transition-opacity">
@@ -1397,7 +1430,41 @@ export default function App() {
               exit={{ opacity: 0 }}
               className="max-w-6xl mx-auto px-4 py-8 space-y-6 text-right"
             >
-              <MajorsExplorer onNavigateToTab={(t) => setActiveTab(t)} />
+              <MajorsExplorer 
+                onNavigateToTab={(t) => setActiveTab(t)}
+                onSelectMajor={(majorId) => {
+                  setSelectedMajorId(majorId);
+                  setActiveTab('major-page');
+                  window.location.hash = `major-${majorId}`;
+                }}
+                onBack={() => {
+                  setActiveTab('home');
+                  window.location.hash = 'home';
+                }}
+              />
+            </motion.div>
+          )}
+
+          {/* TAB: DEDICATED MAJOR PAGE (LIKE GRADE LAYER PAGES) */}
+          {activeTab === 'major-page' && selectedMajorId && (
+            <motion.div
+              key="major-page"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <MajorDedicatedPage 
+                majorId={selectedMajorId}
+                onBack={() => {
+                  setActiveTab('home');
+                  window.location.hash = 'home';
+                }}
+                onSelectOtherMajor={(otherId) => {
+                  setSelectedMajorId(otherId);
+                  window.location.hash = `major-${otherId}`;
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
             </motion.div>
           )}
 
@@ -2049,15 +2116,42 @@ export default function App() {
                 
                 {/* Photo and Header Info */}
                 <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-right pt-2">
-                  <img 
-                    src={selectedStaffForModal.imageUrl} 
-                    alt={selectedStaffForModal.name} 
-                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-school-cyan/50 shadow-md shrink-0"
-                    referrerPolicy="no-referrer"
-                  />
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-school-cyan/50 shadow-md shrink-0 flex items-center justify-center">
+                    {selectedStaffForModal.imageUrl && !selectedStaffForModal.imageUrl.includes('unsplash.com') && !selectedStaffForModal.imageUrl.includes('placeholder') ? (
+                      <img 
+                        src={selectedStaffForModal.imageUrl} 
+                        alt={selectedStaffForModal.name} 
+                        className="w-full h-full object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className={`w-full h-full bg-gradient-to-br ${getAvatarColor(selectedStaffForModal.name).bg} flex items-center justify-center text-white select-none`}>
+                        <span className={`text-3xl font-black ${getAvatarColor(selectedStaffForModal.name).text}`}>
+                          {getHebrewInitials(selectedStaffForModal.name)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                   <div className="space-y-1">
                     <h3 className="text-xl font-black text-white">{selectedStaffForModal.name}</h3>
                     <p className="text-xs text-school-cyan font-bold">{selectedStaffForModal.role}</p>
+                    {selectedStaffForModal.roleDescription && (
+                      <p className="text-[11px] text-school-muted bg-white/5 border border-school-line/50 rounded-lg px-2.5 py-1 inline-block mt-1">
+                        {selectedStaffForModal.roleDescription}
+                      </p>
+                    )}
+                    {selectedStaffForModal.email && (
+                      <div className="pt-2">
+                        <a 
+                          href={`mailto:${selectedStaffForModal.email}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-school-cyan/10 hover:bg-school-cyan/20 border border-school-cyan/30 text-school-cyan text-xs font-semibold transition-colors"
+                          title="שלח אימייל ישיר למורה"
+                        >
+                          <Mail className="w-3.5 h-3.5" />
+                          <span className="dir-ltr">{selectedStaffForModal.email}</span>
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
 

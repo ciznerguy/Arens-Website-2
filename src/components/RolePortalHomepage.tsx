@@ -115,18 +115,20 @@ export const RolePortalHomepage: React.FC<RolePortalHomepageProps> = ({
   const pageEntries = (Object.entries(allPagesMap) as [string, InternalPage][]).filter(([url, page]) => {
     if (!page || url === 'home-page-1') return false;
     const aud = String(page.audience || 'כללי').toLowerCase();
+    const cat = String(page.category || '');
+    const tit = String(page.title || '');
     
     if (role === 'students') {
       return aud.includes('students') || aud.includes('תלמיד') || aud.includes('כללי') || aud.includes('all') || 
-             (page.category && page.category.includes('חט')) || (page.category && page.category.includes('תלמיד'));
+             cat.includes('חט') || cat.includes('תלמיד');
     }
     if (role === 'parents') {
       return aud.includes('parents') || aud.includes('הור') || aud.includes('כללי') || aud.includes('all') || 
-             (page.category && page.category.includes('הורים')) || (page.title && page.title.includes('תשלום')) || (page.title && page.title.includes('השאלת'));
+             cat.includes('הורים') || tit.includes('תשלום') || tit.includes('השאלת');
     }
     if (role === 'teachers') {
       return aud.includes('teachers') || aud.includes('מור') || aud.includes('כללי') || aud.includes('all') || 
-             (page.category && page.category.includes('מורים')) || (page.title && page.title.includes('משוב')) || (page.title && page.title.includes('פדגוג'));
+             cat.includes('מורים') || tit.includes('משוב') || tit.includes('פדגוג');
     }
     return true;
   });

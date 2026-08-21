@@ -1,4 +1,5 @@
 import { Announcement, EventItem, GradeLevel, LearningSpace, QuickLink, GalleryPhoto, StaffMember } from './types';
+import { allTeachersList } from './data/teachersList';
 
 export const schoolLogoSvg = `
 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-school-cyan">
@@ -82,7 +83,7 @@ export const announcementsData: Announcement[] = [
 export const gradesData: GradeLevel[] = [
   {
     grade: 'ז',
-    coordinator: "רכז/ת השכבה",
+    coordinator: "רועי רותם",
     description: "שכבת המעבר וההסתגלות לבית הספר. דגש על רכישת מיומנויות למידה עצמאיות, גיבוש חברתי, והכרת מסלולי הייחודיות השונים של בית הספר.",
     classes: [
       { id: 'z1', name: "ז' 1 - מדעי-טכנולוגי", homeroomTeacher: 'מחנכ/ת הכיתה', room: 'קומה 1, חדר 101', specialty: 'סייבר מטריקס ורובוטיקה' },
@@ -95,7 +96,7 @@ export const gradesData: GradeLevel[] = [
   },
   {
     grade: 'ח',
-    coordinator: "רכז/ת השכבה",
+    coordinator: "איריס שחמון ורינת שטקל",
     description: "שכבת העומק הטכנולוגי והחקר. תלמידי השכבה מובילים פרויקטים של מעורבות קהילתית, משתתפים בסדנאות ומפתחים חשיבה ביקורתית.",
     classes: [
       { id: 'h1', name: "ח' 1 - מדעית-טכנולוגית", homeroomTeacher: 'מחנכ/ת הכיתה', room: 'קומה 2, חדר 201', specialty: 'עמ"ט (מדעית-טכנולוגית)' },
@@ -107,7 +108,7 @@ export const gradesData: GradeLevel[] = [
   },
   {
     grade: 'ט',
-    coordinator: "רכז/ת השכבה",
+    coordinator: "נדב גורן וסמדר קקון",
     description: "שכבת הבוגרים והכנה לחטיבה העליונה. גיבוש זהות אישית ואזרחית, עבודות גמר, ליווי ומנהיגות של השכבות הצעירות, והתכוננות לקראת בחירת מגמות בבית הספר השש-שנתי.",
     classes: [
       { id: 't1', name: "ט' 1 - סייבר ומדעים", homeroomTeacher: 'מחנכ/ת הכיתה', room: 'קומה 3, חדר 301', specialty: 'סייבר מטריקס ופיזיקה' },
@@ -119,7 +120,7 @@ export const gradesData: GradeLevel[] = [
   },
   {
     grade: 'י',
-    coordinator: "רכז/ת השכבה",
+    coordinator: "נירית גרובר",
     description: "כניסה לחטיבה העליונה. דגש על היבחנות, בחירת מגמות מורחבות ובניית זהות בוגרת לקראת תעודת בגרות איכותית.",
     classes: [
       { id: 'y1', name: "י' 1 - סייבר מורחב", homeroomTeacher: 'מחנכ/ת שכבה י', room: 'קומה 4, חדר 401', specialty: 'פיזיקה מוגברת וסייבר' },
@@ -130,7 +131,7 @@ export const gradesData: GradeLevel[] = [
   },
   {
     grade: 'יא',
-    coordinator: "רכז/ת השכבה",
+    coordinator: "ניר מלכה",
     description: "שנת שיא במבחני הבגרות, סיורים לימודיים ממוקדים, גיבוש שכבתי והעמקה מקצועית במגמות הטכנולוגיות וההומניסטיות.",
     classes: [
       { id: 'ya1', name: "יא' 1 - הנדסת תוכנה", homeroomTeacher: 'מחנכ/ת שכבה יא', room: 'קומה 4, חדר 405', specialty: 'סייבר ופיתוח אפליקציות' },
@@ -141,7 +142,7 @@ export const gradesData: GradeLevel[] = [
   },
   {
     grade: 'יב',
-    coordinator: "רכז/ת השכבה",
+    coordinator: "אורלי רז",
     description: "שנת הסיום המרגשת. הכנה לגיוס ולשירות משמעותי, עבודות גמר יצירתיות, ופרויקטים ייחודיים המהווים חותם חינוכי בבית הספר.",
     classes: [
       { id: 'yb1', name: "יב' 1 - פיתוח והייטק", homeroomTeacher: 'מחנכ/ת שכבה יב', room: 'קומה 5, חדר 501', specialty: 'אלגוריתמיקה ואבטחת מידע' },
@@ -224,47 +225,79 @@ export const learningSpacesData: LearningSpace[] = [
 
 export const quickLinksData: QuickLink[] = [
   {
-    id: 'ql-1',
-    title: 'מערכת משוב (Mashov)',
-    url: 'https://web.mashov.info/',
+    id: 'ql-students-mashov',
+    title: 'משוב תלמידים',
+    url: 'https://web.mashov.info/students/login',
     iconName: 'UserCheck',
     badge: 'חובה',
-    category: 'מערכות למידה'
+    category: 'מערכות למידה',
+    audience: 'תלמידים',
+    showInMenu: true
   },
   {
-    id: 'ql-2',
-    title: 'פורטל תלמידים והורים משרד החינוך',
+    id: 'ql-parents-mashov',
+    title: 'משוב הורים',
+    url: 'https://web.mashov.info/parents/login',
+    iconName: 'UserCheck',
+    badge: 'משוב',
+    category: 'מערכות למידה',
+    audience: 'הורים',
+    showInMenu: true
+  },
+  {
+    id: 'ql-teachers-mashov',
+    title: 'משוב עובדי הוראה',
+    url: 'https://web.mashov.info/',
+    iconName: 'UserCheck',
+    badge: 'סגל',
+    category: 'מערכות למידה',
+    audience: 'מורים',
+    showInMenu: true
+  },
+  {
+    id: 'ql-students-graduates-portal',
+    title: 'פורטל תלמידים ובוגרים',
     url: 'https://students.education.gov.il/',
     iconName: 'GraduationCap',
-    category: 'משרד החינוך'
+    category: 'משרד החינוך',
+    audience: 'תלמידים',
+    showInMenu: true
   },
   {
-    id: 'ql-3',
-    title: 'אופק (סנונית)',
-    url: 'https://ofek.snunit.k12.il/',
-    iconName: 'Compass',
-    category: 'מערכות למידה'
+    id: 'ql-parents-portal',
+    title: 'פורטל הורים',
+    url: 'https://parents.education.gov.il/',
+    iconName: 'CreditCard',
+    category: 'שירותים',
+    audience: 'הורים',
+    showInMenu: true
   },
   {
-    id: 'ql-4',
+    id: 'ql-teachers-portal',
+    title: 'פורטל עובדי הוראה',
+    url: 'https://pob.education.gov.il/',
+    iconName: 'Users',
+    category: 'משרד החינוך',
+    audience: 'מורים',
+    showInMenu: true
+  },
+  {
+    id: 'ql-classroom-students',
     title: 'Google Classroom',
     url: 'https://classroom.google.com/',
     iconName: 'Chrome',
-    category: 'מערכות למידה'
+    category: 'מערכות למידה',
+    audience: 'תלמידים',
+    showInMenu: true
   },
   {
-    id: 'ql-5',
-    title: 'ספרייה דיגיטלית כותר',
-    url: 'https://www.kotar.co.il/',
-    iconName: 'BookOpen',
-    category: 'מערכות למידה'
-  },
-  {
-    id: 'ql-6',
-    title: 'תשלומים בית-ספריים (פורטל הורים)',
-    url: 'https://parents.education.gov.il/',
-    iconName: 'CreditCard',
-    category: 'שירותים'
+    id: 'ql-classroom-teachers',
+    title: 'Google Classroom למורים',
+    url: 'https://classroom.google.com/',
+    iconName: 'Chrome',
+    category: 'מערכות למידה',
+    audience: 'מורים',
+    showInMenu: true
   }
 ];
 
@@ -348,46 +381,5 @@ export const schoolRegulations = [
   }
 ];
 
-export const defaultStaffMembers: StaffMember[] = [
-  {
-    id: 'staff-1',
-    name: 'ורד לחיאני',
-    role: 'מורה למתמטיקה ומחנכת בחטיבת הנעורים',
-    bio: 'מורה למתמטיקה ומחנכת אהובה ומסורה בחטיבת הנעורים, בעלת ניסיון של מעל 10 שנים בהובלת תלמידים להצלחה, פיתוח חשיבה אנליטית והכנה למקצועות המדעים. מאמינה שכל תלמיד מסוגל לפצח כל אתגר מתמטי עם הליווי והעידוד הנכון.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
-    isManagement: false
-  },
-  {
-    id: 'staff-2',
-    name: 'נדב גורן',
-    role: 'סגן מנהל בחטיבת הנעורים',
-    bio: 'סגן מנהל חטיבת הנעורים, מוביל את התחום הפדגוגי והמערך החברתי-ערכי בחטיבה. נדב פועל ללא לאות ליצירת אקלים מיטבי ובטוח ומאמין בחינוך מתוך דיאלוג בגובה העיניים והעצמה אישית של כל תלמיד ותלמידה.',
-    imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
-    isManagement: true
-  },
-  {
-    id: 'staff-3',
-    name: 'שני מנור זמר טוב',
-    role: 'מורה ורכזת עברית וספרות',
-    bio: 'רכזת מקצוע העברית והספרות בחטיבת הנעורים. שני מובילה מיזמי קריאה יצירתיים, סדנאות כתיבה ומנחילה את אהבת השפה העברית ורזיה בקרב תלמידי החטיבה בצורה חווייתית ומעשירה.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
-    isManagement: false
-  },
-  {
-    id: 'staff-4',
-    name: 'רינת שטקל',
-    role: 'יועצת שכבה ז\'',
-    bio: 'יועצת שכבת ז\', מלווה את התלמידים וההורים במעבר המורכב והמרגש מבית הספר היסודי לחטיבת הביניים. רינת מעניקה מענה רגשי, מנחה סדנאות כישורי חיים ומקדמת שיח מכבד ואקלים כיתתי חיובי.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
-    isManagement: true
-  },
-  {
-    id: 'staff-5',
-    name: 'מורי',
-    role: 'מורה לאנגלית בחטיבת הנעורים',
-    bio: 'מורה יוצר ודינמי לאנגלית בחטיבת הנעורים, המשלב בשיעוריו מוזיקה, סרטים ופלטפורמות דיגיטליות מתקדמות. מורי מקדם בהתלהבות את כישורי הדיבור והביטחון העצמי של התלמידים בשימוש בשפה האנגלית.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
-    isManagement: false
-  }
-];
+export const defaultStaffMembers: StaffMember[] = allTeachersList;
 

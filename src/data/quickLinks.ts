@@ -2,18 +2,38 @@ import { QuickLink } from '../types';
 
 export const DEFAULT_QUICK_LINKS: QuickLink[] = [
   {
-    id: 'ql-1',
-    title: 'מערכת משוב (Mashov)',
-    url: 'https://web.mashov.info/',
+    id: 'ql-students-mashov',
+    title: 'משוב תלמידים',
+    url: 'https://web.mashov.info/students/login',
     iconName: 'UserCheck',
     badge: 'חובה',
     category: 'מערכות למידה',
-    audience: 'כללי',
+    audience: 'תלמידים',
     showInMenu: true
   },
   {
-    id: 'ql-2',
-    title: 'פורטל תלמידים והורים משרד החינוך',
+    id: 'ql-parents-mashov',
+    title: 'משוב הורים',
+    url: 'https://web.mashov.info/parents/login',
+    iconName: 'UserCheck',
+    badge: 'משוב',
+    category: 'מערכות למידה',
+    audience: 'הורים',
+    showInMenu: true
+  },
+  {
+    id: 'ql-teachers-mashov',
+    title: 'משוב עובדי הוראה',
+    url: 'https://web.mashov.info/',
+    iconName: 'UserCheck',
+    badge: 'סגל',
+    category: 'מערכות למידה',
+    audience: 'מורים',
+    showInMenu: true
+  },
+  {
+    id: 'ql-students-graduates-portal',
+    title: 'פורטל תלמידים ובוגרים',
     url: 'https://students.education.gov.il/',
     iconName: 'GraduationCap',
     category: 'משרד החינוך',
@@ -21,35 +41,8 @@ export const DEFAULT_QUICK_LINKS: QuickLink[] = [
     showInMenu: true
   },
   {
-    id: 'ql-3',
-    title: 'אופק (סנונית)',
-    url: 'https://ofek.snunit.k12.il/',
-    iconName: 'Compass',
-    category: 'מערכות למידה',
-    audience: 'תלמידים',
-    showInMenu: true
-  },
-  {
-    id: 'ql-4',
-    title: 'Google Classroom',
-    url: 'https://classroom.google.com/',
-    iconName: 'Chrome',
-    category: 'מערכות למידה',
-    audience: 'כללי',
-    showInMenu: true
-  },
-  {
-    id: 'ql-5',
-    title: 'ספרייה דיגיטלית כותר',
-    url: 'https://www.kotar.co.il/',
-    iconName: 'BookOpen',
-    category: 'מערכות למידה',
-    audience: 'תלמידים',
-    showInMenu: true
-  },
-  {
-    id: 'ql-6',
-    title: 'תשלומים בית-ספריים (פורטל הורים)',
+    id: 'ql-parents-portal',
+    title: 'פורטל הורים',
     url: 'https://parents.education.gov.il/',
     iconName: 'CreditCard',
     category: 'שירותים',
@@ -57,11 +50,29 @@ export const DEFAULT_QUICK_LINKS: QuickLink[] = [
     showInMenu: true
   },
   {
-    id: 'ql-7',
-    title: 'פורטל עובדי הוראה (מורים)',
+    id: 'ql-teachers-portal',
+    title: 'פורטל עובדי הוראה',
     url: 'https://pob.education.gov.il/',
     iconName: 'Users',
-    category: 'מורים',
+    category: 'משרד החינוך',
+    audience: 'מורים',
+    showInMenu: true
+  },
+  {
+    id: 'ql-classroom-students',
+    title: 'Google Classroom',
+    url: 'https://classroom.google.com/',
+    iconName: 'Chrome',
+    category: 'מערכות למידה',
+    audience: 'תלמידים',
+    showInMenu: true
+  },
+  {
+    id: 'ql-classroom-teachers',
+    title: 'Google Classroom למורים',
+    url: 'https://classroom.google.com/',
+    iconName: 'Chrome',
+    category: 'מערכות למידה',
     audience: 'מורים',
     showInMenu: true
   }

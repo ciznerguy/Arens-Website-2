@@ -119,10 +119,12 @@ export const subscribeToSettings = (key: string, callback: (data: any) => void) 
         const data = docSnap.data();
         callback(data);
       }
+    }, (err) => {
+      console.warn('Error listening to settings:', err);
     });
     return unsub;
   } catch (err) {
-    console.warn('Error listening to settings:', err);
+    console.warn('Error setting up settings listener:', err);
     return () => {};
   }
 };

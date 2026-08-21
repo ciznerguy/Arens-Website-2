@@ -590,12 +590,14 @@ export const registerTeacherForWorkshop = async (
     saveStoredRegistrations(updatedList);
 
     if (event.googleSheetId) {
-      appendRegistrationToGoogleSheet(event.googleSheetId, event, newReg)
-        .then(() => {
-          newReg.syncedToGoogleSheet = true;
-          setDoc(doc(db, 'registrations', newReg.id), newReg, { merge: true }).catch(console.warn);
+      appendRegistrationToGoogleSheet(event.googleSheetId, event, newReg, undefined, true)
+        .then((didSync) => {
+          if (didSync) {
+            newReg.syncedToGoogleSheet = true;
+            setDoc(doc(db, 'registrations', newReg.id), newReg, { merge: true }).catch(console.warn);
+          }
         })
-        .catch(err => console.warn('Google sheet sync failed:', err));
+        .catch(err => console.warn('Google sheet sync notice:', err));
     }
 
     return { success: true, registration: newReg };

@@ -9,11 +9,12 @@ import {
   onSnapshot
 } from 'firebase/firestore';
 
-const STAFF_STORAGE_KEY = 'arens_cms_staff';
+const STAFF_COLLECTION_NAME = 'staff_v3';
+const STAFF_STORAGE_KEY = 'arens_cms_staff_v3';
 
 export const subscribeToStaffMembers = (callback: (staff: StaffMember[]) => void) => {
   try {
-    const staffRef = collection(db, 'staff');
+    const staffRef = collection(db, STAFF_COLLECTION_NAME);
     const unsubscribe = onSnapshot(
       staffRef,
       (snapshot) => {
@@ -22,12 +23,14 @@ export const subscribeToStaffMembers = (callback: (staff: StaffMember[]) => void
           snapshot.forEach((docSnap) => {
             staff.push({ ...(docSnap.data() as StaffMember), id: docSnap.id });
           });
+          // Sort staff to maintain predictable order (management first or by id)
           localStorage.setItem(STAFF_STORAGE_KEY, JSON.stringify(staff));
           window.dispatchEvent(new Event('arens_cms_staff_updated'));
           callback(staff);
         } else {
+          // Initialize collection with all default teachers
           defaultStaffMembers.forEach(s => {
-            setDoc(doc(db, 'staff', s.id), s).catch(console.warn);
+            setDoc(doc(db, STAFF_COLLECTION_NAME, s.id), s).catch(console.warn);
           });
           localStorage.setItem(STAFF_STORAGE_KEY, JSON.stringify(defaultStaffMembers));
           callback(defaultStaffMembers);
@@ -73,7 +76,7 @@ export const saveStoredStaffMembers = (staff: StaffMember[]): void => {
 
 export const saveStaffMember = async (member: StaffMember): Promise<void> => {
   try {
-    await setDoc(doc(db, 'staff', member.id), member);
+    await setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), member);
   } catch (err) {
     console.warn('Error saving staff member to Firestore:', err);
   }
@@ -91,7 +94,7 @@ export const saveStaffMember = async (member: StaffMember): Promise<void> => {
 
 export const deleteStaffMember = async (id: string): Promise<void> => {
   try {
-    await deleteDoc(doc(db, 'staff', id));
+    await deleteDoc(doc(db, STAFF_COLLECTION_NAME, id));
   } catch (err) {
     console.warn('Error deleting staff member from Firestore:', err);
   }
@@ -104,10 +107,10 @@ export const resetStaffToDefaults = async (): Promise<void> => {
   try {
     const current = getStoredStaffMembers();
     for (const member of current) {
-      await deleteDoc(doc(db, 'staff', member.id)).catch(console.warn);
+      await deleteDoc(doc(db, STAFF_COLLECTION_NAME, member.id)).catch(console.warn);
     }
     for (const member of defaultStaffMembers) {
-      await setDoc(doc(db, 'staff', member.id), member).catch(console.warn);
+      await setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), member).catch(console.warn);
     }
   } catch (err) {
     console.warn('Error resetting staff in Firestore:', err);

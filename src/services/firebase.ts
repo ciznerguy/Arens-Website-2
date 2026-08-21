@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeFirestore, getFirestore } from 'firebase/firestore';
 import firebaseConfigJson from '../../firebase-applet-config.json';
 
 const firebaseConfig = {
@@ -14,12 +14,26 @@ const firebaseConfig = {
 // Initialize Firebase App
 export const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize Firestore
+// Initialize Firestore with auto-detect long-polling fallback for robust connectivity across all networks
 const cfg = firebaseConfigJson as Record<string, any>;
-export const db = getFirestore(
-  app,
+const databaseId =
   cfg.firestoreDatabaseId && cfg.firestoreDatabaseId !== '(default)'
     ? cfg.firestoreDatabaseId
-    : undefined
-);
+    : undefined;
+
+let firestoreInstance;
+try {
+  firestoreInstance = initializeFirestore(
+    app,
+    {
+      experimentalAutoDetectLongPolling: true,
+    },
+    databaseId
+  );
+} catch {
+  firestoreInstance = getFirestore(app, databaseId);
+}
+
+export const db = firestoreInstance;
+
 
