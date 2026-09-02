@@ -1037,8 +1037,9 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     };
 
     saveInternalPageOverride(mainPageKey, updatedPage);
+    saveGradeClassesOverride(cleanActiveGrade, gradeClassesList);
     refreshPagesMap();
-    setSaveSuccess(`דף הבית של שכבת ${cleanActiveGrade} עודכן בהצלחה!`);
+    setSaveSuccess(`דף הבית והכיתות של שכבת ${cleanActiveGrade} עודכנו בהצלחה!`);
     setTimeout(() => setSaveSuccess(null), 3000);
   };
 
@@ -4096,6 +4097,107 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                                     >
                                       <Trash2 className="w-4 h-4" />
                                     </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Grade Classes & Tracks Section */}
+                          <div className="space-y-3 pt-3 border-t border-school-line/40">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                              <div>
+                                <h4 className="text-xs font-extrabold text-white flex items-center gap-2">
+                                  <Users className="w-4 h-4 text-school-violet" />
+                                  <span>כיתות ומסלולי השכבה ({gradeClassesList.length})</span>
+                                </h4>
+                                <p className="text-[10px] text-school-muted">
+                                  ניתן להוסיף, לערוך או למחוק כיתות. במידה ואין כיתות כלל - חלק זה יוסתר אוטומטית מדף השכבה.
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={handleAddGradeClass}
+                                  className="flex items-center gap-1 bg-school-violet/15 border border-school-violet/30 text-school-violet hover:bg-school-violet/25 text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                  <span>הוסף כיתה חדשה</span>
+                                </button>
+                                {gradeClassesList.length > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      askConfirmation(
+                                        'הסרת כל הכיתות',
+                                        'האם ברצונך להסיר את כל הכיתות המוגדרות בשכבה זו? (החלק יוסתר לחלוטין מדף השכבה)',
+                                        () => {
+                                          setGradeClassesList([]);
+                                        },
+                                        'כן, הסר את כל הכיתות'
+                                      );
+                                    }}
+                                    className="text-rose-400/80 hover:text-rose-300 text-xs px-2 py-1 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer"
+                                  >
+                                    <span>נקה הכל (הסתר אזור כיתות)</span>
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+
+                            {gradeClassesList.length === 0 ? (
+                              <div className="p-4 text-center bg-[#080d19]/60 rounded-xl border border-dashed border-school-line/60 space-y-2">
+                                <p className="text-xs text-school-muted font-bold">אין כיתות מוגדרות בשכבה זו כעת.</p>
+                                <p className="text-[11px] text-school-muted/70">אזור "כיתות ומסלולי השכבה" מבוטל ומוסתר לחלוטין מדף השכבה.</p>
+                                <button
+                                  type="button"
+                                  onClick={handleAddGradeClass}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-school-cyan/20 border border-school-cyan/40 text-school-cyan hover:bg-school-cyan/30 text-xs font-bold cursor-pointer"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                  <span>הוסף כיתה ראשונה</span>
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {gradeClassesList.map((cls, idx) => (
+                                  <div key={cls.id || idx} className="bg-[#080d19] border border-school-line/60 hover:border-school-cyan/40 p-3.5 rounded-xl space-y-2.5 transition-all">
+                                    <div className="flex items-center justify-between pb-1.5 border-b border-school-line/30">
+                                      <span className="text-[11px] font-black text-school-cyan">כיתה #{idx + 1}</span>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveGradeClass(idx)}
+                                        className="text-rose-400 hover:text-rose-300 text-xs flex items-center gap-1 cursor-pointer hover:bg-rose-500/10 px-2 py-0.5 rounded-md"
+                                        title="מחק כיתה זו"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                        <span className="text-[10px]">מחק כיתה</span>
+                                      </button>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                      <div>
+                                        <label className="text-[10px] text-school-muted block mb-0.5">שם הכיתה *</label>
+                                        <input
+                                          type="text"
+                                          value={cls.name || ''}
+                                          onChange={(e) => handleUpdateGradeClass(idx, 'name', e.target.value)}
+                                          placeholder={`למשל: כיתה ${cleanActiveGrade}' 1`}
+                                          className="w-full bg-[#101b33] border border-school-line/60 rounded-lg py-1.5 px-2.5 text-xs text-white focus:outline-none focus:border-school-cyan"
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className="text-[10px] text-school-muted block mb-0.5">מסלול לימוד / תחום התמחות (אופציונלי)</label>
+                                        <input
+                                          type="text"
+                                          value={cls.specialty || ''}
+                                          onChange={(e) => handleUpdateGradeClass(idx, 'specialty', e.target.value)}
+                                          placeholder="למשל: הייטק וסייבר, מנהיגות, אמנויות..."
+                                          className="w-full bg-[#101b33] border border-school-line/60 rounded-lg py-1.5 px-2.5 text-xs text-white focus:outline-none focus:border-school-cyan"
+                                        />
+                                      </div>
+                                    </div>
                                   </div>
                                 ))}
                               </div>

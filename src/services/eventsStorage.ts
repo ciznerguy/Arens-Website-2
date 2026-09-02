@@ -691,10 +691,39 @@ export const formatToIsraeliDate = (dateStr?: string): string => {
 };
 
 /**
- * Get published/open upcoming events for homepage portal
+ * Checks whether an event date is today or in the future
+ */
+export const isEventFutureOrToday = (dateStr?: string): boolean => {
+  if (!dateStr) return true;
+  try {
+    const trimmed = dateStr.trim();
+    let eventDate: Date | null = null;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(trimmed)) {
+      const [d, m, y] = trimmed.split('/');
+      eventDate = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10), 23, 59, 59, 999);
+    } else if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
+      const [y, m, d] = trimmed.split('T')[0].split('-');
+      eventDate = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10), 23, 59, 59, 999);
+    } else {
+      eventDate = new Date(trimmed);
+      eventDate.setHours(23, 59, 59, 999);
+    }
+    if (eventDate && !isNaN(eventDate.getTime())) {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      return eventDate.getTime() >= now.getTime();
+    }
+  } catch (e) {
+    console.error('Error checking event date:', e);
+  }
+  return true;
+};
+
+/**
+ * Get published/open upcoming events for homepage portal (filters out past dates and archived)
  */
 export const getUpcomingTeacherEvents = (): TeacherEvent[] => {
   const events = getStoredEvents();
-  return events.filter(e => (e.status as string) !== 'archived');
+  return events.filter(e => (e.status as string) !== 'archived' && isEventFutureOrToday(e.date));
 };
 

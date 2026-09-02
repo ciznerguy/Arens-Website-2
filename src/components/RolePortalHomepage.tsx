@@ -231,7 +231,7 @@ export const RolePortalHomepage: React.FC<RolePortalHomepageProps> = ({
       </section>
 
       {/* SPECIAL FEATURED BANNER FOR TEACHERS: WORKSHOPS & EVENTS MODULE */}
-      {role === 'teachers' && (
+      {role === 'teachers' && upcomingEvents.length > 0 && (
         <section className="bg-gradient-to-r from-[#101b33] via-[#0d1c38] to-[#122347] border-2 border-school-cyan/40 hover:border-school-cyan rounded-3xl p-6 md:p-8 shadow-xl shadow-school-cyan/5 transition-all">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div className="space-y-2.5 max-w-2xl">
