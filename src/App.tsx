@@ -61,6 +61,7 @@ import { StaffMember } from './types';
 import { getHebrewInitials, getAvatarColor } from './utils/avatarUtils';
 import FloatingHeroBalls from './components/FloatingHeroBalls';
 import InternalPageViewer from './components/InternalPageViewer';
+import FloatingWhatsAppShare from './components/FloatingWhatsAppShare';
 import AdminPanel from './components/AdminPanel';
 import { RolePortalHomepage } from './components/RolePortalHomepage';
 import { TeacherEventRegistration } from './components/TeacherEventRegistration';
@@ -73,7 +74,7 @@ import { getUpcomingTeacherEvents } from './services/eventsStorage';
 import { SITE_THEMES } from './data/themes';
 import SEOMeta from './components/SEOMeta';
 import { getQuickLinks } from './data/quickLinks';
-import { INTERNAL_PAGES, getInternalPageOverrides, getAllPagesMap } from './data/internalPages';
+import { INTERNAL_PAGES, getInternalPageOverrides, getAllPagesMap, getInternalPage } from './data/internalPages';
 import { InternalPage, QuickLink, TeacherEvent } from './types';
 
 /* Helper to convert relative URLs to full links on Tik-Tak */
@@ -308,15 +309,15 @@ export default function App() {
       root.style.setProperty(`--color-${key}`, val as string);
     });
 
-    // Synchronize URL search parameters with the selected theme
+    // Do not force ?theme= in the URL for default/clean look
     try {
       const url = new URL(window.location.href);
-      if (url.searchParams.get('theme') !== activeTheme) {
-        url.searchParams.set('theme', activeTheme);
+      if (url.searchParams.has('theme') && (url.searchParams.get('theme') === 'cosmic-dark' || !url.searchParams.get('theme'))) {
+        url.searchParams.delete('theme');
         window.history.replaceState({}, '', url.toString());
       }
     } catch (e) {
-      console.error('Error syncing theme with URL query parameters:', e);
+      console.error('Error cleaning theme URL param:', e);
     }
   }, [activeTheme]);
 
@@ -445,9 +446,26 @@ export default function App() {
           }
         } else if (hash === 'contact') {
           setActiveTab('contact');
-        } else if (hash === 'home') {
+        } else if (hash === 'home' || !hash) {
           setActiveTab('home');
           setSelectedInternalPageUrl(null);
+        } else {
+          // Check if hash matches an internal page (with or without 'course/' prefix)
+          let decoded = hash;
+          try {
+            decoded = decodeURIComponent(hash);
+          } catch (e) {}
+          decoded = decoded.replace(/\/+$/, '');
+          const rawClean = hash.replace(/\/+$/, '');
+
+          const pageMatch = getInternalPage(decoded) || getInternalPage(rawClean) || getInternalPage(`course/${decoded}`) || getInternalPage(`course/${rawClean}`);
+          if (pageMatch) {
+            setSelectedInternalPageUrl(`course/${rawClean}/`);
+            setActiveTab('internal-page');
+          } else {
+            setActiveTab('home');
+            setSelectedInternalPageUrl(null);
+          }
         }
       } catch (e) {
         console.error('Error syncing URL route:', e);
@@ -2152,6 +2170,13 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Floating WhatsApp Share Button - shown on all non-home pages */}
+      <FloatingWhatsAppShare
+        activeTab={activeTab}
+        selectedInternalPageUrl={selectedInternalPageUrl}
+        selectedMajorId={selectedMajorId}
+      />
 
     </div>
   );
