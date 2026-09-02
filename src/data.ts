@@ -83,7 +83,7 @@ export const announcementsData: Announcement[] = [
 export const gradesData: GradeLevel[] = [
   {
     grade: 'ז',
-    coordinator: "רועי רותם",
+    coordinator: "רועי רותם ורינת שטקל",
     description: "שכבת המעבר וההסתגלות לבית הספר. דגש על רכישת מיומנויות למידה עצמאיות, גיבוש חברתי, והכרת מסלולי הייחודיות השונים של בית הספר.",
     classes: [
       { id: 'z1', name: "ז' 1 - מדעי-טכנולוגי", homeroomTeacher: 'מחנכ/ת הכיתה', room: 'קומה 1, חדר 101', specialty: 'סייבר מטריקס ורובוטיקה' },
@@ -96,7 +96,7 @@ export const gradesData: GradeLevel[] = [
   },
   {
     grade: 'ח',
-    coordinator: "איריס שחמון ורינת שטקל",
+    coordinator: "רות אסף וסמדר קקון",
     description: "שכבת העומק הטכנולוגי והחקר. תלמידי השכבה מובילים פרויקטים של מעורבות קהילתית, משתתפים בסדנאות ומפתחים חשיבה ביקורתית.",
     classes: [
       { id: 'h1', name: "ח' 1 - עמ״ט (מדעית-טכנולוגית)", homeroomTeacher: 'יפעת שגיב', room: 'קומה 2, חדר 201', specialty: 'עמ"ט מדעית-טכנולוגית' },
@@ -113,7 +113,7 @@ export const gradesData: GradeLevel[] = [
   },
   {
     grade: 'ט',
-    coordinator: "נדב גורן וסמדר קקון",
+    coordinator: "נירית גרובר וענבל ממן",
     description: "שכבת הבוגרים והכנה לחטיבה העליונה. גיבוש זהות אישית ואזרחית, עבודות גמר, ליווי ומנהיגות של השכבות הצעירות, והתכוננות לקראת בחירת מגמות בבית הספר השש-שנתי.",
     classes: [
       { id: 't1', name: "ט' 1 - סייבר ומדעים", homeroomTeacher: 'מחנכ/ת הכיתה', room: 'קומה 3, חדר 301', specialty: 'סייבר מטריקס ופיזיקה' },

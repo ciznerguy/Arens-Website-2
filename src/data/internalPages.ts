@@ -126,52 +126,110 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
   "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%96-%d7%94%d7%a6%d7%a2%d7%93-%d7%94%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%91%d7%93%d7%a8%d7%9a-%d7%94%d7%97%d7%93%d7%a9%d7%94/": {
     title: "שכבת ז': הצעד הראשון בדרך החדשה",
     category: "חטיבת הנעורים",
-    subtitle: "שנת המעבר וההשתלבות בחטיבת הנעורים",
+    subtitle: "התחנה הראשונה במסע הלימודי והחברתי בחטיבת הביניים",
     icon: "Footprints",
     divisionScope: "junior",
     content: [
-      "ברוכים הבאים לשכבת ז'! המעבר מבית הספר היסודי לחטיבה הוא שלב מרגש של גדילה וגילוי עצמי.",
-      "בשנה זו אנו שמים דגש מיוחד על ההסתגלות החברתית והרגשית של התלמיד, הקניית הרגלי למידה עצמאיים, וחשיפה ראשונה למגוון המגמות ומרחבי ה-STEM בבית הספר.",
-      "במהלך השנה נקיים סדנאות גיבוש, ימי שדה ופרויקטים שכבתיים שיעזרו לכל תלמיד למצוא את מקומו הייחודי."
+      "שכבת ז' היא התחנה הראשונה במסע הלימודי והחברתי בחטיבת הביניים. זוהי שנה שבה התלמידים חווים את המעבר לעולם חדש ומאתגר, ומתחילים לבנות את היסודות לערכים, למיומנויות וליחסים שימשיכו ללוות אותם לאורך השנים.",
+      "שכבת ז' היא שנה של התחלה – התחלה של קשרים, למידה וצמיחה. יחד, אנו מלווים את התלמידים ביצירת חוויות משמעותיות ומעצבות, שילוו אותם בהמשך דרכם.",
+      "אנו מזמינים אתכם, תלמידים והורים יקרים, להצטרף אלינו למסע מלא אתגרים, צמיחה וגילויים חדשים. יחד ניצור חוויות בלתי נשכחות ונצעד לעבר העתיד."
     ],
     sections: [
       {
-        title: "פעילויות דגל של השכבה",
-        text: "בכיתה ז' אנו מובילים מספר פרויקטים ייחודיים:\n• תכנית 'גשר לעתיד' - סדנאות גיבוש והיכרות בין תלמידים מבתי ספר מזינים שונים.\n• מבוא ל-STEM - סבב חשיפה מעשי במעבדות הסייבר, הרובוטיקה והקולנוע.\n• טקס קבלת התורה והמשפחה - אירוע חגיגי וקהילתי."
+        title: "בתחום הלימודי",
+        text: "השנה מתמקדת בחשיפה למגוון רחב של מקצועות, כולל מקצועות ליבה לצד מקצועות חדשים, כמו מדעים וטכנולוגיה. תכניות למידה מתקדמות מזמנות לתלמידים חוויות שמעשירות את סקרנותם ואת אהבתם ללמידה."
+      },
+      {
+        title: "בתחום הייעוצי",
+        text: "התכנית הייעוצית מספקת לתלמידים כלים להתמודד עם אתגרי המעבר – חיזוק תחושת השייכות, הקניית ביטחון עצמי ופיתוח כישורי חיים. במהלך השנה מתקיימות סדנאות אישיות וקבוצתיות בשיתוף יועצי בית הספר, שמעניקות מענה לצרכים רגשיים ואישיים."
+      },
+      {
+        title: "בתחום החברתי",
+        text: "שכבת ז' מתאפיינת באווירת גיבוש ויצירת קשרים חדשים. פעילויות חווייתיות כמו טיול גיבוש שנתי, ימי ספורט ופרויקטים משותפים מסייעים בבניית קהילה מחברת ותומכת. תכניות כמו 'חונכות אישית', בהן תלמידי שכבות גבוהות מסייעים לתלמידי ז' להסתגל, מעניקות תחושת ביטחון ושייכות כבר מהיום הראשון."
+      },
+      {
+        title: "צוות מוביל ותכניות השכבה",
+        list: [
+          "רכז השכבה: רועי רותם",
+          "יועצת השכבה: רינת שטקל",
+          "תכנית חברתית ז' וסדנאות גיבוש",
+          "לוח אירועים ומדדי הערכה שכבתיים",
+          "שבועי שכבת ז' ועדכונים שוטפים",
+          "עבודות קיץ וחומרי הכנה לעולים לכיתה ז'"
+        ]
       }
     ]
   },
   "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%97-%d7%a6%d7%9e%d7%99%d7%97%d7%94-%d7%95%d7%94%d7%a2%d7%9e%d7%a7%d7%94-%d7%9e%d7%92%d7%9c%d7%99%d7%9d-%d7%90%d7%aa-%d7%94%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a9/": {
     title: "שכבת ח': צמיחה והעמקה – מגלים את הכוחות שבכם",
     category: "חטיבת הנעורים",
-    subtitle: "שנת ההעמקה הלימודית, מנהיגות ועשייה חברתית",
+    subtitle: "שנת העמקה והתפתחות, חיזוק היכולות הלימודיות והחברתיות",
     icon: "TrendingUp",
     divisionScope: "junior",
     content: [
-      "כיתה ח' היא שנת העמקה וצמיחה פנימית. לאחר שהתלמידים הסתגלו היטב לחטיבה, זה הזמן להעצים את כוחותיהם, לפתח חשיבה ביקורתית ולהוביל עשייה חברתית משמעותית.",
-      "בשכבה זו, התלמידים מתחילים לקחת אחריות רבה יותר על פרויקטים פדגוגיים מורכבים ומשתתפים בימי שדה אקולוגיים ובסיורים ברחבי הארץ."
+      "שכבת ח' היא שנה של העמקה והתפתחות. אחרי ההתאקלמות בשנה הקודמת, התלמידים בשכבה מבססים את הידע שלהם, מגלים תחומי עניין חדשים ומחזקים את יכולותיהם הלימודיות והחברתיות.",
+      "שכבת ח' היא הזמן לצמוח, לגלות את הכוחות הטמונים בכם ולבנות את עצמכם כחלק מקהילה לומדת וחזקה.",
+      "זוהי שנה נהדרת לקחת אחריות, ללמוד ולהרחיב את הגבולות האישיים. אנו כאן כדי לתמוך בכם בכל צעד במסע הזה."
     ],
     sections: [
       {
-        title: "פרויקטים מרכזיים בכיתה ח'",
-        text: "התלמידים משתלבים בפרויקטים כגון:\n• תכנית 'אקו-ארנס' - חקר מעשי ויריד קיימות מונחה סביבה.\n• מסע בעקבות קהילות ומנהיגות - סיורים בשכונות העיר ומוסדות המדינה.\n• חינוך פיננסי ויזמות - סדנאות חווייתיות להבנת עולם הכלכלה הדינמי."
+        title: "בתחום הלימודי",
+        text: "שכבת ח' מתאפיינת בלמידה מעשירה ומאתגרת, עם הרחבת הידע במקצועות ליבה כמו מתמטיקה, מדעים ואנגלית, לצד למידה חווייתית בפרויקטים בין-תחומיים. תכניות חקר, סדנאות טכנולוגיות ושיעורי העשרה פותחים לתלמידים דלתות לחשיבה יצירתית ועצמאית."
+      },
+      {
+        title: "בתחום הייעוצי",
+        text: "התכנית הייעוצית מתמקדת השנה בפיתוח מיומנויות אישיות וחברתיות, כגון פתרון קונפליקטים, שיפור התקשורת הבין-אישית והגברת האחריות האישית. סדנאות קבוצתיות ומפגשים פרטניים מסייעים לתלמידים להתמודד עם אתגרי גיל ההתבגרות ולהבין את עצמם טוב יותר."
+      },
+      {
+        title: "בתחום החברתי",
+        text: "שכבת ח' שמה דגש על חיזוק תחושת הקהילה והמעורבות. פעילויות מגוונות, כמו טיולים שנתיים עם אלמנט של אתגר קבוצתי, ימי התנדבות בקהילה ופרויקטים שיתופיים, מעודדים את התלמידים לגלות ערבות הדדית ולתרום לסביבה שלהם."
+      },
+      {
+        title: "צוות מוביל ותכניות השכבה",
+        list: [
+          "רכזת השכבה: רות אסף",
+          "יועצת השכבה: סמדר קקון",
+          "תכנית חברתית ח' וימי שדה",
+          "לוח אירועים ומדדי הערכה שכבתיים",
+          "שבועי שכבת ח' ועדכונים שוטפים"
+        ]
       }
     ]
   },
   "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%98-%d7%91%d7%97%d7%99%d7%a8%d7%95%d7%aa-%d7%a2%d7%a6%d7%9e%d7%90%d7%95%d7%aa-%d7%95%d7%90%d7%97%d7%a8%d7%99%d7%95%d7%aa/": {
     title: "שכבת ט': בחירות, עצמאות ואחריות",
     category: "חטיבת הנעורים",
-    subtitle: "שנת הסיום של חטיבת הביניים והיערכות לתיכון",
+    subtitle: "שנה משמעותית של התבגרות והכנה לעתיד ולמעבר לתיכון",
     icon: "Award",
     divisionScope: "junior",
     content: [
-      "תלמידי שכבת ט' היקרים נמצאים בשנת מפתח משמעותית המהווה גשר ישיר אל החטיבה העליונה.",
-      "זוהי שנת בחירה, בגרות אישית ואחריות מוגברת. הדגש השנה הוא על היערכות אקדמית ואישית, קבלת החלטות מושכלת לקראת רישום למגמות בתיכון, והובלת מנהיגות בית-ספרית בשכבות הצעירות."
+      "שכבת ט' היא שנה משמעותית של התבגרות והכנה לעתיד. זהו שלב שבו התלמידים מתחילים לקחת אחריות רבה יותר על הלמידה שלהם, על הבחירות האישיות ועל ההתנהלות שלהם לקראת המעבר לתיכון.",
+      "שכבת ט' היא שנה של בחירות, צמיחה ואחריות – מסע שמוביל את התלמידים לעבר העתיד שלהם. זה הזמן לחלום בגדול ולתכנן את העתיד. יחד נגשים את השאיפות שלכם ונבטיח שנה מעשירה ומלאת משמעות."
     ],
     sections: [
       {
-        title: "תהליך בחירת המגמות ותוצרי סוף שנה",
-        text: "כדי להבטיח מעבר מוצלח וחלק לחטיבה העליונה, אנו מקיימים:\n• ערבי חשיפה ובוקר מגמות ייעודי המציג את תכנית הלימודים בתיכון.\n• פרויקט חקר מסכם - 'עבודת השורשים והזהות האזרחית שלי'.\n• טקס סיום חגיגי ומרגש של חטיבת הביניים."
+        title: "בתחום הלימודי",
+        text: "תלמידי שכבת ט' זוכים להתנסות בתכניות לימוד מתקדמות ולהעמיק את הידע שלהם בתחומים מגוונים. השנה מתאפיינת בבחירות משמעותיות כמו בחירת מגמות לימוד לקראת התיכון, והשתתפות בפרויקטים בין-תחומיים המפתחים חשיבה יצירתית, עבודת צוות ואחריות אישית."
+      },
+      {
+        title: "בתחום הייעוצי",
+        text: "התכנית הייעוצית מתמקדת השנה בהכנה למעבר לתיכון ובפיתוח מיומנויות התמודדות עם שינויים ואתגרים. מפגשים עם יועצים וסדנאות מעצימות מסייעים לתלמידים להבין את חוזקותיהם ולהתמודד עם שאלות אישיות הנוגעות לעתידם."
+      },
+      {
+        title: "בתחום החברתי",
+        text: "שכבת ט' מתמקדת בעידוד מנהיגות ומעורבות בקהילה. התלמידים משתתפים בפרויקטים התנדבותיים, טיולים מאתגרים ופעילויות מגבשות שמכינות אותם להיות מנהיגים פעילים ומעורבים."
+      },
+      {
+        title: "צוות מוביל ודפי משנה",
+        list: [
+          "רכזת השכבה: נירית גרובר",
+          "יועצת השכבה: ענבל ממן",
+          "תכנית חברתית ט' ופרויקטי מנהיגות",
+          "מהי תעודת בגרות?",
+          "ממוטיבציה לבחירה - בוקר מגמות לכיתות ט'",
+          "מצגת הסברה להורי ט' לקראת רישום תשפ\"ז",
+          "הצטרפות לכיתת נחשון"
+        ]
       }
     ]
   },
@@ -765,7 +823,7 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
 import { syncPageOverrideToCloud, syncGradeClassesToCloud } from '../services/pagesStorage';
 
 export const GRADE_CANONICAL_KEYS: Record<string, string> = {
-  'ז': "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%96-%d7%94%d7%a6%d7%a2%d7%93-%d7%94%d7%97%d7%93%d7%a9%d7%94/",
+  'ז': "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%96-%d7%94%d7%a6%d7%a2%d7%93-%d7%94%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%91%d7%93%d7%a8%d7%9a-%d7%94%d7%97%d7%93%d7%a9%d7%94/",
   'ח': "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%97-%d7%a6%d7%9e%d7%99%d7%97%d7%94-%d7%95%d7%94%d7%a2%d7%9e%d7%a7%d7%94-%d7%9e%d7%92%d7%9c%d7%99%d7%9d-%d7%90%d7%aa-%d7%94%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a9/",
   'ט': "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%98-%d7%91%d7%97%d7%99%d7%a8%d7%95%d7%aa-%d7%a2%d7%a6%d7%9e%d7%90%d7%95%d7%aa-%d7%95%d7%90%d7%97%d7%a8%d7%99%d7%95%d7%aa/",
   'י': "course/%d7%97%d7%98%d7%a2-2/%d7%a4%d7%95%d7%a1%d7%98-%d7%90%d7%91%d7%90-%d7%a9%d7%9b%d7%91%d7%aa-%d7%99/",
@@ -946,37 +1004,60 @@ export function toCanonicalPageKey(rawKey: string, page?: InternalPage): string 
 export function getGradeBaseDefaultPage(gradeStr: string): InternalPage | null {
   const clean = gradeStr.replace(/['"״]/g, "").trim();
   const canonicalUrl = GRADE_CANONICAL_KEYS[clean];
-  if (!canonicalUrl) return null;
-  const cleanUrl = canonicalUrl.replace(/^\/+|\/+$/g, "");
-  return INTERNAL_PAGES[canonicalUrl] || INTERNAL_PAGES[cleanUrl] || INTERNAL_PAGES[`${cleanUrl}/`] || null;
+  if (canonicalUrl) {
+    const cleanUrl = canonicalUrl.replace(/^\/+|\/+$/g, "");
+    if (INTERNAL_PAGES[canonicalUrl]) return INTERNAL_PAGES[canonicalUrl];
+    if (INTERNAL_PAGES[cleanUrl]) return INTERNAL_PAGES[cleanUrl];
+    if (INTERNAL_PAGES[`${cleanUrl}/`]) return INTERNAL_PAGES[`${cleanUrl}/`];
+  }
+  // Fallback: search INTERNAL_PAGES for matching grade
+  for (const [key, page] of Object.entries(INTERNAL_PAGES)) {
+    if (isGradeMainPage(key) && detectGradeFromKey(key) === clean) {
+      return page;
+    }
+  }
+  return null;
 }
 
 export function getGradeMainPage(gradeStr: string): InternalPage | null {
   const clean = gradeStr.replace(/['"״]/g, "").trim();
   const canonicalUrl = GRADE_CANONICAL_KEYS[clean];
-  if (!canonicalUrl) return null;
+  const cleanUrl = canonicalUrl ? canonicalUrl.replace(/^\/+|\/+$/g, "") : '';
 
-  const cleanUrl = canonicalUrl.replace(/^\/+|\/+$/g, "");
-
-  // 1. Check in user overrides first (highest priority)
+  // 1. Check in user overrides first (if it has meaningful content)
   const overrides = getInternalPageOverrides();
-  if (overrides[cleanUrl]) return overrides[cleanUrl];
-  if (overrides[canonicalUrl]) return overrides[canonicalUrl];
-  if (overrides[`${cleanUrl}/`]) return overrides[`${cleanUrl}/`];
+  const checkOverrideHasContent = (p?: InternalPage) => {
+    if (!p) return false;
+    const hasContent = p.content && p.content.some(c => c && c.trim().length > 0);
+    const hasSections = p.sections && p.sections.length > 0;
+    return Boolean(hasContent || hasSections);
+  };
+
+  if (cleanUrl && overrides[cleanUrl] && checkOverrideHasContent(overrides[cleanUrl])) {
+    return overrides[cleanUrl];
+  }
+  if (canonicalUrl && overrides[canonicalUrl] && checkOverrideHasContent(overrides[canonicalUrl])) {
+    return overrides[canonicalUrl];
+  }
+  if (cleanUrl && overrides[`${cleanUrl}/`] && checkOverrideHasContent(overrides[`${cleanUrl}/`])) {
+    return overrides[`${cleanUrl}/`];
+  }
 
   for (const [k, p] of Object.entries(overrides)) {
     if (!p) continue;
     const isSub = k.includes('subpage') || k.includes('track') || k.includes('class-') || k.includes('כיתה');
     if (!isSub && (detectGradeFromKey(k) === clean || (p.title && detectGradeFromKey(p.title) === clean))) {
-      return p;
+      if (checkOverrideHasContent(p)) {
+        return p;
+      }
     }
   }
 
   // 2. Check in allPagesMap
   const pagesMap = getAllPagesMap();
-  if (pagesMap[cleanUrl]) return pagesMap[cleanUrl];
-  if (pagesMap[canonicalUrl]) return pagesMap[canonicalUrl];
-  if (pagesMap[`${cleanUrl}/`]) return pagesMap[`${cleanUrl}/`];
+  if (cleanUrl && pagesMap[cleanUrl] && checkOverrideHasContent(pagesMap[cleanUrl])) return pagesMap[cleanUrl];
+  if (canonicalUrl && pagesMap[canonicalUrl] && checkOverrideHasContent(pagesMap[canonicalUrl])) return pagesMap[canonicalUrl];
+  if (cleanUrl && pagesMap[`${cleanUrl}/`] && checkOverrideHasContent(pagesMap[`${cleanUrl}/`])) return pagesMap[`${cleanUrl}/`];
 
   // 3. Fallback to base official default page
   return getGradeBaseDefaultPage(clean);
