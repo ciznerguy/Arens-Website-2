@@ -601,18 +601,11 @@ export default function InternalPageViewer({
                 </div>
               )}
 
-              {/* Utility Panel - Back & Share */}
+              {/* Utility Panel - Back */}
               <div className="bg-school-panel border border-school-line rounded-3xl p-4 flex gap-2 shadow-sm">
                 <button
-                  onClick={handleShare}
-                  className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold bg-school-panel2 border border-school-line hover:border-school-cyan hover:text-school-cyan transition-colors"
-                >
-                  {copiedLink ? <Check className="w-4 h-4 text-emerald-400 shrink-0" /> : <Share2 className="w-4 h-4 shrink-0" />}
-                  <span>{copiedLink ? "הועתק!" : "שתף דף"}</span>
-                </button>
-                <button
                   onClick={onGoBackHome}
-                  className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold bg-school-cyan text-school-bg hover:bg-cyan-400 transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold bg-school-cyan text-school-bg hover:bg-cyan-400 transition-colors"
                 >
                   <ArrowRight className="w-4 h-4 shrink-0 -scale-x-100" />
                   <span>חזרה לדף הבית</span>
@@ -705,13 +698,6 @@ export default function InternalPageViewer({
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>הדפס דף</span>
-              </button>
-              <button 
-                onClick={handleShare}
-                className="flex items-center gap-1.5 hover:text-white transition-colors bg-school-bg/40 border border-school-line/60 px-3 py-1.5 rounded-lg"
-              >
-                {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
-                <span>{copiedLink ? "הקישור הועתק!" : "שתף דף"}</span>
               </button>
               <span className="mr-auto self-center opacity-60">עודכן לאחרונה: יולי 2026</span>
             </div>
