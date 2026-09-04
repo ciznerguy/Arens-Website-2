@@ -39,6 +39,7 @@ import {
   CheckCircle2,
   Lock,
   ChevronLeft,
+  ChevronRight,
   ChevronUp,
   ChevronDown,
   Palette,
@@ -261,10 +262,9 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [pageIcon, setPageIcon] = useState<string>('BookOpen');
   const [pageAudience, setPageAudience] = useState<string>('כללי');
   const [pageDivisionScope, setPageDivisionScope] = useState<'both' | 'junior' | 'high'>('both');
-  const [pageImages, setPageImages] = useState<Array<{ url: string; caption?: string; title?: string }>>([]);
-  const [newImageUrl, setNewImageUrl] = useState<string>('');
-  const [newImageCaption, setNewImageCaption] = useState<string>('');
-  const [newImageTitle, setNewImageTitle] = useState<string>('');
+  const [pageImages, setPageImages] = useState<Array<{ url: string; caption?: string; title?: string; fileName?: string }>>([]);
+  const [isDraggingArticleImages, setIsDraggingArticleImages] = useState<boolean>(false);
+  const [isUploadingArticleImages, setIsUploadingArticleImages] = useState<boolean>(false);
   const [pagesDivisionFilter, setPagesDivisionFilter] = useState<'all' | 'junior' | 'high' | 'both'>('all');
   const [pageShowInMenu, setPageShowInMenu] = useState<boolean>(false);
   const [pageContent, setPageContent] = useState<string[]>(['']);
@@ -1260,10 +1260,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
           ? 'junior' 
           : (page.divisionScope === 'high' || (page.divisionScope as any) === 'עליונה' ? 'high' : 'both')
       );
-      setPageImages(page.images ? page.images.map(img => typeof img === 'string' ? { url: img, caption: '', title: '' } : img) : []);
-      setNewImageUrl('');
-      setNewImageCaption('');
-      setNewImageTitle('');
+      setPageImages(page.images ? page.images.slice(0, 5).map(img => typeof img === 'string' ? { url: img, caption: '', title: '', fileName: '' } : img) : []);
       setPageShowInMenu(!!page.showInMenu);
       setPageContent(page.content && page.content.length > 0 ? [...page.content] : ['']);
       setPageSections(page.sections ? JSON.parse(JSON.stringify(page.sections)) : []);
@@ -1286,9 +1283,6 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     setPageAudience('כללי');
     setPageDivisionScope('both');
     setPageImages([]);
-    setNewImageUrl('');
-    setNewImageCaption('');
-    setNewImageTitle('');
     setPageShowInMenu(false);
     setPageContent(['']);
     setPageSections([]);
@@ -1437,6 +1431,145 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     }
   };
 
+  // ARTICLE IMAGES UPLOAD HANDLERS (Direct file upload saved to /public, max 5 images)
+  const processUploadedArticleImages = async (files: FileList | File[]) => {
+    const fileArray = Array.from(files).filter(f => f.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|svg|gif)$/i.test(f.name));
+    if (fileArray.length === 0) {
+      alert('נא להעלות קבצי תמונה בלבד (JPG, PNG, WebP, SVG)!');
+      return;
+    }
+
+    const currentCount = pageImages.length;
+    const remainingSlots = 5 - currentCount;
+    if (remainingSlots <= 0) {
+      alert('הגעת למגבלה המרבית של 5 תמונות למאמר. כדי להעלות תמונה חדשה, יש למחוק תחילה תמונה קיימת.');
+      return;
+    }
+
+    const filesToProcess = fileArray.slice(0, remainingSlots);
+    if (fileArray.length > remainingSlots) {
+      alert(`ניתן להעלות עד 5 תמונות למאמר. נוספו ${remainingSlots} תמונות בלבד.`);
+    }
+
+    setIsUploadingArticleImages(true);
+
+    for (const file of filesToProcess) {
+      try {
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        // Compress image to reasonable dimensions and quality (<250KB) to ensure reliable LocalStorage and Firestore cloud sync
+        const compressedDataUrl = await new Promise<string>((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            const maxDim = 1400;
+            let width = img.width;
+            let height = img.height;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.82));
+            } else {
+              resolve(dataUrl);
+            }
+          };
+          img.onerror = () => resolve(dataUrl);
+          img.src = dataUrl;
+        });
+
+        // Clean file name
+        const cleanName = file.name.replace(/[^a-zA-Z0-9._\-\u0590-\u05FF]/g, '_');
+        let finalUrl = compressedDataUrl;
+
+        try {
+          const res = await fetch('/api/upload-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: cleanName, data: dataUrl })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.url) {
+              finalUrl = data.url;
+            }
+          }
+        } catch (err) {
+          console.warn('Fallback using Data URL:', err);
+        }
+
+        const defaultTitle = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
+
+        setPageImages(prev => {
+          if (prev.length >= 5) return prev;
+          return [
+            ...prev,
+            {
+              url: finalUrl,
+              fileName: cleanName,
+              title: defaultTitle,
+              caption: ''
+            }
+          ];
+        });
+      } catch (e) {
+        console.error('Error processing uploaded image:', e);
+      }
+    }
+
+    setIsUploadingArticleImages(false);
+  };
+
+  const handleArticleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      processUploadedArticleImages(e.target.files);
+    }
+    e.target.value = '';
+  };
+
+  const handleArticleImageDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingArticleImages(true);
+  };
+
+  const handleArticleImageDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingArticleImages(false);
+  };
+
+  const handleArticleImageDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingArticleImages(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processUploadedArticleImages(e.dataTransfer.files);
+    }
+  };
+
+  const handleMoveArticleImage = (index: number, direction: 'up' | 'down') => {
+    const targetIdx = direction === 'up' ? index - 1 : index + 1;
+    if (targetIdx < 0 || targetIdx >= pageImages.length) return;
+    const updated = [...pageImages];
+    const temp = updated[index];
+    updated[index] = updated[targetIdx];
+    updated[targetIdx] = temp;
+    setPageImages(updated);
+  };
+
   // RAW JSON LIVE VALIDATOR
   const handleCodeChange = (val: string) => {
     setRawJsonStr(val);
@@ -1508,7 +1641,14 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
         icon: pageIcon.trim() || undefined,
         audience: (pageAudience as any) || 'כללי',
         divisionScope: pageDivisionScope,
-        images: pageImages.filter(img => img.url && img.url.trim()).length > 0 ? pageImages.filter(img => img.url && img.url.trim()) : undefined,
+        images: pageImages.filter(img => img.url && img.url.trim()).slice(0, 5).length > 0 
+          ? pageImages.filter(img => img.url && img.url.trim()).slice(0, 5).map(img => ({
+              url: img.url,
+              fileName: img.fileName,
+              title: img.title?.trim() || undefined,
+              caption: img.caption?.trim() || undefined
+            })) 
+          : undefined,
         showInMenu: pageShowInMenu,
         date: (isCreatingNewPage ? new Date().toISOString().split('T')[0] : (allPagesMap[targetKey]?.date || new Date().toISOString().split('T')[0])),
         content: pageContent.map(p => p.trim()).filter(Boolean),
@@ -1546,7 +1686,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
         ? 'junior' 
         : (finalPageObj.divisionScope === 'high' || (finalPageObj.divisionScope as any) === 'עליונה' ? 'high' : 'both')
     );
-    setPageImages(finalPageObj.images ? finalPageObj.images.map(img => typeof img === 'string' ? { url: img, caption: '', title: '' } : img) : []);
+    setPageImages(finalPageObj.images ? finalPageObj.images.slice(0, 5).map(img => typeof img === 'string' ? { url: img, caption: '', title: '', fileName: '' } : img) : []);
     setPageShowInMenu(!!finalPageObj.showInMenu);
     setPageContent(finalPageObj.content && finalPageObj.content.length > 0 ? [...finalPageObj.content] : ['']);
     setPageSections(finalPageObj.sections ? JSON.parse(JSON.stringify(finalPageObj.sections)) : []);
@@ -3226,136 +3366,191 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                                 )}
                               </div>
 
-                              {/* PAGE PHOTO GALLERY SECTION */}
+                              {/* PAGE PHOTO GALLERY SECTION - UPLOAD TO PUBLIC (MAX 5 IMAGES, ROTATING SLIDESHOW) */}
                               <div className="space-y-4 border-t border-school-line/40 pt-5">
-                                <div className="space-y-1">
-                                  <h4 className="text-xs font-bold text-white flex items-center gap-2">
-                                    <ImageIcon className="w-4 h-4 text-school-cyan" />
-                                    <span>גלריית תמונות לדף ({pageImages.length})</span>
-                                  </h4>
-                                  <p className="text-[10px] text-school-muted leading-relaxed">
-                                    תמונות שיוצגו בגלריה מהודרת עם אפשרות הגדלה וזום בתחתית הדף.
-                                  </p>
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                  <div className="space-y-0.5">
+                                    <h4 className="text-xs font-bold text-white flex items-center gap-2">
+                                      <ImageIcon className="w-4 h-4 text-school-cyan" />
+                                      <span>גלריית תמונות מתחלפת למאמר ({pageImages.length}/5)</span>
+                                    </h4>
+                                    <p className="text-[10px] text-school-muted leading-relaxed">
+                                      העלאת תמונות שנשמרות בספריית public ומוצגות כסליידר מתחלף מיד אחרי הפסקה הראשונה של המאמר (עד 5 תמונות).
+                                    </p>
+                                  </div>
+
+                                  <div className="flex items-center gap-2 self-start sm:self-auto">
+                                    <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full border ${
+                                      pageImages.length >= 5
+                                        ? 'bg-amber-500/15 border-amber-500/30 text-amber-300'
+                                        : 'bg-school-cyan/10 border-school-cyan/30 text-school-cyan'
+                                    }`}>
+                                      {pageImages.length >= 5 ? 'מכסה מלאה (5/5 תמונות)' : `${5 - pageImages.length} מקומות פנויים להעלאה`}
+                                    </span>
+                                  </div>
                                 </div>
 
-                                {/* List of Existing Images */}
-                                {pageImages.length > 0 && (
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                    {pageImages.map((img, imgIdx) => (
-                                      <div
-                                        key={imgIdx}
-                                        className="bg-[#0c1426] border border-school-line/60 rounded-xl overflow-hidden shadow-sm flex flex-col group relative"
-                                      >
-                                        <div className="relative aspect-video w-full bg-black/40 overflow-hidden">
-                                          <img
-                                            src={img.url}
-                                            alt={img.title || `תמונה ${imgIdx + 1}`}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                            referrerPolicy="no-referrer"
-                                            onError={(e) => {
-                                              (e.target as HTMLElement).style.display = 'none';
-                                            }}
-                                          />
-                                          <button
-                                            type="button"
-                                            onClick={() => {
-                                              const updated = [...pageImages];
-                                              updated.splice(imgIdx, 1);
-                                              setPageImages(updated);
-                                            }}
-                                            className="absolute top-2 left-2 p-1.5 bg-red-500/80 hover:bg-red-600 text-white rounded-lg shadow-md transition-colors cursor-pointer"
-                                            title="מחק תמונה זו"
-                                          >
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                          </button>
-                                        </div>
-                                        <div className="p-2.5 space-y-1.5 flex-1 flex flex-col justify-between">
-                                          <input
-                                            type="text"
-                                            value={img.title || ''}
-                                            onChange={(e) => {
-                                              const updated = [...pageImages];
-                                              updated[imgIdx].title = e.target.value;
-                                              setPageImages(updated);
-                                            }}
-                                            placeholder="כותרת תמונה (אופציונלי)"
-                                            className="w-full bg-[#080d19] border border-school-line/50 rounded-lg py-1 px-2 text-[11px] text-white focus:outline-none focus:border-school-cyan font-bold"
-                                          />
-                                          <input
-                                            type="text"
-                                            value={img.caption || ''}
-                                            onChange={(e) => {
-                                              const updated = [...pageImages];
-                                              updated[imgIdx].caption = e.target.value;
-                                              setPageImages(updated);
-                                            }}
-                                            placeholder="תיאור תמונה / כיתוב"
-                                            className="w-full bg-[#080d19] border border-school-line/50 rounded-lg py-1 px-2 text-[10px] text-school-muted focus:outline-none focus:border-school-cyan"
-                                          />
-                                        </div>
+                                {/* Drag and Drop Upload Zone */}
+                                {pageImages.length < 5 ? (
+                                  <div
+                                    onDragOver={handleArticleImageDragOver}
+                                    onDragLeave={handleArticleImageDragLeave}
+                                    onDrop={handleArticleImageDrop}
+                                    onClick={() => document.getElementById('article-image-upload-input')?.click()}
+                                    className={`border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer select-none ${
+                                      isDraggingArticleImages
+                                        ? 'border-school-cyan bg-school-cyan/15 scale-[0.99]'
+                                        : 'border-school-line/80 hover:border-school-cyan/60 bg-[#080d19]/80 hover:bg-[#0c1426]'
+                                    }`}
+                                  >
+                                    <input
+                                      type="file"
+                                      id="article-image-upload-input"
+                                      accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+                                      multiple
+                                      onChange={handleArticleImageFileChange}
+                                      className="hidden"
+                                    />
+                                    <div className="flex flex-col items-center justify-center space-y-2">
+                                      <div className="w-12 h-12 rounded-2xl bg-school-cyan/15 border border-school-cyan/30 flex items-center justify-center text-school-cyan shadow-lg">
+                                        {isUploadingArticleImages ? (
+                                          <RefreshCw className="w-6 h-6 animate-spin" />
+                                        ) : (
+                                          <UploadCloud className="w-6 h-6" />
+                                        )}
                                       </div>
-                                    ))}
+                                      <div>
+                                        <p className="text-xs font-bold text-white">
+                                          {isUploadingArticleImages
+                                            ? 'מעלה ושומר תמונות בתיקיית public...'
+                                            : 'גרור והשלך תמונות לכאן או לחץ להעלאת קובץ מהמכשיר'}
+                                        </p>
+                                        <p className="text-[10px] text-school-muted mt-1">
+                                          תמיכה בפורמטים JPG, PNG, WebP • התמונות נשמרות בספריית public • עד 5 תמונות למאמר
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-center">
+                                    <p className="text-xs font-bold text-amber-300">
+                                      הגעת למכסה המרבית של 5 תמונות למאמר.
+                                    </p>
+                                    <p className="text-[10px] text-school-muted mt-0.5">
+                                      כדי להעלות תמונה חדשה, מחק אחת מהתמונות הקיימות ברשימה מטה.
+                                    </p>
                                   </div>
                                 )}
 
-                                {/* Add New Image Form Box */}
-                                <div className="bg-[#080d19]/80 border border-dashed border-school-line/80 rounded-2xl p-4 space-y-3">
-                                  <span className="text-xs font-bold text-school-cyan flex items-center gap-1.5">
-                                    <Plus className="w-3.5 h-3.5" />
-                                    <span>הוספת תמונה חדשה לגלריה</span>
-                                  </span>
+                                {/* List of Uploaded Images */}
+                                {pageImages.length > 0 && (
+                                  <div className="space-y-3">
+                                    <span className="text-[11px] font-bold text-white flex items-center gap-1.5">
+                                      <span>תמונות המאמר בסליידר ({pageImages.length}):</span>
+                                      <span className="text-[10px] text-school-muted font-normal">ניתן לשנות סדר בעזרת החצים, לערוך כותרת ותיאור</span>
+                                    </span>
 
-                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                                    <div className="sm:col-span-3">
-                                      <input
-                                        type="text"
-                                        value={newImageUrl}
-                                        onChange={(e) => setNewImageUrl(e.target.value)}
-                                        placeholder="כתובת URL ישירה לתמונה (https://...)"
-                                        className="w-full bg-[#0c1426] border border-school-line/60 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-school-cyan"
-                                      />
-                                    </div>
-                                    <div>
-                                      <input
-                                        type="text"
-                                        value={newImageTitle}
-                                        onChange={(e) => setNewImageTitle(e.target.value)}
-                                        placeholder="כותרת התמונה"
-                                        className="w-full bg-[#0c1426] border border-school-line/60 rounded-xl py-1.5 px-3 text-xs text-white focus:outline-none focus:border-school-cyan"
-                                      />
-                                    </div>
-                                    <div className="sm:col-span-2 flex gap-2">
-                                      <input
-                                        type="text"
-                                        value={newImageCaption}
-                                        onChange={(e) => setNewImageCaption(e.target.value)}
-                                        placeholder="תיאור קצר / כיתוב לתמונה"
-                                        className="flex-1 bg-[#0c1426] border border-school-line/60 rounded-xl py-1.5 px-3 text-xs text-white focus:outline-none focus:border-school-cyan"
-                                      />
-                                      <button
-                                        type="button"
-                                        disabled={!newImageUrl.trim()}
-                                        onClick={() => {
-                                          if (!newImageUrl.trim()) return;
-                                          setPageImages([
-                                            ...pageImages,
-                                            {
-                                              url: newImageUrl.trim(),
-                                              title: newImageTitle.trim() || undefined,
-                                              caption: newImageCaption.trim() || undefined
-                                            }
-                                          ]);
-                                          setNewImageUrl('');
-                                          setNewImageTitle('');
-                                          setNewImageCaption('');
-                                        }}
-                                        className="px-4 py-1.5 bg-school-cyan/20 border border-school-cyan/40 hover:bg-school-cyan text-school-cyan hover:text-slate-950 rounded-xl text-xs font-black transition-colors disabled:opacity-30 cursor-pointer whitespace-nowrap"
-                                      >
-                                        הוסף לגלריה
-                                      </button>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                      {pageImages.map((img, imgIdx) => (
+                                        <div
+                                          key={imgIdx}
+                                          className="bg-[#0c1426] border border-school-line/60 hover:border-school-cyan/40 rounded-xl overflow-hidden shadow-sm flex flex-col group relative transition-all"
+                                        >
+                                          {/* Image Frame */}
+                                          <div className="relative aspect-video w-full bg-black/40 overflow-hidden">
+                                            <img
+                                              src={img.url}
+                                              alt={img.title || `תמונה ${imgIdx + 1}`}
+                                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                              referrerPolicy="no-referrer"
+                                              onError={(e) => {
+                                                const target = e.currentTarget;
+                                                target.src = '/learning-space.png';
+                                              }}
+                                            />
+
+                                            {/* Order Number Badge */}
+                                            <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm text-[10px] font-extrabold text-school-cyan border border-school-cyan/30">
+                                              #{imgIdx + 1}
+                                            </span>
+
+                                            {/* Action Buttons Top Bar */}
+                                            <div className="absolute top-2 inset-x-2 flex items-center justify-between">
+                                              {/* Reorder Buttons */}
+                                              <div className="flex items-center gap-1">
+                                                <button
+                                                  type="button"
+                                                  disabled={imgIdx === 0}
+                                                  onClick={() => handleMoveArticleImage(imgIdx, 'up')}
+                                                  className="p-1 bg-black/70 hover:bg-school-cyan hover:text-slate-950 text-white rounded-md transition-colors disabled:opacity-30 cursor-pointer"
+                                                  title="הזז קדימה בסליידר"
+                                                >
+                                                  <ChevronRight className="w-3.5 h-3.5" />
+                                                </button>
+                                                <button
+                                                  type="button"
+                                                  disabled={imgIdx === pageImages.length - 1}
+                                                  onClick={() => handleMoveArticleImage(imgIdx, 'down')}
+                                                  className="p-1 bg-black/70 hover:bg-school-cyan hover:text-slate-950 text-white rounded-md transition-colors disabled:opacity-30 cursor-pointer"
+                                                  title="הזז אחורה בסליידר"
+                                                >
+                                                  <ChevronLeft className="w-3.5 h-3.5" />
+                                                </button>
+                                              </div>
+
+                                              {/* Delete Button */}
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  const updated = [...pageImages];
+                                                  updated.splice(imgIdx, 1);
+                                                  setPageImages(updated);
+                                                }}
+                                                className="p-1.5 bg-red-500/80 hover:bg-red-600 text-white rounded-lg shadow-md transition-colors cursor-pointer"
+                                                title="מחק תמונה זו"
+                                              >
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                              </button>
+                                            </div>
+                                          </div>
+
+                                          {/* Metadata Inputs */}
+                                          <div className="p-2.5 space-y-1.5 flex-1 flex flex-col justify-between">
+                                            <div className="space-y-1">
+                                              {img.fileName && (
+                                                <p className="text-[9px] text-school-cyan font-mono truncate" title={`public/${img.fileName}`}>
+                                                  public/{img.fileName}
+                                                </p>
+                                              )}
+                                              <input
+                                                type="text"
+                                                value={img.title || ''}
+                                                onChange={(e) => {
+                                                  const updated = [...pageImages];
+                                                  updated[imgIdx].title = e.target.value;
+                                                  setPageImages(updated);
+                                                }}
+                                                placeholder="כותרת תמונה (אופציונלי)"
+                                                className="w-full bg-[#080d19] border border-school-line/50 rounded-lg py-1 px-2 text-[11px] text-white focus:outline-none focus:border-school-cyan font-bold"
+                                              />
+                                            </div>
+                                            <input
+                                              type="text"
+                                              value={img.caption || ''}
+                                              onChange={(e) => {
+                                                const updated = [...pageImages];
+                                                updated[imgIdx].caption = e.target.value;
+                                                setPageImages(updated);
+                                              }}
+                                              placeholder="תיאור תמונה / כיתוב"
+                                              className="w-full bg-[#080d19] border border-school-line/50 rounded-lg py-1 px-2 text-[10px] text-school-muted focus:outline-none focus:border-school-cyan"
+                                            />
+                                          </div>
+                                        </div>
+                                      ))}
                                     </div>
                                   </div>
-                                </div>
+                                )}
                               </div>
 
                             </div>

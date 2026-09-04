@@ -49,6 +49,7 @@ import {
   getGradeBaseDefaultPage
 } from '../data/internalPages';
 import { JuniorHighCards } from './JuniorHighCards';
+import { ArticleImageGallery } from './ArticleImageGallery';
 import { gradesData } from '../data';
 import { allTeachersList } from '../data/teachersList';
 import { getHebrewInitials, getAvatarColor } from '../utils/avatarUtils';
@@ -703,22 +704,79 @@ export default function InternalPageViewer({
             </div>
           </div>
 
-          {/* Core Paragraphs */}
-          {(!page.content || page.content.filter(p => p && p.trim()).length === 0) && (!page.sections || page.sections.length === 0) ? (
-            <div className="text-center py-12 px-6 bg-school-panel2/50 border border-dashed border-school-line/60 rounded-2xl space-y-2">
-              <Clock className="w-8 h-8 text-school-cyan/70 mx-auto" />
-              <h3 className="text-base font-bold text-school-text">בקרוב</h3>
-              <p className="text-xs text-school-muted">מידע מפורט בנושא זה יעודכן ויועלה לאתר בקרוב.</p>
-            </div>
-          ) : (
-            <div className="space-y-4 text-sm md:text-base text-school-muted/95 leading-relaxed text-justify">
-              {page.content.filter(p => p && p.trim()).map((paragraph, pIdx) => (
-                <p key={pIdx}>
-                  {paragraph}
-                </p>
-              ))}
+          {/* Main Hero Image if provided (only if page does not have a gallery) */}
+          {page.imageUrl && (!page.images || page.images.length === 0) && (
+            <div className="rounded-2xl overflow-hidden border border-school-line shadow-lg bg-school-panel2">
+              <img 
+                src={page.imageUrl} 
+                alt={page.title} 
+                className="w-full h-auto max-h-[480px] object-cover object-center hover:scale-[1.01] transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  const currentSrc = target.getAttribute('src');
+                  const fallbacks = [
+                    '/learning-space.png',
+                    '/assets/learning-space.png',
+                    '/מרחב למידה.png',
+                    '/assets/מרחב למידה.png',
+                    '/assets/מרחב-למידה.png',
+                    '/מרחב-למידה.png',
+                    '/learning-space.jpg',
+                    '/assets/learning-space.jpg'
+                  ];
+                  const nextFallback = fallbacks.find(f => f !== currentSrc && !target.dataset.tried?.includes(f));
+                  if (nextFallback) {
+                    target.dataset.tried = (target.dataset.tried || '') + ',' + nextFallback;
+                    target.src = nextFallback;
+                  }
+                }}
+              />
             </div>
           )}
+
+          {/* Core Paragraphs & Rotating Image Gallery (Displayed right after the first paragraph) */}
+          {(() => {
+            const validParagraphs = (page.content || []).filter(p => p && p.trim());
+            const hasGallery = page.images && page.images.length > 0;
+            const firstParagraph = validParagraphs[0];
+            const remainingParagraphs = validParagraphs.slice(1);
+
+            if (validParagraphs.length === 0 && (!page.sections || page.sections.length === 0) && !hasGallery) {
+              return (
+                <div className="text-center py-12 px-6 bg-school-panel2/50 border border-dashed border-school-line/60 rounded-2xl space-y-2">
+                  <Clock className="w-8 h-8 text-school-cyan/70 mx-auto" />
+                  <h3 className="text-base font-bold text-school-text">בקרוב</h3>
+                  <p className="text-xs text-school-muted">מידע מפורט בנושא זה יעודכן ויועלה לאתר בקרוב.</p>
+                </div>
+              );
+            }
+
+            return (
+              <div className="space-y-4 text-sm md:text-base text-school-muted/95 leading-relaxed text-justify">
+                {/* First paragraph */}
+                {firstParagraph && (
+                  <p>{firstParagraph}</p>
+                )}
+
+                {/* Rotating Gallery (Displayed right after first paragraph) */}
+                {hasGallery && (
+                  <ArticleImageGallery 
+                    images={page.images!} 
+                    pageTitle={page.title} 
+                    onImageZoom={(img) => setActiveImageZoom(img)} 
+                  />
+                )}
+
+                {/* Remaining paragraphs */}
+                {remainingParagraphs.map((paragraph, pIdx) => (
+                  <p key={pIdx}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            );
+          })()}
 
           {/* Interactive Banner for Newsletter Page */}
           {(page.title.includes('מידעון') || pageUrl.includes('מידעון') || pageUrl.includes('%d7%9e%d7%99%d7%93%d7%a2%d7%95%d7%9f')) && (
@@ -846,63 +904,7 @@ export default function InternalPageViewer({
             </div>
           )}
 
-          {/* Photo Gallery with Lightbox */}
-          {page.images && page.images.length > 0 && (
-            <div className="border-t border-school-line/60 pt-6 mt-8 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-extrabold text-sm text-white flex items-center gap-2">
-                  <ImageIcon className="w-4.5 h-4.5 text-school-cyan" />
-                  <span>גלריית תמונות ותיעוד מהשטח ({page.images.length})</span>
-                </h3>
-                <span className="text-[10px] text-school-muted font-medium">לחץ על תמונה להגדלה</span>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {page.images.map((imgItem, imgIdx) => {
-                  const imgObj = typeof imgItem === 'string' ? { url: imgItem, title: '', caption: '' } : imgItem;
-                  return (
-                    <motion.div
-                      key={imgIdx}
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.2 }}
-                      onClick={() => setActiveImageZoom(imgObj)}
-                      className="group relative bg-[#080d19] border border-school-line hover:border-school-cyan/50 rounded-2xl overflow-hidden shadow-lg cursor-pointer flex flex-col"
-                    >
-                      <div className="aspect-[4/3] w-full overflow-hidden bg-slate-900 relative">
-                        <img 
-                          src={imgObj.url} 
-                          alt={imgObj.title || imgObj.caption || page.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          referrerPolicy="no-referrer"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <div className="p-2.5 rounded-full bg-school-cyan/90 text-slate-950 shadow-lg">
-                            <ZoomIn className="w-5 h-5" />
-                          </div>
-                        </div>
-                      </div>
-
-                      {(imgObj.title || imgObj.caption) && (
-                        <div className="p-3 text-right space-y-1 bg-gradient-to-b from-[#0c1426] to-[#080d19] border-t border-school-line/40 flex-1 flex flex-col justify-center">
-                          {imgObj.title && (
-                            <h5 className="font-extrabold text-xs text-white group-hover:text-school-cyan transition-colors leading-tight">
-                              {imgObj.title}
-                            </h5>
-                          )}
-                          {imgObj.caption && (
-                            <p className="text-[11px] text-school-muted line-clamp-2 leading-relaxed">
-                              {imgObj.caption}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
           {/* PDF Files attachments */}
           {page.pdfFiles && page.pdfFiles.length > 0 && (
@@ -1136,6 +1138,25 @@ export default function InternalPageViewer({
                   alt={activeImageZoom.title || activeImageZoom.caption || 'תמונה בהגדלה'}
                   className="w-full h-full object-contain max-h-[70vh]"
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    const currentSrc = target.getAttribute('src');
+                    const fallbacks = [
+                      '/learning-space.png',
+                      '/assets/learning-space.png',
+                      '/מרחב למידה.png',
+                      '/assets/מרחב למידה.png',
+                      '/assets/מרחב-למידה.png',
+                      '/מרחב-למידה.png',
+                      '/learning-space.jpg',
+                      '/assets/learning-space.jpg'
+                    ];
+                    const nextFallback = fallbacks.find(f => f !== currentSrc && !target.dataset.tried?.includes(f));
+                    if (nextFallback) {
+                      target.dataset.tried = (target.dataset.tried || '') + ',' + nextFallback;
+                      target.src = nextFallback;
+                    }
+                  }}
                 />
               </div>
 

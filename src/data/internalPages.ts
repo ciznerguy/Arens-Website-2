@@ -127,6 +127,7 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
     subtitle: "מרחב למידה חדשני לפיתוח מיומנויות הלומד העצמאי, ניהול תהליכים והצבת יעדים",
     icon: "Sparkles",
     divisionScope: "high",
+    images: [],
     content: [
       "בעולם משתנה, מיומנויות הלומד העצמאי כגון ניהול תהליכי עבודה, הצבת יעדים, התמודדות עם קשיים, ולקיחת אחריות מהוות מרכיב חיוני לחיים. מתוך תפיסה זו, הוקם בתיכון מרחב \"צומחים לדעת\".",
       "מרחב זה הוא מרחב למידה חדשני שנועד לאפשר לתלמידים לעבוד, לחשוב, ליצור ולהתקדם כלומדים עצמאיים.",
@@ -163,6 +164,7 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
     subtitle: "מרחב למידה חדשני לפיתוח מיומנויות הלומד העצמאי, ניהול תהליכים והצבת יעדים",
     icon: "Sparkles",
     divisionScope: "high",
+    images: [],
     content: [
       "בעולם משתנה, מיומנויות הלומד העצמאי כגון ניהול תהליכי עבודה, הצבת יעדים, התמודדות עם קשיים, ולקיחת אחריות מהוות מרכיב חיוני לחיים. מתוך תפיסה זו, הוקם בתיכון מרחב \"צומחים לדעת\".",
       "מרחב זה הוא מרחב למידה חדשני שנועד לאפשר לתלמידים לעבוד, לחשוב, ליצור ולהתקדם כלומדים עצמאיים.",
@@ -1356,13 +1358,13 @@ export function getAllPagesMap(): Record<string, InternalPage> {
     } catch (e) {}
   };
 
-  // 1. Process overrides first (user edits take top precedence)
-  Object.entries(overrides).forEach(([rawKey, page]) => {
+  // 1. Process base INTERNAL_PAGES first as defaults
+  Object.entries(INTERNAL_PAGES).forEach(([rawKey, page]) => {
     registerPage(rawKey, page);
   });
 
-  // 2. Process base INTERNAL_PAGES
-  Object.entries(INTERNAL_PAGES).forEach(([rawKey, page]) => {
+  // 2. Process overrides second (user edits take top precedence and overwrite defaults)
+  Object.entries(overrides).forEach(([rawKey, page]) => {
     registerPage(rawKey, page);
   });
 
@@ -1393,8 +1395,28 @@ export function getInternalPage(key: string): InternalPage | null {
     }
   }
 
-  const pagesMap = getAllPagesMap();
   const canonKey = toCanonicalPageKey(cleanKey);
+  const overrides = getInternalPageOverrides();
+
+  // Top Priority: Check user overrides directly first
+  if (overrides[canonKey]) return overrides[canonKey];
+  if (overrides[canonKey.toLowerCase()]) return overrides[canonKey.toLowerCase()];
+  if (overrides[cleanKey]) return overrides[cleanKey];
+  if (overrides[cleanKey.toLowerCase()]) return overrides[cleanKey.toLowerCase()];
+  for (const [k, p] of Object.entries(overrides)) {
+    if (!p) continue;
+    const cleanK = k.replace(/^\/+|\/+$/g, "");
+    if (cleanK.toLowerCase() === cleanKey.toLowerCase() || toCanonicalPageKey(cleanK, p) === canonKey) {
+      return p;
+    }
+    try {
+      if (decodeURIComponent(cleanK).toLowerCase() === decodeURIComponent(cleanKey).toLowerCase()) {
+        return p;
+      }
+    } catch (e) {}
+  }
+
+  const pagesMap = getAllPagesMap();
 
   // 1. Direct fast lookup in pagesMap
   if (pagesMap[canonKey]) return pagesMap[canonKey];

@@ -64,6 +64,7 @@ export interface InternalPage {
   title: string;
   category: string;
   subtitle?: string;
+  imageUrl?: string;
   icon?: string;
   content: string[];
   audience?: 'students' | 'parents' | 'teachers' | 'all' | 'תלמידים' | 'הורים' | 'מורים' | 'כללי';
@@ -80,6 +81,7 @@ export interface InternalPage {
     url: string;
     caption?: string;
     title?: string;
+    fileName?: string;
   } | string>;
   interactiveFields?: {
     label: string;
