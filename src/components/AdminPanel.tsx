@@ -60,13 +60,14 @@ import {
 } from 'lucide-react';
 import { TeacherEventsAdmin } from './TeacherEventsAdmin';
 import { MajorsAdmin } from './MajorsAdmin';
+import { MyProfileTab } from './MyProfileTab';
 import { getStoredMajors } from '../services/majorsStorage';
 import { 
   INTERNAL_PAGES, 
   InternalPage, 
   getInternalPageOverrides, 
   saveInternalPageOverride, 
-  deleteInternalPageOverride,
+  deleteInternalPageOverride, 
   deleteInternalPagePermanently,
   getAllPagesMap,
   getGradeClassesOverrides,
@@ -85,7 +86,15 @@ import { getQuickLinks, saveQuickLink, deleteQuickLink } from '../data/quickLink
 const DEFAULT_EDITORS = [
   { email: 'nava.ss@arens.school', name: 'נאווה שקל ששון', role: 'מנהלת שש-שנתי' },
   { email: 'dan.p@arens.school', name: 'דן פנחס', role: 'מנהל חטיבת נעורים' },
-  { email: '1003045545@taded.org.il', name: 'מנהל ראשי', role: 'מנהל ראשי' }
+  { email: '1003045545@taded.org.il', name: 'מנהל ראשי', role: 'מנהל ראשי' },
+  { email: 'admin@arens.school', name: 'מנהל מערכת', role: 'מנהל ראשי' },
+  { email: 'orly.raz@arens.school', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
+  { email: 'ciznerguy@taded.org.il', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: 'me@ciznerguy.com', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: 'guy.tzizner@arens.school', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: 'tomer.naaman@arens.school', name: 'תומר נעמן', role: 'רכז מגמת פיזיקה' },
+  { email: 'marindoron@gmail.com', name: 'דורון מרין', role: 'מורה' },
+  { email: 'teacher@arens.school', name: 'מורה לדוגמה', role: 'מורה' }
 ];
 
 interface Editor {
@@ -128,12 +137,13 @@ interface AdminPanelProps {
   onNavigateToPage?: (url: string) => void;
   activeTheme?: string;
   onThemeChange?: (themeId: string) => void;
+  initialStaffEmail?: string;
 }
 
-export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onThemeChange }: AdminPanelProps) {
+export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onThemeChange, initialStaffEmail }: AdminPanelProps) {
   // Authentication State
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [loginEmail, setLoginEmail] = useState<string>('1003045545@taded.org.il');
+  const [loginEmail, setLoginEmail] = useState<string>(initialStaffEmail || '1003045545@taded.org.il');
   const [loginPassword, setLoginPassword] = useState<string>('admin123');
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -141,7 +151,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [currentUser, setCurrentUser] = useState<Editor | null>(null);
 
   // CMS Tabs
-  const [activeTab, setActiveTab] = useState<'homepage' | 'pages' | 'my-grade' | 'majors' | 'news' | 'editors' | 'theme' | 'staff' | 'socials' | 'quick-links' | 'teachers-events'>('homepage');
+  const [activeTab, setActiveTab] = useState<'homepage' | 'pages' | 'my-grade' | 'majors' | 'news' | 'editors' | 'theme' | 'staff' | 'socials' | 'quick-links' | 'teachers-events' | 'my-profile'>('homepage');
 
   // Homepage Settings State
   const [hpSubtitle, setHpSubtitle] = useState<string>('שש שנתי ע"ש משה ארנס');
@@ -321,19 +331,47 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
   // Role detection helpers
   const isSuperAdmin = (role: string) => {
-    return role === 'מנהל ראשי' || role === 'סופר אדמין' || role === 'סופר אדמין (Super Admin)' || role === 'מנהלת שש-שנתי';
+    return role === 'מנהל ראשי' || role === 'סופר אדמין' || role === 'סופר אדמין (Super Admin)' || role === 'מנהלת שש-שנתי' || role === 'מנהל מערכת';
   };
 
   const isAdmin = (role: string) => {
-    return role === 'אדמין' || role === 'אדמין (Admin)' || role === 'מנהל חטיבת נעורים';
+    return isSuperAdmin(role) || 
+           role === 'אדמין' || 
+           role === 'אדמין (Admin)' || 
+           role.includes('סגן') || 
+           role.includes('סגנית') || 
+           role.includes('מנהל חטיב') || 
+           role.includes('מנהלת חטיב');
+  };
+
+  const isFullSiteAdmin = (role: string) => {
+    return isSuperAdmin(role) || isAdmin(role);
   };
 
   const isGradeCoordinator = (role: string) => {
-    return role.startsWith('רכז שכבה') || role.startsWith('רכז/ת שכבה') || role.includes('רכז שכבה') || role.includes('רכז/ת שכבה');
+    return role.includes('שכבה') || role.includes('שכבת') || role.startsWith('רכז שכבה') || role.startsWith('רכז/ת שכבה');
   };
 
   const isMajorCoordinator = (role: string) => {
-    return role.startsWith('רכז מגמת') || role.startsWith('רכז/ת מגמת') || role.includes('רכז מגמת') || role.includes('רכז/ת מגמת') || role.includes('רכז מגמה');
+    const r = (role || '').toLowerCase();
+    return r.includes('רכז מגמת') || r.includes('רכז/ת מגמת') || r.includes('רכז מגמה') || r.includes('רכז מדעי המחשב') || r.includes('רכז הנדסת תוכנה') || r.startsWith('רכז מגמת');
+  };
+
+  const isEnglishCoordinator = (role: string) => {
+    const r = (role || '').toLowerCase();
+    return r.includes('אנגלית') || r.includes('english');
+  };
+
+  const isHomeroomTeacher = (role: string) => {
+    return (role || '').includes('מחנך') || (role || '').includes('מחנכת');
+  };
+
+  const getHomeroomClass = (role: string): string | null => {
+    if (!role) return null;
+    if (role.includes("יב'1") || role.includes("יב 1") || role.includes("יב1")) return "יב'1";
+    const match = role.match(/(?:מחנך|מחנכת)\s*(?:כיתה|כתה)?\s*([ז-י]['"״]?[1-9])/);
+    if (match) return match[1];
+    return null;
   };
 
   const getMajorIdFromCoordinatorRole = (role: string): string | null => {
@@ -347,7 +385,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     if (r.includes('ערבית')) return 'major-arabic';
     if (r.includes('מדעי החברה') || r.includes('חברה')) return 'major-social-sciences';
     if (r.includes('כימיה')) return 'major-chemistry';
-    if (r.includes('תוכנה') || r.includes('הנדסת תוכנה') || r.includes('מחשבים')) return 'major-software-eng';
+    if (r.includes('תוכנה') || r.includes('הנדסת תוכנה') || r.includes('מחשב') || r.includes('מדעי המחשב')) return 'major-software-eng';
     if (r.includes('חנ"ג') || r.includes('חינוך גופני') || r.includes('ספורט')) return 'major-pe';
     if (r.includes('ביולוגיה')) return 'major-biology';
     return null;
@@ -355,18 +393,12 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
   const getGradeFromCoordinatorRole = (role: string): string | null => {
     if (!isGradeCoordinator(role)) return null;
-    if (role.includes("ז'")) return "ז";
-    if (role.includes("ח'")) return "ח";
-    if (role.includes("ט'")) return "ט";
-    if (role.includes("יא'")) return "יא";
-    if (role.includes("יב'")) return "יב";
-    if (role.includes("י'")) return "י";
-    if (role.includes('ז')) return 'ז';
-    if (role.includes('ח')) return 'ח';
-    if (role.includes('ט')) return 'ט';
-    if (role.includes('יא')) return 'יא';
-    if (role.includes('יב')) return 'יב';
-    if (role.includes('י')) return 'י';
+    if (role.includes("יא'") || role.includes("שכבת יא") || role.includes("שכבה יא") || role.includes('יא')) return "יא";
+    if (role.includes("יב'") || role.includes("שכבת יב") || role.includes("שכבה יב") || role.includes('יב')) return "יב";
+    if (role.includes("ז'") || role.includes("שכבת ז") || role.includes("שכבה ז") || role.includes('ז')) return "ז";
+    if (role.includes("ח'") || role.includes("שכבת ח") || role.includes("שכבה ח") || role.includes('ח')) return "ח";
+    if (role.includes("ט'") || role.includes("שכבת ט") || role.includes("שכבה ט") || role.includes('ט')) return "ט";
+    if (role.includes("י'") || role.includes("שכבת י") || role.includes("שכבה י") || /(שכבת|שכבה|רכזת|רכז)\s*י(?![א-ת])/i.test(role)) return "י";
     return null;
   };
 
@@ -433,6 +465,51 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     ) return 'י';
 
     return null;
+  };
+
+  const canUserEditPage = (url: string, page: any, role: string): boolean => {
+    if (!role) return false;
+    if (isFullSiteAdmin(role)) return true;
+
+    const assignedGrade = getGradeFromCoordinatorRole(role);
+    const hasEnglish = isEnglishCoordinator(role);
+    const hasMajor = isMajorCoordinator(role);
+    const assignedMajor = getMajorIdFromCoordinatorRole(role);
+
+    // 1. Grade coordination check
+    if (assignedGrade) {
+      const pageGrade = getGradeForPage(url, page);
+      if (pageGrade === assignedGrade) return true;
+      if (url.includes(`שכבה-${assignedGrade}`) || url.includes(`שכבת-${assignedGrade}`)) return true;
+      if (GRADE_MAIN_KEYS[assignedGrade] && url === GRADE_MAIN_KEYS[assignedGrade]) return true;
+    }
+
+    // 2. English coordination check
+    if (hasEnglish) {
+      let decodedUrl = '';
+      try { decodedUrl = decodeURIComponent(url).toLowerCase(); } catch { decodedUrl = url.toLowerCase(); }
+      const pageText = `${decodedUrl} ${(page?.title || '')} ${(page?.subtitle || '')} ${(page?.category || '')}`.toLowerCase();
+      if (pageText.includes('אנגלית') || pageText.includes('english')) return true;
+    }
+
+    // 3. Major coordination check
+    if (hasMajor && assignedMajor) {
+      if (url.includes(assignedMajor)) return true;
+      const pageText = `${url} ${(page?.title || '')} ${(page?.category || '')}`.toLowerCase();
+      if (assignedMajor === 'major-data-analyst' && pageText.includes('דאטה')) return true;
+      if (assignedMajor === 'major-theater-musicals' && (pageText.includes('תיאטרון') || pageText.includes('מחזות'))) return true;
+      if (assignedMajor === 'major-physics' && pageText.includes('פיזיקה')) return true;
+      if (assignedMajor === 'major-cyber-geography' && (pageText.includes('גיאוגרפיה') || pageText.includes('סייבר'))) return true;
+      if (assignedMajor === 'major-business-econ' && (pageText.includes('כלכלה') || pageText.includes('מנהל'))) return true;
+      if (assignedMajor === 'major-arabic' && pageText.includes('ערבית')) return true;
+      if (assignedMajor === 'major-social-sciences' && pageText.includes('מדעי החברה')) return true;
+      if (assignedMajor === 'major-chemistry' && pageText.includes('כימיה')) return true;
+      if (assignedMajor === 'major-software-eng' && (pageText.includes('תוכנה') || pageText.includes('מחשבים') || pageText.includes('מדעי המחשב') || pageText.includes('מחשב'))) return true;
+      if (assignedMajor === 'major-pe' && (pageText.includes('גופני') || pageText.includes('ספורט'))) return true;
+      if (assignedMajor === 'major-biology' && pageText.includes('ביולוגיה')) return true;
+    }
+
+    return false;
   };
 
   const effectiveRole = impersonatedRole || currentUser?.role || '';
@@ -510,7 +587,20 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     const savedUser = localStorage.getItem('arens_cms_user');
     if (token && savedUser) {
       setIsLoggedIn(true);
-      setCurrentUser(JSON.parse(savedUser));
+      try {
+        const parsed = JSON.parse(savedUser);
+        const storedEditors = getStoredEditors();
+        const matched = storedEditors.find(ed => ed.email.trim().toLowerCase() === (parsed.email || '').trim().toLowerCase()) ||
+                        DEFAULT_EDITORS.find(ed => ed.email.trim().toLowerCase() === (parsed.email || '').trim().toLowerCase());
+        if (matched) {
+          parsed.role = matched.role;
+          parsed.name = matched.name;
+          localStorage.setItem('arens_cms_user', JSON.stringify(parsed));
+        }
+        setCurrentUser(parsed);
+      } catch {
+        setCurrentUser(JSON.parse(savedUser));
+      }
     }
 
     // Load Editors from Firestore cloud & local cache
@@ -563,11 +653,16 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     };
   }, []);
 
-  // Automatically select relevant tab for grade coordinators or major coordinators
+  // Automatically select relevant tab for grade coordinators, english coordinators, or major coordinators
   useEffect(() => {
     if (isLoggedIn) {
-      if (isGradeCoordinator(effectiveRole)) {
+      if (isFullSiteAdmin(effectiveRole)) {
+        // Full site admins keep their tab
+      } else if (isGradeCoordinator(effectiveRole)) {
         setActiveTab('my-grade');
+      } else if (isEnglishCoordinator(effectiveRole)) {
+        setActiveTab('pages');
+        setSearchPageQuery('אנגלית');
       } else if (isMajorCoordinator(effectiveRole)) {
         setActiveTab('majors');
       }
@@ -891,20 +986,48 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       return;
     }
 
+    const cleanEmail = loginEmail.trim().toLowerCase();
     // Try matching an editor
-    const matched = editors.find(ed => ed.email.toLowerCase() === loginEmail.toLowerCase()) || 
-                    DEFAULT_EDITORS.find(ed => ed.email.toLowerCase() === loginEmail.toLowerCase());
+    let matched = editors.find(ed => ed.email.trim().toLowerCase() === cleanEmail) || 
+                  DEFAULT_EDITORS.find(ed => ed.email.trim().toLowerCase() === cleanEmail) ||
+                  getStoredEditors().find(ed => ed.email.trim().toLowerCase() === cleanEmail);
     
+    // Also try matching in staff members list
+    if (!matched) {
+      const matchedStaff = staffMembers.find(s => s.email?.trim().toLowerCase() === cleanEmail);
+      if (matchedStaff) {
+        matched = {
+          email: cleanEmail,
+          name: matchedStaff.name,
+          role: matchedStaff.role || 'מורה'
+        };
+      }
+    }
+
     const loggedUser = matched || {
-      email: loginEmail,
-      name: loginEmail.split('@')[0],
-      role: 'עורך אורח'
+      email: cleanEmail,
+      name: cleanEmail.split('@')[0],
+      role: 'מורה'
     };
 
     localStorage.setItem('arens_cms_token', 'simulated_jwt_token_12345');
     localStorage.setItem('arens_cms_user', JSON.stringify(loggedUser));
     setCurrentUser(loggedUser);
     setIsLoggedIn(true);
+
+    // Automatically navigate to the appropriate tab based on role
+    const userRole = loggedUser.role || '';
+    if (isFullSiteAdmin(userRole)) {
+      setActiveTab('homepage');
+    } else if (isGradeCoordinator(userRole)) {
+      setActiveTab('my-grade');
+    } else if (isMajorCoordinator(userRole)) {
+      setActiveTab('majors');
+    } else if (isEnglishCoordinator(userRole)) {
+      setActiveTab('pages');
+    } else {
+      setActiveTab('my-profile');
+    }
 
     // If editor list didn't include them, append them
     if (matched && !editors.some(ed => ed.email === matched.email)) {
@@ -1664,6 +1787,12 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     // Clear error
     setPageSaveError(null);
 
+    // Security check: ensure non-full-admin can only edit pages within their assigned domain
+    if (!isFullSiteAdmin(effectiveRole) && !canUserEditPage(targetKey, finalPageObj, effectiveRole)) {
+      setPageSaveError('אין לך הרשאות לערוך או לשמור דף זה. יש לך גישה רק לדפי התפקיד שלך.');
+      return;
+    }
+
     // Save
     saveInternalPageOverride(targetKey, finalPageObj);
     
@@ -2048,6 +2177,11 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       const page = allPagesMap[key];
       if (!page || !page.title) continue;
 
+      // Access control: Non-full-admins can ONLY view/edit pages within their assigned domain
+      if (!isFullSiteAdmin(effectiveRole) && !canUserEditPage(key, page, effectiveRole)) {
+        continue;
+      }
+
       const canonKey = toCanonicalPageKey(key, page);
       if (seenKeys.has(canonKey)) continue;
 
@@ -2072,7 +2206,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       }
     }
     return result;
-  }, [allPagesMap, searchPageQuery, pagesDivisionFilter]);
+  }, [allPagesMap, searchPageQuery, pagesDivisionFilter, effectiveRole]);
 
   const filteredNewsList = newsArticles.filter(art => 
     art.title.toLowerCase().includes(searchNewsQuery.toLowerCase())
@@ -2193,14 +2327,36 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                 </button>
               </form>
 
-              <div className="pt-2 border-t border-school-line/40 text-center space-y-1.5">
-                <p className="text-[10px] text-school-muted">סיירת העריכה פתוחה לצוות המנהלי. כניסה מהירה:</p>
-                <div className="flex justify-center gap-2">
+              <div className="pt-2 border-t border-school-line/40 text-center space-y-2">
+                <p className="text-[10px] text-school-muted font-bold">כניסה מהירה לפי תפקיד (לבדיקת הרשאות בזמן אמת):</p>
+                <div className="grid grid-cols-2 gap-1.5 text-right" dir="rtl">
                   <button 
+                    type="button"
                     onClick={() => { setLoginEmail('admin@arens.school'); setLoginPassword('admin123'); }}
-                    className="text-[10px] bg-school-cyan/5 border border-school-cyan/20 hover:bg-school-cyan/10 text-school-cyan px-2.5 py-1 rounded-md transition-all"
+                    className="text-[10px] bg-school-cyan/10 border border-school-cyan/30 hover:bg-school-cyan/20 text-school-cyan p-1.5 rounded-lg transition-all text-right font-bold truncate"
                   >
-                    מנהל ראשי (admin@arens.school)
+                    👑 מנהל ראשי (הכל)
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => { setLoginEmail('orly.raz@arens.school'); setLoginPassword('admin123'); }}
+                    className="text-[10px] bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-300 p-1.5 rounded-lg transition-all text-right font-bold truncate"
+                  >
+                    🎓 רכזת שכבה יב' (אורלי)
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => { setLoginEmail('ciznerguy@taded.org.il'); setLoginPassword('admin123'); }}
+                    className="text-[10px] bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 text-amber-300 p-1.5 rounded-lg transition-all text-right font-bold truncate"
+                  >
+                    🏆 רכז מדעי המחשב (גיא)
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => { setLoginEmail('marindoron@gmail.com'); setLoginPassword('admin123'); }}
+                    className="text-[10px] bg-purple-500/10 border border-purple-500/30 hover:bg-purple-500/20 text-purple-300 p-1.5 rounded-lg transition-all text-right font-bold truncate"
+                  >
+                    👤 מורה (עריכת פרופיל בלבד)
                   </button>
                 </div>
               </div>
@@ -2230,25 +2386,44 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                   {/* Super Admin Impersonation Dropdown */}
                   {currentUser && isSuperAdmin(currentUser.role) && (
                     <div className="pt-2 border-t border-school-line/40 space-y-1">
-                      <label className="text-[9px] text-school-muted font-bold block">סימולציית תפקיד (תצוגת רכז):</label>
+                      <label className="text-[9px] text-school-muted font-bold block">סימולציית תפקיד (תצוגת הרשאות):</label>
                       <select
                         value={impersonatedRole || ''}
                         onChange={(e) => {
                           const val = e.target.value;
                           setImpersonatedRole(val ? val : null);
+                          const targetRole = val || currentUser?.role || '';
+                          if (isFullSiteAdmin(targetRole)) {
+                            setActiveTab('homepage');
+                          } else if (isGradeCoordinator(targetRole)) {
+                            setActiveTab('my-grade');
+                          } else if (isMajorCoordinator(targetRole)) {
+                            setActiveTab('majors');
+                          } else if (isEnglishCoordinator(targetRole)) {
+                            setActiveTab('pages');
+                          } else {
+                            setActiveTab('my-profile');
+                          }
                         }}
                         className="w-full bg-school-bg border border-school-line/60 rounded-lg py-1 px-1.5 text-[10px] text-white focus:outline-none focus:border-school-cyan cursor-pointer"
                       >
-                        <option value="">מנהל ראשי (תצוגה רגילה)</option>
-                        <optgroup label="רכזי שכבות">
-                          <option value="רכז שכבה ז'">רכז שכבה ז'</option>
-                          <option value="רכז שכבה ח'">רכז שכבה ח'</option>
-                          <option value="רכז שכבה ט'">רכז שכבה ט'</option>
-                          <option value="רכז שכבה י'">רכז שכבה י'</option>
-                          <option value="רכז שכבה יא'">רכז שכבה יא'</option>
-                          <option value="רכז שכבה יב'">רכז שכבה יב'</option>
+                        <option value="">מנהל ראשי (גישה מלאה להכל)</option>
+                        <optgroup label="סימולציית מורה מן המניין (עריכת פרופיל בלבד)">
+                          <option value="מורה מן המניין">מורה מן המניין (טאב פרופיל אישי בלבד)</option>
+                          <option value="מורה לחינוך גופני">מורה לחינוך גופני (טאב פרופיל בלבד)</option>
                         </optgroup>
-                        <optgroup label="רכזי 11 המגמות">
+                        <optgroup label="סימולציית תפקידים מיוחדים">
+                          <option value="רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1">אורלי רז (רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1)</option>
+                        </optgroup>
+                        <optgroup label="רכזי שכבות (פרופיל + שכבה)">
+                          <option value="רכז שכבה ז'">רכז שכבה ז' (פרופיל + שכבה ז')</option>
+                          <option value="רכז שכבה ח'">רכז שכבה ח' (פרופיל + שכבה ח')</option>
+                          <option value="רכז שכבה ט'">רכז שכבה ט' (פרופיל + שכבה ט')</option>
+                          <option value="רכז שכבה י'">רכז שכבה י' (פרופיל + שכבה י')</option>
+                          <option value="רכז שכבה יא'">רכז שכבה יא' (פרופיל + שכבה יא')</option>
+                          <option value="רכז שכבה יב'">רכז שכבה יב' (פרופיל + שכבה יב')</option>
+                        </optgroup>
+                        <optgroup label="רכזי 11 המגמות (פרופיל + מגמה)">
                           <option value="רכז מגמת דאטה אנליסט">רכז מגמת דאטה אנליסט</option>
                           <option value="רכז מגמת תיאטרון ומחזות זמר">רכז מגמת תיאטרון ומחזות זמר</option>
                           <option value="רכז מגמת פיזיקה">רכז מגמת פיזיקה</option>
@@ -2257,7 +2432,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           <option value="רכז מגמת ערבית">רכז מגמת ערבית</option>
                           <option value="רכז מגמת מדעי החברה">רכז מגמת מדעי החברה</option>
                           <option value="רכז מגמת כימיה">רכז מגמת כימיה</option>
-                          <option value="רכז מגמת הנדסת תוכנה">רכז מגמת הנדסת תוכנה</option>
+                          <option value="רכז מגמת מדעי המחשב והנדסת תוכנה ורכז תקשוב">גיא ציזנר (רכז מגמת מדעי המחשב והנדסת תוכנה ורכז תקשוב)</option>
+                          <option value="רכז מגמת מדעי המחשב והנדסת תוכנה">רכז מגמת מדעי המחשב והנדסת תוכנה</option>
                           <option value="רכז מגמת חנ&quot;ג">רכז מגמת חנ"ג</option>
                           <option value="רכז מגמת ביולוגיה">רכז מגמת ביולוגיה</option>
                         </optgroup>
@@ -2268,36 +2444,26 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
                 {/* Tab selector buttons */}
                 <div className="space-y-1.5">
-                  {isGradeCoordinator(effectiveRole) ? (
-                    <button 
-                      onClick={() => { setActiveTab('my-grade'); }}
-                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                        activeTab === 'my-grade' 
-                          ? 'bg-school-cyan/15 text-white border border-school-cyan/30' 
-                          : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <GraduationCap className="w-4 h-4 text-school-cyan" />
-                        <span>ניהול השכבה שלי ({getGradeFromCoordinatorRole(effectiveRole)})</span>
-                      </span>
-                    </button>
-                  ) : isMajorCoordinator(effectiveRole) ? (
-                    <button 
-                      onClick={() => { setActiveTab('majors'); }}
-                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                        activeTab === 'majors' 
-                          ? 'bg-school-cyan/15 text-white border border-school-cyan/30' 
-                          : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <Award className="w-4 h-4 text-amber-400" />
-                        <span>ניהול המגמה שלי ({effectiveRole.replace('רכז מגמת ', '').replace('רכז/ת מגמת ', '')})</span>
-                      </span>
-                    </button>
-                  ) : (
+                  {isFullSiteAdmin(effectiveRole) ? (
                     <>
+                      {/* Personal Profile Tab */}
+                      <button 
+                        onClick={() => { setActiveTab('my-profile'); setEditingNewsIdx(null); }}
+                        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                          activeTab === 'my-profile' 
+                            ? 'bg-school-cyan/15 text-white border border-school-cyan/30 shadow-sm' 
+                            : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <UserCheck className="w-4 h-4 text-school-cyan" />
+                          <span>הפרופיל האישי שלי</span>
+                        </span>
+                        <span className="text-[9px] bg-school-cyan/20 text-school-cyan px-2 py-0.5 rounded-full font-bold">
+                          כרטיס מורה
+                        </span>
+                      </button>
+
                       {/* Homepage Hero & Content Tab */}
                       <button 
                         onClick={() => { setActiveTab('homepage'); setEditingNewsIdx(null); }}
@@ -2489,6 +2655,104 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         </span>
                       </button>
                     </>
+                  ) : (
+                    /* Role-restricted Navigation for Co-ordinators & Teachers */
+                    <div className="space-y-2">
+                      <div className="px-2 py-1 text-[10px] text-school-muted/80 font-bold uppercase tracking-wider border-b border-school-line/30 pb-1.5">
+                        אזורי עריכה מורשים
+                      </div>
+
+                      {/* Personal Profile Tab - ALWAYS available for ALL teachers & coordinators */}
+                      <button 
+                        onClick={() => { setActiveTab('my-profile'); }}
+                        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                          activeTab === 'my-profile' 
+                            ? 'bg-school-cyan/15 text-white border border-school-cyan/30 shadow-sm' 
+                            : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <UserCheck className="w-4 h-4 text-school-cyan" />
+                          <span>הפרופיל האישי שלי</span>
+                        </span>
+                        <span className="text-[9px] bg-school-cyan/20 text-school-cyan px-2 py-0.5 rounded-full font-bold">
+                          כרטיס מורה
+                        </span>
+                      </button>
+
+                      {/* Grade Coordinator Tab */}
+                      {isGradeCoordinator(effectiveRole) && (
+                        <button 
+                          onClick={() => { setActiveTab('my-grade'); }}
+                          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                            activeTab === 'my-grade' 
+                              ? 'bg-school-cyan/15 text-white border border-school-cyan/30 shadow-sm' 
+                              : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <GraduationCap className="w-4 h-4 text-school-cyan" />
+                            <span>ניהול שכבה {getGradeFromCoordinatorRole(effectiveRole)}'</span>
+                          </span>
+                          {isHomeroomTeacher(effectiveRole) && (
+                            <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
+                              {getHomeroomClass(effectiveRole) || 'מחנכת'}
+                            </span>
+                          )}
+                        </button>
+                      )}
+
+                      {/* English Department / Coordinator Tab */}
+                      {isEnglishCoordinator(effectiveRole) && (
+                        <button 
+                          onClick={() => { 
+                            setActiveTab('pages'); 
+                            setSearchPageQuery('אנגלית');
+                            setEditingNewsIdx(null); 
+                          }}
+                          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                            activeTab === 'pages' 
+                              ? 'bg-emerald-500/15 text-white border border-emerald-500/30 shadow-sm' 
+                              : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <Globe className="w-4 h-4 text-emerald-400" />
+                            <span>ניהול מקצוע אנגלית</span>
+                          </span>
+                          <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold font-mono">
+                            דפי מקצוע
+                          </span>
+                        </button>
+                      )}
+
+                      {/* Major Coordinator Tab */}
+                      {isMajorCoordinator(effectiveRole) && (
+                        <button 
+                          onClick={() => { setActiveTab('majors'); }}
+                          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                            activeTab === 'majors' 
+                              ? 'bg-amber-500/15 text-white border border-amber-500/30 shadow-sm' 
+                              : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <Award className="w-4 h-4 text-amber-400" />
+                            <span>ניהול המגמה שלי</span>
+                          </span>
+                          <span className="text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">
+                            מגמה
+                          </span>
+                        </button>
+                      )}
+
+                      {!isGradeCoordinator(effectiveRole) && !isEnglishCoordinator(effectiveRole) && !isMajorCoordinator(effectiveRole) && (
+                        <div className="p-3 bg-school-cyan/5 border border-school-cyan/20 rounded-xl text-school-muted text-[11px] leading-relaxed">
+                          <span className="text-school-cyan font-bold block mb-0.5">הרשאת מורה:</span>
+                          חשבונך מוגדר להרשאת עריכת הפרופיל האישי שלך בלבד.
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -2526,8 +2790,32 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                 )}
               </AnimatePresence>
 
+              {/* MY PROFILE TAB (ACCESSIBLE TO ALL TEACHERS & ADMINS) */}
+              {activeTab === 'my-profile' && (
+                <div className="max-w-5xl mx-auto">
+                  <MyProfileTab 
+                    currentUser={currentUser}
+                    staffMembers={staffMembers}
+                    isFullAdmin={isFullSiteAdmin(effectiveRole)}
+                    onProfileUpdated={(updated) => {
+                      setStaffMembers(prev => {
+                        const idx = prev.findIndex(s => s.id === updated.id);
+                        if (idx >= 0) {
+                          const copy = [...prev];
+                          copy[idx] = updated;
+                          return copy;
+                        }
+                        return [...prev, updated];
+                      });
+                      setSaveSuccess('הפרופיל האישי עודכן בהצלחה בבסיס הנתונים וסונכרן באתר!');
+                      setTimeout(() => setSaveSuccess(null), 3500);
+                    }}
+                  />
+                </div>
+              )}
+
               {/* 0. HOMEPAGE HERO & TITLES EDITING WORKSPACE */}
-              {activeTab === 'homepage' && (
+              {activeTab === 'homepage' && isFullSiteAdmin(effectiveRole) && (
                 <div className="space-y-6 max-w-4xl mx-auto">
                   
                   {/* Header Box */}
@@ -2756,7 +3044,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* 1. PAGES EDITING WORKSPACE */}
-              {activeTab === 'pages' && (
+              {activeTab === 'pages' && (isFullSiteAdmin(effectiveRole) || isEnglishCoordinator(effectiveRole)) && (
                 <div className="space-y-6">
                   
                   {/* Select or create layout */}
@@ -3652,7 +3940,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* QUICK LINKS MANAGEMENT WORKSPACE */}
-              {activeTab === 'quick-links' && (
+              {activeTab === 'quick-links' && isFullSiteAdmin(effectiveRole) && (
                 <div className="space-y-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#101b33] border border-school-line p-6 rounded-2xl">
                     <div>
@@ -3923,7 +4211,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* 1.5. GRADE LAYER MANAGEMENT WORKSPACE (ניהול ועריכת שכבות) */}
-              {activeTab === 'my-grade' && (
+              {activeTab === 'my-grade' && (isFullSiteAdmin(effectiveRole) || isGradeCoordinator(effectiveRole)) && (
                 <div className="space-y-6">
                   
                   {/* Grade Layer Header & Switcher */}
@@ -4794,7 +5082,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* 2. NEWS UPDATES WORKSPACE */}
-              {activeTab === 'news' && (
+              {activeTab === 'news' && isFullSiteAdmin(effectiveRole) && (
                 <div className="space-y-6">
                   
                   {editingNewsIdx !== null ? (
@@ -5006,7 +5294,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* 5. STAFF MAINTENANCE WORKSPACE */}
-              {activeTab === 'staff' && (
+              {activeTab === 'staff' && isFullSiteAdmin(effectiveRole) && (
                 <div className="space-y-6">
                   
                   {editingStaffId !== null ? (
@@ -5453,7 +5741,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* 3. EDITORS TEAM WORKSPACE */}
-              {activeTab === 'editors' && (
+              {activeTab === 'editors' && isFullSiteAdmin(effectiveRole) && (
                 <div className="space-y-6">
                   
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -5631,7 +5919,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* 3.5. SOCIAL NETWORKS MANAGEMENT WORKSPACE */}
-              {activeTab === 'socials' && (
+              {activeTab === 'socials' && isFullSiteAdmin(effectiveRole) && (
                 <div className="space-y-6 animate-fade-in">
                   <div className="border-b border-school-line/30 pb-4">
                     <h2 className="text-xl font-black text-white">רשתות חברתיות וערוצי שידור</h2>
@@ -5771,7 +6059,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* 4. DESIGN AND THEME MANAGEMENT WORKSPACE */}
-              {activeTab === 'theme' && (
+              {activeTab === 'theme' && isFullSiteAdmin(effectiveRole) && (
                 <div className="space-y-6 animate-fade-in">
                   {/* Top header and sub-tabs selector */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-school-line/30 pb-4">
@@ -6127,7 +6415,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* 8.5. SCHOOL MAJORS & TRACKS (MIDDLE SCHOOL & HIGH SCHOOL) */}
-              {activeTab === 'majors' && (
+              {activeTab === 'majors' && (isFullSiteAdmin(effectiveRole) || isMajorCoordinator(effectiveRole)) && (
                 <div className="max-w-7xl mx-auto">
                   <MajorsAdmin 
                     restrictedMajorId={isMajorCoordinator(effectiveRole) ? getMajorIdFromCoordinatorRole(effectiveRole) : null}
@@ -6137,7 +6425,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* 9. TEACHERS EVENTS & WORKSHOPS GOOGLE SYNC WORKSPACE */}
-              {activeTab === 'teachers-events' && (
+              {activeTab === 'teachers-events' && isFullSiteAdmin(effectiveRole) && (
                 <div className="max-w-7xl mx-auto -m-6">
                   <TeacherEventsAdmin />
                 </div>

@@ -745,10 +745,6 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
     ],
     sections: [
       {
-        title: "שכבות הלימוד בחטיבה העליונה",
-        text: "• שכבת י': ביסוס הלמידה במגמות, תחילת פרויקטי גמר ופיתוח מעורבות חברתית פעילה.\n• שכבת יא': האצת הלמידה לבגרויות, המסע הישראלי ומיזמי הנצחה וקהילה בפתח תקווה.\n• שכבת יב': שנת הסיום והבגרות המלאה, סדנאות הכנה לצה\"ל, הפקת מופע הסיום ומיזמי הובלה ומנהיגות."
-      },
-      {
         title: "11 מגמות הלימוד המתקדמות (5-10 יח\"ל)",
         text: "• מגמות STEM: הנדסת תוכנה (5-10 יח\"ל), דאטה אנליסט (5 יח\"ל), פיזיקה (5 יח\"ל), כימיה (5 יח\"ל), ביולוגיה (5 יח\"ל), סייבר גיאוגרפיה (5 יח\"ל).\n• מגמות רוח, חברה, שפות ואמנויות: מנהל וכלכלה (5 יח\"ל), מדעי החברה (5 יח\"ל), ערבית (5 יח\"ל), תיאטרון ומחזות זמר (5 יח\"ל), חינוך גופני מוגבר (5 יח\"ל)."
       },
@@ -890,6 +886,30 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
       "יריד הקיימות השנתי 'אקו-ארנס' התקיים השבוע בהצלחה מסחררת ובהשתתפות מאות תלמידים, הורים ומורים!",
       "היריד הציג מגוון פרויקטים ירוקים שפותחו במסגרת שיעורי מדעים ומעורבות חברתית, כולל מחזור חכם, גינה לימודית ומיזמי חיסכון באנרגיה.",
       "אנו גאים בתלמידינו המובילים שינוי סביבתי אמיתי ומעורר השראה."
+    ]
+  },
+  "course/english-department": {
+    title: "מקצוע אנגלית - תוכנית לימודים, בגרויות ופרויקטים",
+    category: "מקצועות ליבה",
+    subtitle: "צוות אנגלית שש-שנתי: 4 ו-5 יח\"ל, משימות קריאה (Book Report), סדנאות דיבור ופרויקטים",
+    icon: "Globe",
+    content: [
+      "הוראת האנגלית בבית הספר השש-שנתי ע\"ש משה ארנס שמה דגש על שפה מדוברת, כתיבה אקדמית וספרות עשירה.",
+      "תלמידי בית הספר ניגשים לבחינות הבגרות ברמות 4 ו-5 יחידות לימוד ומשיגים ציונים גבוהים במיוחד בבחינות הכתובות ובבחינה בעל-פה (COBE).",
+      "הצוות מפעיל סדנאות Debate, למידה דיגיטלית מתקדמת, פרויקטים אינטראקטיביים ומשימות קריאה מותאמות."
+    ],
+    sections: [
+      {
+        title: "תחומי המיקוד בהוראת האנגלית",
+        text: "• מיומנויות שיח ודיבור שוטף (Oral Proficiency & Presentation Skills).\n• העמקה בספרות האנגלית (Literature Program) וכתיבת חיבורים ברמה גבוהה.\n• תגבור והכנה אינטנסיבית לבחינות הבגרות (Modules A-G ו-COBE).\n• למידה חווייתית דרך קולנוע, מוזיקה וספרות עכשווית."
+      }
+    ],
+    pdfFiles: [
+      {
+        name: "אנגלית - משימות קריאה שכבת ח-ט (Book Report)",
+        url: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNjaG9vbCBEb2N1bWVudCkKL0NyZWF0b3IgKEFyZW5zIFNjaG9vbCkKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwovS2lkcyBbNCAwIFJdCi9Db3VudCAxCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KL0NvbnRlbnRzIDYgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKNiAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNTQgNzAwIFRkCihTY2hvb2wgRG9jdW1lbnQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDEyMCAwMDAwMCBuIAowMDAwMDAwMTcxIDAwMDAwIG4gCjAwMDAwMDAzMDIgMDAwMDAgbiAKMDAwMDAwMDM4MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKPj4Kc3RhcnR4cmVmCjQ3OQolJUVPRgo=",
+        size: "950 KB"
+      }
     ]
   }
 };

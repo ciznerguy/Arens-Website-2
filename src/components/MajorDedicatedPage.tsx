@@ -41,7 +41,7 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
     const majorTitleSafe = String(major.title || '');
     const rawName = String(major.coordinatorName || major.contactPerson || '');
 
-    if (majorIdSafe.includes('software') || majorTitleSafe.includes('הנדסת תוכנה') || majorTitleSafe.includes('מחשבים')) {
+    if (majorIdSafe.includes('software') || majorTitleSafe.includes('הנדסת תוכנה') || majorTitleSafe.includes('מחשב') || majorTitleSafe.includes('מדעי המחשב')) {
       const gMatch = allTeachersList.find(t => (t.name && t.name.includes('ציזנר')) || (t.email && t.email.includes('ciznerguy')));
       if (gMatch) return gMatch;
     }

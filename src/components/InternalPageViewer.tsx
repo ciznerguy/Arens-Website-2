@@ -49,6 +49,7 @@ import {
   getGradeBaseDefaultPage
 } from '../data/internalPages';
 import { JuniorHighCards } from './JuniorHighCards';
+import { HighSchoolGradeCards } from './HighSchoolGradeCards';
 import { ArticleImageGallery } from './ArticleImageGallery';
 import { gradesData } from '../data';
 import { allTeachersList } from '../data/teachersList';
@@ -822,10 +823,20 @@ export default function InternalPageViewer({
             </div>
           )}
 
+          {/* Dedicated Hub Blocks for High School Students Portal */}
+          {(pageUrl === 'students-high' || pageUrl === 'course/חטע' || page.title.includes('לתלמידי חטיבה עליונה')) && (
+            <HighSchoolGradeCards onNavigateToPage={onNavigateToPage} />
+          )}
+
           {/* Dynamic Extra Sections */}
           {page.sections && page.sections.length > 0 && (
             <div className="space-y-6 pt-4">
-              {page.sections.map((sec: any, sIdx: number) => {
+              {page.sections
+                .filter((sec: any) => {
+                  const t = (sec.title || '').trim();
+                  return !t.includes('שכבות הלימוד בחטיבה העליונה') && !t.includes('שכבות הלימוד בחט"ע');
+                })
+                .map((sec: any, sIdx: number) => {
                 const sectionText = sec.content !== undefined ? sec.content : sec.text;
                 const hasText = sectionText && (typeof sectionText === 'string' ? sectionText.trim().length > 0 : Array.isArray(sectionText) ? sectionText.length > 0 : false);
                 const hasList = sec.list && sec.list.length > 0;
@@ -869,39 +880,9 @@ export default function InternalPageViewer({
             </div>
           )}
 
-          {/* Dedicated Hub Blocks for Junior & High School Students Portals */}
+          {/* Dedicated Hub Blocks for Junior Portals */}
           {(pageUrl === 'students-junior' || pageUrl === 'course/חטב' || page.title.includes('חטיבת נעורים') || page.title.includes('לתלמידי חטיבת נעורים')) && (
             <JuniorHighCards onNavigateToPage={onNavigateToPage} />
-          )}
-
-          {(pageUrl === 'students-high' || pageUrl === 'course/חטע' || page.title.includes('לתלמידי חטיבה עליונה')) && (
-            <div className="space-y-4 pt-2">
-              <div className="bg-gradient-to-r from-school-violet/10 via-school-panel2 to-school-panel border border-school-violet/25 rounded-2xl p-5 space-y-3">
-                <h4 className="font-extrabold text-sm text-school-violet flex items-center gap-2">
-                  <Award className="w-4.5 h-4.5" />
-                  <span>מעבר מהיר לשכבות החטיבה העליונה</span>
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {[
-                    { grade: 'י', title: 'שכבת י\'', desc: 'כניסה למגמות ומעורבות', url: 'course/%d7%a9%d7%9b%d7%91%d7%aa-%d7%99/' },
-                    { grade: 'יא', title: 'שכבת יא\'', desc: 'האצה לבגרויות והמסע הישראלי', url: 'course/%d7%a9%d7%9b%d7%91%d7%aa-%d7%99%d7%90/' },
-                    { grade: 'יב', title: 'שכבת יב\'', desc: 'שנת הסיום, בגרויות והכנה לצה"ל', url: 'course/%d7%a9%d7%9b%d7%91%d7%aa-%d7%99%d7%91/' }
-                  ].map((item, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => onNavigateToPage(item.url)}
-                      className="p-3.5 rounded-xl bg-[#080d19] border border-school-line hover:border-school-violet/50 hover:bg-school-violet/5 text-right transition-all group cursor-pointer"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-extrabold text-xs text-white group-hover:text-school-violet transition-colors">{item.title}</span>
-                        <ArrowRight className="w-3.5 h-3.5 text-school-muted group-hover:text-school-violet -scale-x-100 transition-transform group-hover:translate-x-1" />
-                      </div>
-                      <p className="text-[10px] text-school-muted mt-1 truncate">{item.desc}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
           )}
 
 

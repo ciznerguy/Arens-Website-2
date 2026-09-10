@@ -39,6 +39,7 @@ import {
   Sparkles,
   FileText,
   Lock,
+  Edit3,
   Sun,
   Moon,
   Facebook,
@@ -172,6 +173,7 @@ export default function App() {
   });
 
   const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
+  const [adminInitialEmail, setAdminInitialEmail] = useState<string | undefined>(undefined);
   const [inviteGreeting, setInviteGreeting] = useState<string | null>(null);
 
   // Active role for the new portal homepage (students, parents, teachers)
@@ -623,24 +625,14 @@ export default function App() {
       t: "להורים",
       tab: "parents",
       sub: [
-        { t: "להורים 👨‍👩‍👧", tab: "parents" },
-        { t: "משוב הורים", externalUrl: "https://web.mashov.info/parents/login" },
-        { t: "פורטל הורים", externalUrl: "https://parents.education.gov.il/" },
-        { t: "פרויקט השאלת ספרים תשפ\"ז", url: "course/%d7%a4%d7%a8%d7%95%d7%99%d7%a7%d7%98-%d7%94%d7%a9%d7%90%d7%9c%d7%aa-%d7%a1%d7%a4%d7%a8%d7%99%d7%9d-%d7%aa%d7%a9%d7%a4%d7%95/" },
-        { t: "טפסים חשובים וטפסי רישום", url: "course/%d7%98%d7%a4%d7%a1%d7%99-%d7%a8%d7%99%d7%a9%d7%95%d7%9d/" }
+        { t: "להורים 👨‍👩‍👧", tab: "parents" }
       ]
     },
     {
       t: "למורים",
       tab: "teachers",
       sub: [
-        { t: "למורים 🍎", tab: "teachers" },
-        { t: "משוב עובדי הוראה", externalUrl: "https://web.mashov.info/" },
-        { t: "פורטל עובדי הוראה", externalUrl: "https://pob.education.gov.il/" },
-        { t: "Google Classroom", externalUrl: "https://classroom.google.com/" },
-        { t: "הרשמה לסדנאות ואירועי צוות 🌟", tab: "teachers-events" },
-        { t: "ניהול אירועים וסדנאות (Google Sync) ⚙️", tab: "teachers-events-admin" },
-        { t: "טפסים ודיווחי משוב", url: "course/%d7%98%d7%a4%d7%a1%d7%99-%d7%a8%d7%99%d7%a9%d7%95%d7%9d/" }
+        { t: "למורים 🍎", tab: "teachers" }
       ]
     }
   ];
@@ -1959,13 +1951,17 @@ export default function App() {
       {/* --- CMS MODAL --- */}
       {isAdminOpen && (
         <AdminPanel 
-          onClose={() => setIsAdminOpen(false)} 
+          onClose={() => {
+            setIsAdminOpen(false);
+            setAdminInitialEmail(undefined);
+          }} 
           onNavigateToPage={(url) => {
             setSelectedInternalPageUrl(url);
             setActiveTab('internal-page');
           }}
           activeTheme={activeTheme}
           onThemeChange={setActiveTheme}
+          initialStaffEmail={adminInitialEmail}
         />
       )}
 
@@ -2155,13 +2151,28 @@ export default function App() {
                   </p>
                 </div>
 
-                {/* Bottom Footer Close Button */}
-                <div className="border-t border-school-line/30 pt-4 mt-2 text-left shrink-0">
+                {/* Bottom Footer Actions */}
+                <div className="border-t border-school-line/30 pt-4 mt-2 flex items-center justify-between shrink-0">
                   <button
                     onClick={() => setSelectedStaffForModal(null)}
-                    className="px-5 py-2 border border-school-line/85 rounded-xl text-xs hover:bg-white/5 transition-all text-white cursor-pointer"
+                    className="px-4 py-2 border border-school-line/85 rounded-xl text-xs hover:bg-white/5 transition-all text-white cursor-pointer"
                   >
                     סגור חלונית
+                  </button>
+                  <button
+                    onClick={() => {
+                      const email = selectedStaffForModal.email;
+                      setSelectedStaffForModal(null);
+                      if (email) {
+                        setAdminInitialEmail(email);
+                      }
+                      setIsAdminOpen(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-school-cyan/15 hover:bg-school-cyan/25 border border-school-cyan/30 rounded-xl text-xs text-school-cyan font-bold transition-all cursor-pointer"
+                    title="כניסה לעריכת הפרופיל האישי במערכת הניהול"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>עריכת פרופיל זה</span>
                   </button>
                 </div>
               </div>

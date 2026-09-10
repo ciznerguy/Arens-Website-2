@@ -23,6 +23,25 @@ export const subscribeToStaffMembers = (callback: (staff: StaffMember[]) => void
           snapshot.forEach((docSnap) => {
             staff.push({ ...(docSnap.data() as StaffMember), id: docSnap.id });
           });
+
+          // Ensure Guy Tzizner is recognized as Major Coordinator for Computer Science & Software Engineering
+          const guyIdx = staff.findIndex(s => s.id === 'staff-108' || s.name === 'גיא ציזנר' || s.email === 'ciznerguy@taded.org.il' || s.email === 'me@ciznerguy.com');
+          if (guyIdx >= 0) {
+            const guy = staff[guyIdx];
+            if (!guy.role?.includes('רכז מגמת') || !guy.role?.includes('מדעי המחשב')) {
+              const updatedGuy: StaffMember = {
+                ...guy,
+                role: 'רכז מגמת מדעי המחשב והנדסת תוכנה, ורכז תקשוב',
+                roleDescription: 'רכז מגמת מדעי המחשב והנדסת תוכנה חט"ע, מורה למדעי המחשב ורכז תקשוב בית ספרי',
+                bio: guy.bio && guy.bio.includes('רכז מגמת') 
+                  ? guy.bio 
+                  : 'רכז מגמת מדעי המחשב והנדסת תוכנה בחטיבה העליונה, מורה למדעי המחשב ורכז תקשוב בית ספרי.'
+              };
+              staff[guyIdx] = updatedGuy;
+              setDoc(doc(db, STAFF_COLLECTION_NAME, guy.id), updatedGuy).catch(console.warn);
+            }
+          }
+
           // Sort staff to maintain predictable order (management first or by id)
           localStorage.setItem(STAFF_STORAGE_KEY, JSON.stringify(staff));
           window.dispatchEvent(new Event('arens_cms_staff_updated'));
@@ -55,8 +74,17 @@ export const getStoredStaffMembers = (): StaffMember[] => {
     if (!raw) {
       return defaultStaffMembers;
     }
-    const parsed = JSON.parse(raw);
+    const parsed: StaffMember[] = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
+      const guyIdx = parsed.findIndex(s => s.id === 'staff-108' || s.name === 'גיא ציזנר' || s.email === 'ciznerguy@taded.org.il' || s.email === 'me@ciznerguy.com');
+      if (guyIdx >= 0 && (!parsed[guyIdx].role?.includes('רכז מגמת') || !parsed[guyIdx].role?.includes('מדעי המחשב'))) {
+        parsed[guyIdx] = {
+          ...parsed[guyIdx],
+          role: 'רכז מגמת מדעי המחשב והנדסת תוכנה, ורכז תקשוב',
+          roleDescription: 'רכז מגמת מדעי המחשב והנדסת תוכנה חט"ע, מורה למדעי המחשב ורכז תקשוב בית ספרי'
+        };
+        localStorage.setItem(STAFF_STORAGE_KEY, JSON.stringify(parsed));
+      }
       return parsed;
     }
   } catch (e) {

@@ -1072,10 +1072,10 @@ export const allTeachersList: StaffMember[] = [
   {
     id: 'staff-108',
     name: 'גיא ציזנר',
-    role: 'מורה להנדסת תוכנה ורכז תקשוב',
-    roleDescription: 'מורה להנדסת תוכנה חט"ע ורכז תקשוב',
+    role: 'רכז מגמת מדעי המחשב והנדסת תוכנה ורכז תקשוב',
+    roleDescription: 'רכז מגמת מדעי המחשב והנדסת תוכנה חט"ע, מורה למדעי המחשב ורכז תקשוב בית ספרי',
     email: 'ciznerguy@taded.org.il',
-    bio: 'מורה להנדסת תוכנה בחטיבה העליונה ורכז תקשוב בית ספרי.',
+    bio: 'רכז מגמת מדעי המחשב והנדסת תוכנה בחטיבה העליונה, מורה להנדסת תוכנה ורכז תקשוב בית ספרי.',
     imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
     isManagement: false
   },

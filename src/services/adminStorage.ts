@@ -9,7 +9,8 @@ export interface Editor {
 
 export const DEFAULT_EDITORS: Editor[] = [
   { email: '1003045545@taded.org.il', name: 'מנהל ראשי', role: 'מנהל ראשי' },
-  { email: 'orly.raz.1010@gmail.com', name: 'ח אורלי', role: 'רכז שכבה יב\'' },
+  { email: '1002641566@taded.org.il', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
+  { email: 'orly.raz.1010@gmail.com', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
   { email: 'kamilroy35@gmail.com', name: 'שקל ששון נאוה', role: 'מנהל מערכת' }
 ];
 
@@ -21,7 +22,22 @@ export const getStoredEditors = (): Editor[] => {
     const raw = localStorage.getItem('arens_cms_editors');
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Ensure known editors have their correct permissions updated
+        const updated = parsed.map((ed: Editor) => {
+          const match = DEFAULT_EDITORS.find(d => d.email.toLowerCase() === ed.email.toLowerCase());
+          if (match && match.email.includes('1002641566') || match?.email.includes('orly.raz')) {
+            return { ...ed, role: match.role, name: match.name };
+          }
+          return ed;
+        });
+        DEFAULT_EDITORS.forEach(def => {
+          if (!updated.some((u: Editor) => u.email.toLowerCase() === def.email.toLowerCase())) {
+            updated.push(def);
+          }
+        });
+        return updated;
+      }
     }
   } catch (e) {
     console.error('Failed reading stored editors', e);

@@ -13,7 +13,7 @@ const MAJORS_STORAGE_KEY = 'arens_school_majors_v3';
 export const DEFAULT_MAJORS: SchoolMajor[] = [
   {
     id: 'major-software-eng',
-    title: 'הנדסת תוכנה',
+    title: 'מדעי המחשב והנדסת תוכנה',
     division: 'high_school',
     shortDescription: 'תכנות מונחה עצמים, אלגוריתמיקה מתקדמת, מבני נתונים, פרויקטי גמר וסייבר.',
     fullDescription: 'מגמת הנדסת תוכנה ברמה מוגברת (5-10 יח"ל) מכשירה תלמידים בפיתוח מערכות תוכנה מורכבות, תכנות ב-Java/Python/C#, מבני נתונים, אלגוריתמיקה ופרויקטי גמר מעשיים.',
