@@ -10,6 +10,7 @@ import { SchoolMajor, StaffMember } from '../types';
 import { getStoredMajors, subscribeToMajors } from '../services/majorsStorage';
 import { allTeachersList } from '../data/teachersList';
 import { getHebrewInitials, getAvatarColor } from '../utils/avatarUtils';
+import { TeacherAvatar } from './TeacherAvatar';
 
 interface MajorDedicatedPageProps {
   majorId: string;
@@ -298,22 +299,13 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
         </div>
 
         <div className="bg-school-panel/80 border border-school-line/60 rounded-2xl p-6 flex items-start gap-4 shadow-sm">
-          <div className="w-12 h-12 rounded-xl overflow-hidden border border-emerald-500/30 flex items-center justify-center shrink-0">
-            {coordinatorInfo?.imageUrl && !coordinatorInfo.imageUrl.includes('unsplash.com') && !coordinatorInfo.imageUrl.includes('placeholder') ? (
-              <img 
-                src={coordinatorInfo.imageUrl} 
-                alt={coordinatorDisplayName} 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div className={`w-full h-full bg-gradient-to-br ${getAvatarColor(coordinatorDisplayName).bg} flex items-center justify-center select-none`}>
-                <span className={`text-sm font-black ${getAvatarColor(coordinatorDisplayName).text}`}>
-                  {getHebrewInitials(coordinatorDisplayName)}
-                </span>
-              </div>
-            )}
-          </div>
+          <TeacherAvatar
+            name={coordinatorDisplayName}
+            imageUrl={coordinatorInfo?.imageUrl}
+            className="w-12 h-12 rounded-xl"
+            textClassName="text-sm font-black"
+            borderClassName="border border-emerald-500/30"
+          />
           <div>
             <h3 className="text-sm font-extrabold text-school-text">{coordinatorDisplayName}</h3>
             <p className="text-xs text-school-cyan mt-0.5 font-bold">{coordinatorDisplayRole}</p>

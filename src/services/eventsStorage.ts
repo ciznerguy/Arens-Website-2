@@ -118,7 +118,7 @@ export const INITIAL_REGISTERED_TEACHERS: WorkshopRegistration[] = [
     eventId: 'arens-pedagogy-2026',
     workshopId: 'ws-carpentry',
     workshopTitle: 'נגרות',
-    fullName: 'ציזנר גיא',
+    fullName: 'גיא ציזנר',
     phone: '052-6564464',
     email: '1003045545@taded.org.il',
     roleOrSubject: 'מדעי המחשב',
@@ -694,16 +694,22 @@ export const formatToIsraeliDate = (dateStr?: string): string => {
  * Checks whether an event date is today or in the future
  */
 export const isEventFutureOrToday = (dateStr?: string): boolean => {
-  if (!dateStr) return true;
+  if (!dateStr || !dateStr.trim()) return false;
   try {
     const trimmed = dateStr.trim();
     let eventDate: Date | null = null;
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(trimmed)) {
-      const [d, m, y] = trimmed.split('/');
-      eventDate = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10), 23, 59, 59, 999);
-    } else if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
-      const [y, m, d] = trimmed.split('T')[0].split('-');
-      eventDate = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10), 23, 59, 59, 999);
+    if (/^\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{4}$/.test(trimmed)) {
+      const parts = trimmed.split(/[\/\.-]/);
+      const d = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      const y = parseInt(parts[2], 10);
+      eventDate = new Date(y, m - 1, d, 23, 59, 59, 999);
+    } else if (/^\d{4}[\/\.-]\d{1,2}[\/\.-]\d{1,2}/.test(trimmed)) {
+      const parts = trimmed.split('T')[0].split(/[\/\.-]/);
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      const d = parseInt(parts[2], 10);
+      eventDate = new Date(y, m - 1, d, 23, 59, 59, 999);
     } else {
       eventDate = new Date(trimmed);
       eventDate.setHours(23, 59, 59, 999);
@@ -716,7 +722,7 @@ export const isEventFutureOrToday = (dateStr?: string): boolean => {
   } catch (e) {
     console.error('Error checking event date:', e);
   }
-  return true;
+  return false;
 };
 
 /**

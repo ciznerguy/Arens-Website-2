@@ -21,7 +21,7 @@ import {
   FileSpreadsheet,
   MapPin
 } from 'lucide-react';
-import { getUpcomingTeacherEvents, formatToIsraeliDate, subscribeToTeacherEvents } from '../services/eventsStorage';
+import { getUpcomingTeacherEvents, formatToIsraeliDate, subscribeToTeacherEvents, isEventFutureOrToday } from '../services/eventsStorage';
 
 interface RolePortalHomepageProps {
   role: 'students' | 'parents' | 'teachers';
@@ -61,7 +61,7 @@ export const RolePortalHomepage: React.FC<RolePortalHomepageProps> = ({
 
     // Subscribe to Firestore live changes
     const unsub = subscribeToTeacherEvents((events) => {
-      const active = events.filter(e => (e.status as string) !== 'archived');
+      const active = events.filter(e => (e.status as string) !== 'archived' && isEventFutureOrToday(e.date));
       setUpcomingEvents(active);
     });
 
@@ -515,7 +515,7 @@ export const RolePortalHomepage: React.FC<RolePortalHomepageProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               
               {/* CHRONOLOGICAL FUTURE WORKSHOP CARDS (FIRST CARDS ON THE RIGHT FOR TEACHERS) */}
-              {role === 'teachers' && upcomingEvents.map((event, evIdx) => (
+              {role === 'teachers' && upcomingEvents.filter(e => (e.status as string) !== 'archived' && isEventFutureOrToday(e.date)).map((event, evIdx) => (
                 <div
                   key={event.id || `up-ev-${evIdx}`}
                   onClick={() => onNavigateToTab('teachers-events', event.id)}

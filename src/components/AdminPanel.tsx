@@ -1,4 +1,4 @@
-import { saveStaffMember, deleteStaffMember, resetStaffToDefaults, getStoredStaffMembers, subscribeToStaffMembers } from '../services/staffStorage';
+import { saveStaffMember, deleteStaffMember, resetStaffToDefaults, getStoredStaffMembers, subscribeToStaffMembers, isGuyTsizner } from '../services/staffStorage';
 import { saveNewsArticle, deleteNewsArticle, resetNewsToDefaults, getStoredNews, saveSetting } from '../services/cmsStorage';
 import { syncPageOverrideToCloud, syncGradeClassesToCloud } from '../services/pagesStorage';
 import { syncAdminConfigToCloud, subscribeToAdminSettings, fetchAdminConfigFromCloud, getStoredEditors } from '../services/adminStorage';
@@ -81,14 +81,18 @@ import { StaffMember, QuickLink } from '../types';
 import { getHebrewInitials, getAvatarColor } from '../utils/avatarUtils';
 import { SITE_THEMES, DESIGN_TRENDS } from '../data/themes';
 import { getQuickLinks, saveQuickLink, deleteQuickLink } from '../data/quickLinks';
+import { TeacherAvatar } from './TeacherAvatar';
+import { compressImage } from '../utils/imageCompressor';
 
 // Initial default editors
 const DEFAULT_EDITORS = [
   { email: 'nava.ss@arens.school', name: 'נאווה שקל ששון', role: 'מנהלת שש-שנתי' },
   { email: 'dan.p@arens.school', name: 'דן פנחס', role: 'מנהל חטיבת נעורים' },
-  { email: '1003045545@taded.org.il', name: 'מנהל ראשי', role: 'מנהל ראשי' },
+  { email: '1003045545@taded.org.il', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
   { email: 'admin@arens.school', name: 'מנהל מערכת', role: 'מנהל ראשי' },
   { email: 'orly.raz@arens.school', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
+  { email: '1002641566@taded.org.il', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
+  { email: 'orly.raz.1010@gmail.com', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
   { email: 'ciznerguy@taded.org.il', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
   { email: 'me@ciznerguy.com', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
   { email: 'guy.tzizner@arens.school', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
@@ -349,7 +353,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   const isGradeCoordinator = (role: string) => {
-    return role.includes('שכבה') || role.includes('שכבת') || role.startsWith('רכז שכבה') || role.startsWith('רכז/ת שכבה');
+    const r = (role || '').toLowerCase();
+    return r.includes('שכבה') || r.includes('שכבת') || r.startsWith('רכז שכבה') || r.startsWith('רכז/ת שכבה') || r.includes('אורלי רז');
   };
 
   const isMajorCoordinator = (role: string) => {
@@ -359,16 +364,20 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
   const isEnglishCoordinator = (role: string) => {
     const r = (role || '').toLowerCase();
-    return r.includes('אנגלית') || r.includes('english');
+    const hasEnglish = r.includes('אנגלית') || r.includes('english');
+    const isCoordinator = r.includes('רכז') || r.includes('רכזת') || r.includes('מוביל') || r.includes('מובילת') || r.includes('ראש צוות');
+    const isOrly = r.includes('אורלי רז') || (r.includes('יב') && (r.includes('רכז') || r.includes('רכזת')));
+    return (hasEnglish && isCoordinator) || isOrly;
   };
 
   const isHomeroomTeacher = (role: string) => {
-    return (role || '').includes('מחנך') || (role || '').includes('מחנכת');
+    const r = (role || '').toLowerCase();
+    return r.includes('מחנך') || r.includes('מחנכת') || r.includes('אורלי רז');
   };
 
   const getHomeroomClass = (role: string): string | null => {
     if (!role) return null;
-    if (role.includes("יב'1") || role.includes("יב 1") || role.includes("יב1")) return "יב'1";
+    if (role.includes("יב'1") || role.includes("יב 1") || role.includes("יב1") || role.includes("אורלי רז")) return "יב'1";
     const match = role.match(/(?:מחנך|מחנכת)\s*(?:כיתה|כתה)?\s*([ז-י]['"״]?[1-9])/);
     if (match) return match[1];
     return null;
@@ -394,7 +403,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const getGradeFromCoordinatorRole = (role: string): string | null => {
     if (!isGradeCoordinator(role)) return null;
     if (role.includes("יא'") || role.includes("שכבת יא") || role.includes("שכבה יא") || role.includes('יא')) return "יא";
-    if (role.includes("יב'") || role.includes("שכבת יב") || role.includes("שכבה יב") || role.includes('יב')) return "יב";
+    if (role.includes("יב'") || role.includes("שכבת יב") || role.includes("שכבה יב") || role.includes('יב') || role.includes('אורלי רז')) return "יב";
     if (role.includes("ז'") || role.includes("שכבת ז") || role.includes("שכבה ז") || role.includes('ז')) return "ז";
     if (role.includes("ח'") || role.includes("שכבת ח") || role.includes("שכבה ח") || role.includes('ח')) return "ח";
     if (role.includes("ט'") || role.includes("שכבת ט") || role.includes("שכבה ט") || role.includes('ט')) return "ט";
@@ -539,6 +548,102 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [showResetStaffConfirm, setShowResetStaffConfirm] = useState<boolean>(false);
   const [staffFormError, setStaffFormError] = useState<string | null>(null);
 
+  // Helper to find real staff member details for role simulation
+  const simulatedStaffMember = useMemo((): StaffMember | null => {
+    if (!impersonatedRole || !staffMembers.length) return null;
+    const r = impersonatedRole.toLowerCase();
+
+    // 1. Guy Tsizner / Computer Science / Tech Coordinator
+    if (r.includes('מדעי המחשב') || r.includes('תקשוב') || r.includes('ציזנר')) {
+      const found = staffMembers.find(s => isGuyTsizner(s)) || staffMembers.find(s => s.id === 'staff-108');
+      if (found) return found;
+    }
+
+    // 2. Orly Raz / Grade 12 / English Coordinator
+    if (r.includes('אורלי רז') || r.includes('שכבה יב') || (r.includes('יב') && (r.includes('אנגלית') || r.includes('רכז')))) {
+      const found = staffMembers.find(s => s.name?.includes('אורלי רז')) || 
+                    staffMembers.find(s => s.email?.toLowerCase().includes('orly.raz') || s.email?.includes('1002641566'));
+      if (found) return found;
+    }
+
+    // 3. Majors coordinators matching
+    const majorKeywords: { kw: string; nameSub: string; emailSub: string }[] = [
+      { kw: 'דאטה אנליסט', nameSub: 'נירית', emailSub: 'niritrdt' },
+      { kw: 'תיאטרון', nameSub: 'גיל דוידוביץ', emailSub: 'gil.davidovitz' },
+      { kw: 'פיזיקה', nameSub: 'תומר נעמן', emailSub: 'tomertna' },
+      { kw: 'סייבר גיאוגרפיה', nameSub: 'תומר ברגהאוס', emailSub: 't.berghaus' },
+      { kw: 'מנהל וכלכלה', nameSub: 'אילת דניאל', emailSub: 'ayelet.daniel' },
+      { kw: 'ערבית', nameSub: 'רז קצב', emailSub: 'razkyk' },
+      { kw: 'מדעי החברה', nameSub: 'איילה ברונשטיין', emailSub: 'ayalabronstein' },
+      { kw: 'כימיה', nameSub: 'שחר צור', emailSub: 'shahar.tzur' },
+      { kw: 'חנ"ג', nameSub: 'נירה פרקש', emailSub: 'nniirraa' },
+      { kw: 'חינוך גופני', nameSub: 'נירה פרקש', emailSub: 'nniirraa' },
+      { kw: 'ביולוגיה', nameSub: 'מוטי חובה', emailSub: 'motyhova' },
+    ];
+
+    for (const m of majorKeywords) {
+      if (r.includes(m.kw)) {
+        const found = staffMembers.find(s => 
+          (s.name && s.name.includes(m.nameSub)) || 
+          (s.email && s.email.toLowerCase().includes(m.emailSub)) ||
+          (s.role && s.role.includes(m.kw)) ||
+          (s.bio && s.bio.includes(m.kw))
+        );
+        if (found) return found;
+      }
+    }
+
+    // 4. Grade Coordinators
+    if (r.includes('רכז שכבה') || r.includes('רכזת שכבה')) {
+      const gMatch = r.match(/שכבה\s*([ז-יב'"]+)/);
+      const gradeLetter = gMatch ? gMatch[1].replace(/['"]/g, '').trim() : '';
+      if (gradeLetter) {
+        const found = staffMembers.find(s => (s.role || '').includes('רכז') && (s.role || '').includes(gradeLetter));
+        if (found) return found;
+      }
+    }
+
+    // 5. Regular teachers
+    if (r.includes('מורה לחינוך גופני')) {
+      const found = staffMembers.find(s => s.role?.includes('גופני') || s.bio?.includes('גופני'));
+      if (found) return found;
+    }
+    if (r.includes('מורה')) {
+      const aviva = staffMembers.find(s => s.name?.includes('אביבה') || s.email?.toLowerCase().includes('safiraviva'));
+      if (aviva) return aviva;
+      const anyTeacher = staffMembers.find(s => !isGuyTsizner(s) && !s.role?.includes('מנהל') && !s.role?.includes('רכז'));
+      if (anyTeacher) return anyTeacher;
+    }
+
+    // Fallback: match by role string directly
+    return staffMembers.find(s => s.role?.toLowerCase().includes(r)) || null;
+  }, [impersonatedRole, staffMembers]);
+
+  // The active user object for display and profile editing
+  const effectiveUser = useMemo(() => {
+    if (!currentUser) return null;
+    if (!impersonatedRole) return currentUser;
+
+    if (simulatedStaffMember) {
+      const isOrly = simulatedStaffMember.name?.includes('אורלי רז') || 
+                     simulatedStaffMember.email?.toLowerCase().includes('orly.raz') || 
+                     simulatedStaffMember.email?.includes('1002641566');
+      return {
+        name: simulatedStaffMember.name,
+        role: isOrly ? "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" : impersonatedRole,
+        email: simulatedStaffMember.email || (isGuyTsizner(simulatedStaffMember) ? 'ciznerguy@taded.org.il' : (isOrly ? '1002641566@taded.org.il' : `${simulatedStaffMember.name.replace(/\s+/g, '.')}@arens.school`)),
+        imageUrl: simulatedStaffMember.imageUrl || ''
+      };
+    }
+
+    return {
+      name: impersonatedRole,
+      role: impersonatedRole,
+      email: `${impersonatedRole.replace(/\s+/g, '')}@arens.school`,
+      imageUrl: ''
+    };
+  }, [currentUser, impersonatedRole, simulatedStaffMember]);
+
   // Global Confirmation Modal State
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -665,9 +770,20 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
         setSearchPageQuery('אנגלית');
       } else if (isMajorCoordinator(effectiveRole)) {
         setActiveTab('majors');
+      } else {
+        setActiveTab('my-profile');
       }
     }
   }, [isLoggedIn, effectiveRole]);
+
+  // Auto-select English department page when English coordinator visits pages tab
+  useEffect(() => {
+    if (activeTab === 'pages' && isEnglishCoordinator(effectiveRole) && !isFullSiteAdmin(effectiveRole)) {
+      if (!selectedPageKey || !selectedPageKey.includes('english')) {
+        handleSelectPage('course/english-department');
+      }
+    }
+  }, [activeTab, effectiveRole, selectedPageKey]);
 
   // Load Grade main page details on grade change or update
   useEffect(() => {
@@ -1015,9 +1131,11 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     setCurrentUser(loggedUser);
     setIsLoggedIn(true);
 
-    // Automatically navigate to the appropriate tab based on role
+    // Automatically navigate to the appropriate tab based on role or initialStaffEmail
     const userRole = loggedUser.role || '';
-    if (isFullSiteAdmin(userRole)) {
+    if (initialStaffEmail) {
+      setActiveTab('my-profile');
+    } else if (isFullSiteAdmin(userRole)) {
       setActiveTab('homepage');
     } else if (isGradeCoordinator(userRole)) {
       setActiveTab('my-grade');
@@ -2126,24 +2244,30 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     setTimeout(() => setSaveSuccess(null), 3000);
   };
 
-  const handleStaffPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStaffPhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 1500000) { // Limit size to ~1.5MB for localStorage safety
-        alert('הקובץ גדול מדי. מומלץ להעלות תמונה קלה יותר מ-1MB.');
+      if (!file.type.startsWith('image/')) {
+        alert('אנא העלה קובץ תמונה בלבד.');
         return;
       }
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setStaffImageUrl(event.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressed = await compressImage(file, 500, 0.85);
+        setStaffImageUrl(compressed);
+      } catch (err) {
+        console.error('Photo compression error:', err);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            setStaffImageUrl(event.target.result as string);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
-  const handleStaffPhotoDrop = (e: React.DragEvent) => {
+  const handleStaffPhotoDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDraggingStaffPhoto(false);
     const file = e.dataTransfer.files?.[0];
@@ -2152,17 +2276,19 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
         alert('אנא העלה קובץ תמונה בלבד.');
         return;
       }
-      if (file.size > 1500000) {
-        alert('הקובץ גדול מדי. מומלץ להעלות תמונה קלה יותר מ-1MB.');
-        return;
+      try {
+        const compressed = await compressImage(file, 500, 0.85);
+        setStaffImageUrl(compressed);
+      } catch (err) {
+        console.error('Photo compression error:', err);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            setStaffImageUrl(event.target.result as string);
+          }
+        };
+        reader.readAsDataURL(file);
       }
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setStaffImageUrl(event.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -2373,15 +2499,31 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                 {/* Active user info */}
                 <div className="bg-[#121c33] border border-school-line/60 rounded-2xl p-3.5 space-y-2">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-full bg-school-cyan/10 flex items-center justify-center text-school-cyan font-black text-xs">
-                      {currentUser?.name[0]}
+                    <div className="w-9 h-9 rounded-full bg-school-cyan/10 flex items-center justify-center text-school-cyan font-black text-xs overflow-hidden shrink-0 border border-school-cyan/20">
+                      {effectiveUser?.imageUrl ? (
+                        <img 
+                          src={effectiveUser.imageUrl} 
+                          alt={effectiveUser.name} 
+                          className="w-full h-full object-cover" 
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        effectiveUser?.name?.[0] || '?'
+                      )}
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs font-extrabold text-white truncate max-w-[130px]">{currentUser?.name}</p>
-                      <p className="text-[9px] text-school-cyan font-semibold">{currentUser?.role}</p>
+                    <div className="text-right overflow-hidden flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-extrabold text-white truncate max-w-[120px]">{effectiveUser?.name}</p>
+                        {impersonatedRole && (
+                          <span className="text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1 py-0.2 rounded font-bold shrink-0">
+                            סימולציה
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[9px] text-school-cyan font-semibold truncate" title={effectiveRole}>{effectiveRole}</p>
                     </div>
                   </div>
-                  <div className="text-[9px] text-school-muted truncate">{currentUser?.email}</div>
+                  <div className="text-[9px] text-school-muted truncate" title={effectiveUser?.email}>{effectiveUser?.email}</div>
 
                   {/* Super Admin Impersonation Dropdown */}
                   {currentUser && isSuperAdmin(currentUser.role) && (
@@ -2421,7 +2563,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           <option value="רכז שכבה ט'">רכז שכבה ט' (פרופיל + שכבה ט')</option>
                           <option value="רכז שכבה י'">רכז שכבה י' (פרופיל + שכבה י')</option>
                           <option value="רכז שכבה יא'">רכז שכבה יא' (פרופיל + שכבה יא')</option>
-                          <option value="רכז שכבה יב'">רכז שכבה יב' (פרופיל + שכבה יב')</option>
+                          <option value="רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1">רכז שכבה יב' (אורלי רז - שכבה יב' + מקצוע אנגלית + מחנכת יב'1)</option>
                         </optgroup>
                         <optgroup label="רכזי 11 המגמות (פרופיל + מגמה)">
                           <option value="רכז מגמת דאטה אנליסט">רכז מגמת דאטה אנליסט</option>
@@ -2708,6 +2850,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           onClick={() => { 
                             setActiveTab('pages'); 
                             setSearchPageQuery('אנגלית');
+                            handleSelectPage('course/english-department');
                             setEditingNewsIdx(null); 
                           }}
                           className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
@@ -2794,7 +2937,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               {activeTab === 'my-profile' && (
                 <div className="max-w-5xl mx-auto">
                   <MyProfileTab 
-                    currentUser={currentUser}
+                    currentUser={effectiveUser}
                     staffMembers={staffMembers}
                     isFullAdmin={isFullSiteAdmin(effectiveRole)}
                     onProfileUpdated={(updated) => {
@@ -3047,6 +3190,39 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               {activeTab === 'pages' && (isFullSiteAdmin(effectiveRole) || isEnglishCoordinator(effectiveRole)) && (
                 <div className="space-y-6">
                   
+                  {/* Dedicated Header Banner for English Coordinator */}
+                  {isEnglishCoordinator(effectiveRole) && (
+                    <div className="bg-[#101b33] border border-emerald-500/30 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg shadow-black/20">
+                      <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                          <Globe className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h2 className="text-base md:text-lg font-extrabold text-white">מרחב ניהול מקצוע אנגלית השש-שנתי</h2>
+                            <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                              רכזת מקצוע: אורלי רז
+                            </span>
+                          </div>
+                          <p className="text-xs text-school-muted mt-0.5">
+                            ניהול תוכניות לימודים, בגרויות (G/E), פרויקטים ודפי העשרה באנגלית לכלל שכבות בית הספר
+                          </p>
+                        </div>
+                      </div>
+
+                      {isGradeCoordinator(effectiveRole) && (
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('my-grade')}
+                          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-school-cyan/15 border border-school-cyan/30 hover:bg-school-cyan/25 text-xs font-bold text-school-cyan transition-all self-start md:self-auto shadow-sm cursor-pointer"
+                        >
+                          <GraduationCap className="w-4 h-4" />
+                          <span>מעבר לניהול שכבה יב' (מחנכת יב'1)</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
+
                   {/* Select or create layout */}
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                     
@@ -3054,14 +3230,18 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                     <div className="lg:col-span-4 bg-[#101b33] border border-school-line rounded-2xl p-4 space-y-4">
                       
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-school-cyan uppercase">קטלוג דפים</span>
-                        <button 
-                          onClick={handleStartCreateNewPage}
-                          className="flex items-center gap-1.5 bg-school-cyan/10 border border-school-cyan/20 hover:bg-school-cyan/25 text-school-cyan text-[10px] font-extrabold px-2.5 py-1.5 rounded-lg transition-colors"
-                        >
-                          <FilePlus className="w-3.5 h-3.5" />
-                          <span>דף חדש מאפס</span>
-                        </button>
+                        <span className="text-[10px] font-bold text-school-cyan uppercase">
+                          {isEnglishCoordinator(effectiveRole) && !isFullSiteAdmin(effectiveRole) ? 'דפי מקצוע אנגלית' : 'קטלוג דפים'}
+                        </span>
+                        {isFullSiteAdmin(effectiveRole) && (
+                          <button 
+                            onClick={handleStartCreateNewPage}
+                            className="flex items-center gap-1.5 bg-school-cyan/10 border border-school-cyan/20 hover:bg-school-cyan/25 text-school-cyan text-[10px] font-extrabold px-2.5 py-1.5 rounded-lg transition-colors"
+                          >
+                            <FilePlus className="w-3.5 h-3.5" />
+                            <span>דף חדש מאפס</span>
+                          </button>
+                        )}
                       </div>
 
                       <div className="relative">
@@ -4222,33 +4402,57 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           <GraduationCap className="w-5 h-5" />
                         </div>
                         <div>
-                          <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+                          <h2 className="text-lg font-extrabold text-white flex flex-wrap items-center gap-2">
                             <span>ניהול ועריכת שכבות לימוד</span>
                             <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-school-cyan/15 border border-school-cyan/30 text-school-cyan">
                               שכבה {cleanActiveGrade}
                             </span>
+                            {isEnglishCoordinator(effectiveRole) && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                רכזת שכבה יב' ואנגלית (מחנכת יב'1)
+                              </span>
+                            )}
                           </h2>
-                          <p className="text-xs text-school-muted">
+                          <p className="text-xs text-school-muted mt-0.5">
                             {isGradeCoordinator(effectiveRole) 
-                              ? `אזור ניהול ייעודי עבור רכז שכבה ${cleanActiveGrade}`
+                              ? (isEnglishCoordinator(effectiveRole)
+                                  ? 'מרחב ניהול ייעודי עבור אורלי רז: עריכת דף שכבה יב\', כיתות הלימוד ופעילויות השכבה'
+                                  : `אזור ניהול ייעודי עבור רכז שכבה ${cleanActiveGrade}`)
                               : 'בחר שכבה מהרשימה כדי לערוך את דף הבית השכבתי, כיתות הלימוד ודפי המשנה'
                             }
                           </p>
                         </div>
                       </div>
 
-                      {/* View Page Preview Button */}
-                      {mainPageKey && (
-                        <button
-                          onClick={() => {
-                            window.location.hash = mainPageKey;
-                          }}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-school-line hover:border-school-cyan text-xs font-bold text-school-cyan transition-colors self-start md:self-auto cursor-pointer"
-                        >
-                          <Globe className="w-3.5 h-3.5" />
-                          <span>תצוגה מקדימה באתר</span>
-                        </button>
-                      )}
+                      <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+                        {isEnglishCoordinator(effectiveRole) && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveTab('pages');
+                              setSearchPageQuery('אנגלית');
+                              handleSelectPage('course/english-department');
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 hover:bg-emerald-500/25 text-xs font-bold text-emerald-300 transition-colors cursor-pointer shadow-sm"
+                          >
+                            <Globe className="w-3.5 h-3.5 text-emerald-400" />
+                            <span>מעבר לניהול מקצוע אנגלית</span>
+                          </button>
+                        )}
+
+                        {/* View Page Preview Button */}
+                        {mainPageKey && (
+                          <button
+                            onClick={() => {
+                              window.location.hash = mainPageKey;
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-school-line hover:border-school-cyan text-xs font-bold text-school-cyan transition-colors cursor-pointer"
+                          >
+                            <Globe className="w-3.5 h-3.5" />
+                            <span>תצוגה מקדימה באתר</span>
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Admin Grade Switcher Tabs (If not locked to coordinator) */}
@@ -5620,19 +5824,11 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                                   }}
                                 >
                                   <div className="w-11 h-11 rounded-full overflow-hidden border border-school-line/60 shrink-0 flex items-center justify-center">
-                                    {member.imageUrl && !member.imageUrl.includes('unsplash.com') && !member.imageUrl.includes('placeholder') ? (
-                                      <img 
-                                        src={member.imageUrl} 
-                                        alt={member.name} 
-                                        className="w-full h-full object-cover"
-                                      />
-                                    ) : (
-                                      <div className={`w-full h-full bg-gradient-to-br ${getAvatarColor(member.name).bg} flex items-center justify-center select-none`}>
-                                        <span className={`text-xs font-black ${getAvatarColor(member.name).text}`}>
-                                          {getHebrewInitials(member.name)}
-                                        </span>
-                                      </div>
-                                    )}
+                                    <TeacherAvatar 
+                                      imageUrl={member.imageUrl} 
+                                      name={member.name} 
+                                      textClass="text-xs" 
+                                    />
                                   </div>
                                   <div className="space-y-0.5">
                                     <div className="flex items-center gap-2">

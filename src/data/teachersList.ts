@@ -8,7 +8,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מנהלת שש שנתי',
     email: 'kamilroy35@gmail.com',
     bio: 'מנהלת בית הספר השש-שנתי משה ארנס. מובילה את המוסד החינוכי למצוינות אקדמית, ערכית וחברתית.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: true
   },
   {
@@ -18,7 +18,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מנהל חטיבת נעורים',
     email: 'eli.levin79@gmail.com',
     bio: 'מנהל חטיבת הנעורים. מוביל את העשייה החינוכית, הפדגוגית והערכית בחטיבה.',
-    imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: true
   },
   {
@@ -28,7 +28,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"ע',
     email: 'abronit@gmail.com',
     bio: 'מורה למתמטיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -38,7 +38,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לכימיה חט"ע ומורה למדעים חט"נ',
     email: 'bestassl98@gmail.com',
     bio: 'מורה לכימיה בחטיבה העליונה ומורה למדעים בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -48,7 +48,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת יא\'9',
     email: 'liyoed@gmail.com',
     bio: 'מחנכת כיתה יא\'9 בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -58,7 +58,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורת שילוב חט"נ',
     email: 'tovah20@walla.com',
     bio: 'מורת שילוב בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -68,7 +68,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לחינוך מיוחד חט"נ',
     email: 'livnatooosh@gmail.com',
     bio: 'מורה לחינוך מיוחד בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -78,7 +78,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת כתה ט2 ומורה לערבית חט"נ',
     email: 'offir252@gmail.com',
     bio: 'מחנכת כיתה ט2 ומורה לערבית בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -88,7 +88,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת כתה ז3 ומורה לערבית חט"נ',
     email: 'drorite1@gmail.com',
     bio: 'מחנכת כיתה ז3 ומורה לערבית בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -98,7 +98,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לחנ"ג חט"נ',
     email: 'tehilailani88@gmail.com',
     bio: 'מורה לחינוך גופני בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -108,7 +108,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'סגן שני ומורה לאנגלית חט"ע',
     email: 'yaronelner82@gmail.com',
     bio: 'סגן מנהל ומורה לאנגלית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: true
   },
   {
@@ -118,7 +118,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לערבית חט"נ',
     email: 'Amber26@gmail.com',
     bio: 'מורה לערבית בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -128,7 +128,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה להיסטוריה חט"נ ולאזרחות חט"ע',
     email: 'engelshimi@gmail.com',
     bio: 'מורה להיסטוריה בחטיבת הנעורים ולאזרחות בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -138,7 +138,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"ע וחט"נ',
     email: 'galerez2522@gmail.com',
     bio: 'מורה למתמטיקה בחטיבת הנעורים ובחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -148,7 +148,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למרכיבים לחברת מופת חט"ע',
     email: 'assafesh@gmail.com',
     bio: 'מורה למרכיבים לחברת מופת בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -158,7 +158,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת ראשית כיתה תקשורתית ט5 חט"נ',
     email: 'michal30@gmail.com',
     bio: 'מחנכת ראשית כיתה תקשורתית ט5 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -168,7 +168,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורת שילוב חט"נ',
     email: 'SYLTGBY@GMAIL.COM',
     bio: 'מורת שילוב בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -178,7 +178,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת יא\'3 ומורה למתמטיקה חט"ע',
     email: 'ettiburov@gmail.com',
     bio: 'מחנכת יא\'3 ומורה למתמטיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -188,7 +188,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת כתה ז1 מורה להיסטוריה ומסע"אות חט"נ',
     email: 'michalg99@walla.co.il',
     bio: 'מחנכת כיתה ז1, מורה להיסטוריה ומסעאות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -198,7 +198,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לגאוגרפיה חט"ע',
     email: 'navatb11@gmail.com',
     bio: 'מורה לגאוגרפיה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -208,7 +208,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לאנגלית חט"נ',
     email: 'radmila.sasonov@gmail.com',
     bio: 'מורה לאנגלית בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -218,7 +218,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לכימיה חט"נ',
     email: 'lynn28.h@gmail.com',
     bio: 'מורה לכימיה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -228,7 +228,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"ע',
     email: 'yonat.shirin@gmail.com',
     bio: 'מורה למתמטיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -238,7 +238,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"ע',
     email: 'limorbenz1@gmail.com',
     bio: 'מורה למתמטיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -248,7 +248,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לביולוגיה חט"ע',
     email: 'ndz.moshearens@gmail.com',
     bio: 'מורה לביולוגיה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -258,7 +258,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכזת בגרויות והתאמות מחנכת כיתה יא4 ומורה להיסטוריה וזהות וחברה',
     email: 'liatbn100@gmail.com',
     bio: 'רכזת בגרויות והתאמות, מחנכת כיתה יא4 ומורה להיסטוריה וזהות וחברה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -268,7 +268,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"ע',
     email: 'selling2022@gmail.com',
     bio: 'מורה למתמטיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -278,7 +278,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לפיזיקה חט"ע',
     email: 't.berghaus@gmail.com',
     bio: 'מורה לפיזיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -288,7 +288,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למדעי החברה חט"ע',
     email: 'ayalabronstein@gmail.com',
     bio: 'מורה למדעי החברה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -298,7 +298,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנך כתה ז4 ומורה להיסטוריה ומסע"אות',
     email: 'aryebashari@gmail.com',
     bio: 'מחנך כיתה ז4 ומורה להיסטוריה ומסעאות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -308,7 +308,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'סגן מנהל חט"נ ומחנך כתה ט4 חט"נ',
     email: 'nadavg85@gmail.com',
     bio: 'סגן מנהל חטיבת הנעורים ומחנך כיתה ט4.',
-    imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: true
   },
   {
@@ -318,7 +318,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לאנגלית חט"ע',
     email: 'revigoren@walla.com',
     bio: 'מורה לאנגלית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -328,7 +328,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לגיאוגרפיה חט"ע',
     email: 'orna.gindy@gmail.com',
     bio: 'מורה לגיאוגרפיה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -338,7 +338,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת י\'2 מורה לכימיה חט"ע רכזת שכבה י\' ורכזת מגמה כימיה',
     email: 'niritrdt@gmail.com',
     bio: 'מחנכת י\'2, מורה לכימיה חט"ע, רכזת שכבה י\' ורכזת מגמת כימיה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -348,7 +348,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת י\'6 ומורה לביולוגיה חט"ע',
     email: 'meravgromman@gmail.com',
     bio: 'מחנכת כיתה י\'6 ומורה לביולוגיה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -358,7 +358,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנך כתה ז 6 ומורה להיסטוריה חט"נ',
     email: 'yurigrossman@gmail.com',
     bio: 'מחנך כיתה ז6 ומורה להיסטוריה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -368,7 +368,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למסע"אות חט"נ',
     email: 'Grzipi11@gmail.com',
     bio: 'מורה למסעאות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -378,7 +378,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה ללשון חט"ע',
     email: 'dvlior100@gmail.com',
     bio: 'מורה ללשון בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -388,7 +388,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת ראשית כתה תקשורתית ח10 חט"נ',
     email: 'Hiladavid31@gmail.com',
     bio: 'מחנכת ראשית כיתה תקשורתית ח10 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -398,7 +398,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת יא\' 5 מורה לאזרחות ספרות',
     email: 'ronyydavid@gmail.com',
     bio: 'מחנכת יא\'5, מורה לאזרחות וספרות בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -408,7 +408,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לתנ"כ ומסע"אות חט"נ',
     email: 'S0544750307@gmail.com',
     bio: 'מורה לתנ"ך ומסעאות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -418,7 +418,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לביולוגיה חט"ע ורכז מגמה',
     email: 'gil.davidovitz@gmail.com',
     bio: 'מורה לביולוגיה ורכז מגמת ביולוגיה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -428,7 +428,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למידע ונתונים חט"ע',
     email: 'ayelet.daniel@gmail.com',
     bio: 'מורה למידע ונתונים בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -438,7 +438,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת כתה ז 7 ומורה לספרות ואומנות חט"נ',
     email: '1002096329@jerschools.org.il',
     bio: 'מחנכת כיתה ז7 ומורה לספרות ואומנות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -448,7 +448,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לשל"ח חט"נ',
     email: 'nehorayha123@gmail.com',
     bio: 'מורה לשל"ח בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -458,7 +458,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"ב וחט"ע',
     email: 'zhvaintrub@gmail.com',
     bio: 'מורה למתמטיקה בחטיבת הנעורים ובחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -468,7 +468,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לכימיה חט"ע',
     email: 'kobywolfman@gmail.com',
     bio: 'מורה לכימיה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -478,7 +478,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לספרות חט"ע',
     email: 'tova58@gmail.com',
     bio: 'מורה לספרות בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -487,7 +487,7 @@ export const allTeachersList: StaffMember[] = [
     role: 'מחנכת כתה ז8 ומורה למתמטיקה',
     roleDescription: 'מחנכת כתה ז 8 ומורה למתמטיקה חט"נ',
     bio: 'מחנכת כיתה ז8 ומורה למתמטיקה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -497,7 +497,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת יב\' 4 מורה לחנ"ג חט"ע ורכזת מעורבות חברתית',
     email: 'Hofit1986.v@gmail.com',
     bio: 'מחנכת יב\'4, מורה לחינוך גופני ורכזת מעורבות חברתית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -507,7 +507,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לאנגלית חט"נ',
     email: 'varonelite@gmail.com',
     bio: 'מורה לאנגלית בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -517,7 +517,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"נ',
     email: 'eliz@ariel.ac.il',
     bio: 'מורה למתמטיקה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -527,7 +527,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת י\'4 ומורה לאנגלית חט"ע',
     email: 'mishelle@gmail.com',
     bio: 'מחנכת כיתה י\'4 ומורה לאנגלית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -537,7 +537,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"ע',
     email: 'estisinger1967@gmail.com',
     bio: 'מורה למתמטיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -547,7 +547,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנך כתה ח4 ומורה למדעים ופיזיקה חט"נ',
     email: 'Sophalin@gmail.com',
     bio: 'מחנך כיתה ח4 ומורה למדעים ופיזיקה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -557,7 +557,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לאנגלית חט"נ',
     email: '33sjyalhj@gmail.com',
     bio: 'מורה לאנגלית בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -567,7 +567,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לתיאטרון חט"ע',
     email: 'motyhova@gmail.com',
     bio: 'מורה לתיאטרון בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -577,7 +577,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למדעים חט"נ',
     email: 'HilkiHen@gmail.com',
     bio: 'מורה למדעים בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -587,7 +587,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לספרות חט"ע מסלול אומנויות הבמה חט"נ',
     email: 'talpess@gmail.com',
     bio: 'מורה לספרות בחטיבה העליונה ומסלול אומנויות הבמה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -597,7 +597,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'יועצת חט"ע ומחנכת כיתה יב\' 5',
     email: 'offrilu@gmail.com',
     bio: 'יועצת חינוכית בחטיבה העליונה ומחנכת כיתה יב\'5.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -607,7 +607,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכז מתמטיקה ומורה מתמטיקה חט"ע',
     email: 'yaron.jacob@gmail.com',
     bio: 'רכז מתמטיקה ומורה למתמטיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -617,7 +617,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת יב\' 7 ומורה לחנ"ג חט"ע',
     email: 'linoynaaman97@gmail.com',
     bio: 'מחנכת כיתה יב\'7 ומורה לחינוך גופני בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -627,7 +627,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'יועצת חט"ע',
     email: 'buli1774@gmail.com',
     bio: 'יועצת חינוכית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -637,7 +637,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכזת פדגוגית ומחנכת כתה תקשורתית ז 9 חט"נ',
     email: 'Lirontzur10@gmail.com',
     bio: 'רכזת פדגוגית ומחנכת כיתה תקשורתית ז9 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -647,7 +647,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לחינוך מיוחד חט"נ',
     email: 'meirav2286@gmail.com',
     bio: 'מורה לחינוך מיוחד בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -657,7 +657,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכזת תנ"כ מחנכת כתה ח7 ומורה לתנ"כ ומסע"אות חט"נ',
     email: 'sarit8642@gmail.com',
     bio: 'רכזת תנ"ך, מחנכת כיתה ח7 ומורה לתנ"ך ומסעאות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -667,7 +667,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'יועצת ומחנכת כתה ז2 חט"נ',
     email: 'oritlevy1@gmail.com',
     bio: 'יועצת חינוכית ומחנכת כיתה ז2 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -677,7 +677,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה וספרות חט"ע',
     email: 'liron.lubel@gmail.com',
     bio: 'מורה למתמטיקה וספרות בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -686,7 +686,7 @@ export const allTeachersList: StaffMember[] = [
     role: 'תרפיסטית',
     roleDescription: 'תרפיסטית',
     bio: 'תרפיסטית רגשית בבית הספר.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -696,7 +696,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורת שילוב חט"נ',
     email: 'sigalit194@gmail.com',
     bio: 'מורת שילוב בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -706,7 +706,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לחנ"ג חט"ע',
     email: 'meytal13@gmail.com',
     bio: 'מורה לחינוך גופני בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -716,7 +716,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת כתה ח2 ומורה למתמטיקה חט"נ',
     email: 'VERED356@WALLA.CO.IL',
     bio: 'מחנכת כיתה ח2 ומורה למתמטיקה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -726,7 +726,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"ע',
     email: 'Meir_maya@walla.co.il',
     bio: 'מורה למתמטיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -736,7 +736,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת כתה ט3 ומורה למסע"אות חט"נ',
     email: 'Inbal123401@gmail.com',
     bio: 'מחנכת כיתה ט3 ומורה למסעאות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -746,7 +746,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנך יב\' 6 ומורה לחנ"ג חט"ע רכז מערכת חט"ע',
     email: 'ranmori2101@gmail.com',
     bio: 'מחנך יב\'6, מורה לחנ"ג ורכז מערכת בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -756,7 +756,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורת שילוב חט"נ',
     email: 's0548525422@gmail.com',
     bio: 'מורת שילוב בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -766,7 +766,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת יב\' 3 ומורה לאנגלית חט"ע',
     email: 'eman.mahameed28@gmail.com',
     bio: 'מחנכת כיתה יב\'3 ומורה לאנגלית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -776,7 +776,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"נ',
     email: 'amnonmi6@gmail.com',
     bio: 'מורה למתמטיקה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -786,7 +786,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לעברית וספרות חט"נ',
     email: 'bezuma9@gmail.com',
     bio: 'מורה לעברית וספרות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -796,7 +796,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'סגן ראשון רכז פדגוגי רכז שכבה ומחנך יא\'6',
     email: 'nirmalka6@gmail.com',
     bio: 'סגן ראשון, רכז פדגוגי, רכז שכבה ומחנך כיתה יא\'6 בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: true
   },
   {
@@ -806,7 +806,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לחנ"ג חט"ע',
     email: 'ofekmalka77@gmail.com',
     bio: 'מורה לחינוך גופני בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -816,7 +816,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'יועצת שכבה ז חט"נ',
     email: 'Inbalmaman5@gmail.com',
     bio: 'יועצת שכבת ז\' בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -826,7 +826,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לספרות עברית ומסע"אות מחנכת כתה ח5 חט"נ ורכזת מערכת',
     email: 'Shani.manor789@gmail.com',
     bio: 'רכזת מערכת, מחנכת כיתה ח5 ומורה לספרות, עברית ומסעאות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -836,7 +836,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למידע ונתונים חט"ע',
     email: 'moligi.m@gmail.com',
     bio: 'מורה למידע ונתונים בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -846,7 +846,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לאנגלית וספרות חט"ע',
     email: 'moragmessinger@gmail.com',
     bio: 'מורה לאנגלית וספרות בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -856,7 +856,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה ללשון חט"ע',
     email: 'reutmoshe100@gmail.com',
     bio: 'מורה ללשון בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -866,7 +866,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"נ',
     email: 'rivka_nagar@walla.co.il',
     bio: 'מורה למתמטיקה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -876,7 +876,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת יא\'8 חט"ע',
     email: 'nnofya66@gmail.com',
     bio: 'מחנכת כיתה יא\'8 בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -886,7 +886,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנך י\'5 ומורה לאזרחות חט"ע',
     email: 'navetrip@gmail.com',
     bio: 'מחנך כיתה י\'5 ומורה לאזרחות בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -896,7 +896,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנך י\'1 ומורה לאנגלית חט"ע',
     email: 'arielnoy@gmail.com',
     bio: 'מחנך כיתה י\'1 ומורה לאנגלית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -906,7 +906,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לאנגלית חט"ע',
     email: 'Galnahim1991@gmail.com',
     bio: 'מורה לאנגלית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -916,7 +916,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנך יא\'7, מורה לחנ"ג ורכז מגמת חנ"ג חט"ע',
     email: 'tomertna19922@gmail.com',
     bio: 'מחנך כיתה יא\'7, מורה לחינוך גופני ורכז מגמת חנ"ג בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -926,7 +926,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה ללשון חט"ע',
     email: 'bcsulami@gmail.com',
     bio: 'מורה ללשון בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -936,7 +936,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לספרות והיסטוריה חט"ע',
     email: 'eitans067@gmail.com',
     bio: 'מורה לספרות והיסטוריה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -946,7 +946,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לאנגלית חט"ע',
     email: 'safiraviva22@gmail.com',
     bio: 'מורה לאנגלית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -956,7 +956,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לאזרחות חט"ע',
     email: 'sigalitadi2015@gmail.com',
     bio: 'מורה לאזרחות בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -966,7 +966,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכזת של"ח ומורה של"ח חט"נ',
     email: 'Yaelovad@gmail.com',
     bio: 'רכזת ומורה לשל"ח בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -976,7 +976,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכזת ומורה למתמטיקה חט"נ',
     email: 'galitozer007@gmail.com',
     bio: 'רכזת ומורה למתמטיקה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -986,7 +986,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה תקשורתיות חט"נ',
     email: 'tamarhaim640@gmail.com',
     bio: 'מורה למתמטיקה בכיתות תקשורת בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -996,7 +996,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה להיסטוריה וספרות חט"ע',
     email: 'amram74@gmail.com',
     bio: 'מורה להיסטוריה וספרות בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1006,7 +1006,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת עמיתה כתה תקשרותית ט7',
     email: 'h6793392@gmail.com',
     bio: 'מחנכת עמיתה בכיתה תקשורתית ט7 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1016,7 +1016,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לעברית ומסע"אות חט"נ',
     email: 'ofir.pniel@gmail.com',
     bio: 'מורה לעברית ומסעאות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1026,7 +1026,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת י\'3 ומורה לספרות חט"ע',
     email: 'rachelif81@gmail.com',
     bio: 'מחנכת כיתה י\'3 ומורה לספרות בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1036,7 +1036,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכזת חברתית חט"ב וחט"ע ומחנכת כתה ט6 חט"נ',
     email: 'Elinorpt@gmail.com',
     bio: 'רכזת חברתית חט"ב וחט"ע ומחנכת כיתה ט6 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1046,7 +1046,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לערבית חט"ע',
     email: 'nniirraa@gmail.com',
     bio: 'מורה לערבית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1056,7 +1056,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנך כתה ז 5 ומורה למתמטיקה חט"נ',
     email: 'azukerm@gmail.com',
     bio: 'מחנך כיתה ז5 ומורה למתמטיקה בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1066,7 +1066,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לגאוגרפיה חט"ע ורכז ביטחון חט"ע',
     email: 'shahar.tzur1@gmail.com',
     bio: 'מורה לגאוגרפיה ורכז ביטחון בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1076,7 +1076,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכז מגמת מדעי המחשב והנדסת תוכנה חט"ע, מורה למדעי המחשב ורכז תקשוב בית ספרי',
     email: 'ciznerguy@taded.org.il',
     bio: 'רכז מגמת מדעי המחשב והנדסת תוכנה בחטיבה העליונה, מורה להנדסת תוכנה ורכז תקשוב בית ספרי.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1086,7 +1086,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה כתה תקשורתית חט"נ',
     email: 'etyshn@gmail.com',
     bio: 'מורה למתמטיקה בכיתות תקשורתיות בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1096,7 +1096,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לחנ"ג ומחנכת כתה ח6 חט"נ',
     email: 'marindoron@gmail.com',
     bio: 'מחנכת כיתה ח6 ומורה לחינוך גופני בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1106,7 +1106,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנך יא\'2 ומורה לכלכלה וניהול חט"ע',
     email: 'razkyk007@gmail.com',
     bio: 'מחנך כיתה יא\'2 ומורה לכלכלה וניהול בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1116,7 +1116,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'יועצת שכבה ט ומחנכת כתה ט 1 חט"נ',
     email: 'smadarkakon1@gmail.com',
     bio: 'יועצת שכבת ט\' ומחנכת כיתה ט1 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1126,7 +1126,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למחשבים חט"נ',
     email: 'ella.kreiczer@gmail.com',
     bio: 'מורה למחשבים בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1136,7 +1136,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"ע',
     email: 'avireuven@gmail.com',
     bio: 'מורה למתמטיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1146,7 +1146,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'תרפיסטית כתות תקשורת חט"ע',
     email: 'meirav.tarbut@gmail.com',
     bio: 'תרפיסטית כיתות תקשורת בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1156,7 +1156,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לעברית +רבי מלל חט"נ',
     email: 'michalp80@gmail.com',
     bio: 'מורה לעברית ומקצועות רבי מלל בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1166,7 +1166,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'תרפיסטית כתות תקשורת חט"ע',
     email: 'liatrozink@gmail.com',
     bio: 'תרפיסטית כיתות תקשורת בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1176,7 +1176,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לחנ"ג חט"ב',
     email: 'guyrotman6@gmail.com',
     bio: 'מורה לחינוך גופני בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1186,7 +1186,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכז שכבה ז\' ומחנך ראשי כתה תקשורתית ז 10 חט"נ',
     email: 'roeirotem6@gmail.com',
     bio: 'רכז שכבת ז\' ומחנך ראשי כיתה תקשורתית ז10 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1196,7 +1196,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכזת שכבה יב\' מחנכת יב\' 1 רכזת אנגלית ומורה לאנגלית חט"ע',
     email: 'orly.raz.1010@gmail.com',
     bio: 'רכזת שכבת יב\', רכזת מקצוע אנגלית ומחנכת כיתה יב\'1 בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1206,7 +1206,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת י\'8 חט"ע',
     email: 'shani.sagi123@gmail.com',
     bio: 'מחנכת כיתה י\'8 בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1216,7 +1216,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'רכזת ומורה לאנגלית מחנכת כתה ח1 חט"נ',
     email: 'nishlukit@gmail.com',
     bio: 'רכזת ומורה לאנגלית ומחנכת כיתה ח1 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1226,7 +1226,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת י\'7 ורכזת תקשורתיות חט"ע',
     email: 'veredsagiv9@gmail.com',
     bio: 'מחנכת כיתה י\'7 ורכזת כיתות תקשורת בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1236,7 +1236,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למדעי החברה ופסיכולוגיה חט"ע',
     email: 'ora.schwarz7@gmail.com',
     bio: 'מורה למדעי החברה ופסיכולוגיה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1246,7 +1246,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת עמיתה כתה תקשרותית חט"נ',
     email: 'odel.shunem@gmail.com',
     bio: 'מחנכת עמיתה בכיתה תקשורתית בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1256,7 +1256,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'סגנית מנהל חט"נ מחנכת ח3 מורה לעברית וספרות חט"נ',
     email: 'Irisshahmoon@bezeqint.net',
     bio: 'סגנית מנהל חטיבת הנעורים, מחנכת כיתה ח3 ומורה לעברית וספרות.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: true
   },
   {
@@ -1266,7 +1266,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת עמיתה כתה תקשורתית ח9 חט"נ',
     email: 'adishtain@gmail.com',
     bio: 'מחנכת עמיתה בכיתה תקשורתית ח9 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1276,7 +1276,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'יועצת שכבה ח ומחנכת כתה ח8 חט"נ',
     email: 'rinatshtekel@gmail.com',
     bio: 'יועצת שכבת ח\' ומחנכת כיתה ח8 בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1286,7 +1286,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למדעים חט"נ',
     email: 'spninas@yahoo.com',
     bio: 'מורה למדעים בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1296,7 +1296,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה ללשון חט"נ',
     email: 'Nofar811@gmail.com',
     bio: 'מורה ללשון בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1306,7 +1306,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה למתמטיקה חט"ע',
     email: 'boaz.shlomo.david@gmail.com',
     bio: 'מורה למתמטיקה בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1316,7 +1316,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לאנגלית חט"נ',
     email: 'Royamotiey@gmail.com',
     bio: 'מורה לאנגלית בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1326,7 +1326,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מחנכת יא\'1 ומורה לאנגלית חט"ע',
     email: 'sharon4usa@gmail.com',
     bio: 'מחנכת כיתה יא\'1 ומורה לאנגלית בחטיבה העליונה.',
-    imageUrl: 'https://images.unsplash.com/photo-1580894732444-8fecef2271ff?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1336,7 +1336,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לתנ"כ חט"נ',
     email: 'batelsh111@gmail.com',
     bio: 'מורה לתנ"ך בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1346,7 +1346,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לחינוך מיוחד - מורה מקצועית רבי מלל חט"נ',
     email: 'pninash75@gmail.com',
     bio: 'מורה לחינוך מיוחד ומקצועות רבי מלל בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   },
   {
@@ -1356,7 +1356,7 @@ export const allTeachersList: StaffMember[] = [
     roleDescription: 'מורה לשילוב חט"נ',
     email: 't036191885@gmail.com',
     bio: 'מורת שילוב בחטיבת הנעורים.',
-    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400',
+    imageUrl: '',
     isManagement: false
   }
 ];

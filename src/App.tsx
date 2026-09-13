@@ -60,6 +60,7 @@ import {
 } from './data';
 import { StaffMember } from './types';
 import { getHebrewInitials, getAvatarColor } from './utils/avatarUtils';
+import { TeacherAvatar } from './components/TeacherAvatar';
 import FloatingHeroBalls from './components/FloatingHeroBalls';
 import InternalPageViewer from './components/InternalPageViewer';
 import FloatingWhatsAppShare from './components/FloatingWhatsAppShare';
@@ -162,6 +163,15 @@ export default function App() {
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
   // Selected staff member for bio modal popup
   const [selectedStaffForModal, setSelectedStaffForModal] = useState<StaffMember | null>(null);
+  // Keep modal data in sync if staff members change
+  useEffect(() => {
+    if (selectedStaffForModal) {
+      const fresh = staffMembers.find(s => s.id === selectedStaffForModal.id);
+      if (fresh && fresh !== selectedStaffForModal) {
+        setSelectedStaffForModal(fresh);
+      }
+    }
+  }, [staffMembers]);
   // State to toggle between showing only management staff vs all staff on the homepage
   const [showAllStaffOnHomepage, setShowAllStaffOnHomepage] = useState<boolean>(false);
 
@@ -269,10 +279,15 @@ export default function App() {
       refreshTeacherEvents();
     };
 
+    const handleStaffUpdate = () => {
+      loadStaff();
+    };
+
     window.addEventListener('internal_pages_updated', handlePagesUpdate);
     window.addEventListener('quick_links_updated', handleQuickLinksUpdate);
     window.addEventListener('arens_events_updated', handleEventsUpdate);
     window.addEventListener('arens_registrations_updated', handleEventsUpdate);
+    window.addEventListener('arens_cms_staff_updated', handleStaffUpdate);
     return () => {
       unsubStaff();
       unsubNews();
@@ -282,6 +297,7 @@ export default function App() {
       window.removeEventListener('quick_links_updated', handleQuickLinksUpdate);
       window.removeEventListener('arens_events_updated', handleEventsUpdate);
       window.removeEventListener('arens_registrations_updated', handleEventsUpdate);
+      window.removeEventListener('arens_cms_staff_updated', handleStaffUpdate);
     };
   }, []);
 
@@ -1207,21 +1223,14 @@ export default function App() {
                           )}
 
                           {/* Profile Photo or Hebrew Initials Avatar */}
-                          <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-school-line/60 group-hover:border-school-cyan/50 transition-colors mb-5 shadow-inner">
-                            {member.imageUrl && !member.imageUrl.includes('unsplash.com') && !member.imageUrl.includes('placeholder') ? (
-                              <img 
-                                src={member.imageUrl} 
-                                alt={member.name} 
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                referrerPolicy="no-referrer"
-                              />
-                            ) : (
-                              <div className={`w-full h-full bg-gradient-to-br ${getAvatarColor(member.name).bg} flex items-center justify-center text-white select-none`}>
-                                <span className={`text-2xl font-black tracking-wider ${getAvatarColor(member.name).text}`}>
-                                  {getHebrewInitials(member.name)}
-                                </span>
-                              </div>
-                            )}
+                          <div className="mb-5">
+                            <TeacherAvatar
+                              name={member.name}
+                              imageUrl={member.imageUrl}
+                              className="w-28 h-28 rounded-full shadow-inner"
+                              textClassName="text-2xl font-black"
+                              borderClassName="border-2 border-school-line/60 group-hover:border-school-cyan/50 transition-colors"
+                            />
                           </div>
 
                           {/* Info */}
@@ -2101,22 +2110,13 @@ export default function App() {
                 
                 {/* Photo and Header Info */}
                 <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-right pt-2">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-school-cyan/50 shadow-md shrink-0 flex items-center justify-center">
-                    {selectedStaffForModal.imageUrl && !selectedStaffForModal.imageUrl.includes('unsplash.com') && !selectedStaffForModal.imageUrl.includes('placeholder') ? (
-                      <img 
-                        src={selectedStaffForModal.imageUrl} 
-                        alt={selectedStaffForModal.name} 
-                        className="w-full h-full object-cover"
-                        referrerPolicy="no-referrer"
-                      />
-                    ) : (
-                      <div className={`w-full h-full bg-gradient-to-br ${getAvatarColor(selectedStaffForModal.name).bg} flex items-center justify-center text-white select-none`}>
-                        <span className={`text-3xl font-black ${getAvatarColor(selectedStaffForModal.name).text}`}>
-                          {getHebrewInitials(selectedStaffForModal.name)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  <TeacherAvatar 
+                    name={selectedStaffForModal.name}
+                    imageUrl={selectedStaffForModal.imageUrl}
+                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-full shadow-md shrink-0"
+                    textClassName="text-3xl font-black"
+                    borderClassName="border-2 border-school-cyan/50"
+                  />
                   <div className="space-y-1">
                     <h3 className="text-xl font-black text-white">{selectedStaffForModal.name}</h3>
                     <p className="text-xs text-school-cyan font-bold">{selectedStaffForModal.role}</p>

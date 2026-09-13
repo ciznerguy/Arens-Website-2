@@ -14,7 +14,7 @@ const firebaseConfig = {
 // Initialize Firebase App
 export const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize Firestore with forced long-polling for reliable connectivity in sandboxed iframes & proxies
+// Initialize Firestore with auto-detect long-polling for reliable connectivity across browsers, WebSockets, and proxies
 const cfg = firebaseConfigJson as Record<string, any>;
 const databaseId =
   cfg.firestoreDatabaseId && cfg.firestoreDatabaseId !== '(default)'
@@ -26,7 +26,7 @@ try {
   firestoreInstance = initializeFirestore(
     app,
     {
-      experimentalForceLongPolling: true,
+      experimentalAutoDetectLongPolling: true,
     },
     databaseId
   );

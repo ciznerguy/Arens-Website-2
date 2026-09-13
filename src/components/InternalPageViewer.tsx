@@ -54,6 +54,7 @@ import { ArticleImageGallery } from './ArticleImageGallery';
 import { gradesData } from '../data';
 import { allTeachersList } from '../data/teachersList';
 import { getHebrewInitials, getAvatarColor } from '../utils/avatarUtils';
+import { TeacherAvatar } from './TeacherAvatar';
 import { getStoredMajors } from '../services/majorsStorage';
 import { SchoolMajor, StaffMember } from '../types';
 
@@ -521,22 +522,13 @@ export default function InternalPageViewer({
                       {coordinatorsList.map((coord, cIdx) => (
                         <div key={cIdx} className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-school-bg/40 border border-school-line/50">
                           {/* Avatar with Hebrew initials or uploaded photo */}
-                          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-school-cyan/40 shadow-sm flex items-center justify-center">
-                            {coord.imageUrl && !coord.imageUrl.includes('unsplash.com') && !coord.imageUrl.includes('placeholder') ? (
-                              <img 
-                                src={coord.imageUrl} 
-                                alt={coord.name} 
-                                className="w-full h-full object-cover"
-                                referrerPolicy="no-referrer"
-                              />
-                            ) : (
-                              <div className={`w-full h-full bg-gradient-to-br ${getAvatarColor(coord.name).bg} flex items-center justify-center text-white select-none`}>
-                                <span className={`text-xl font-black ${getAvatarColor(coord.name).text}`}>
-                                  {getHebrewInitials(coord.name)}
-                                </span>
-                              </div>
-                            )}
-                          </div>
+                          <TeacherAvatar
+                            name={coord.name}
+                            imageUrl={coord.imageUrl}
+                            className="w-16 h-16 rounded-full shadow-sm"
+                            textClassName="text-xl font-black"
+                            borderClassName="border-2 border-school-cyan/40"
+                          />
 
                           <div className="space-y-0.5">
                             <h3 className="font-black text-sm text-school-text">{coord.name}</h3>

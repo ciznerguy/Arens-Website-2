@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { 
   User, Mail, Camera, UploadCloud, CheckCircle2, Sparkles, 
-  Trash2, Save, ShieldCheck, Award, GraduationCap, Info,
-  AlertCircle, RefreshCw, ExternalLink, BookOpen, HeartHandshake
+  Trash2, Save, Award, GraduationCap, Info,
+  AlertCircle, RefreshCw, ExternalLink, BookOpen, HeartHandshake, Loader2
 } from 'lucide-react';
 import { StaffMember } from '../types';
-import { saveStaffMember } from '../services/staffStorage';
+import { saveStaffMember, isGuyTsizner } from '../services/staffStorage';
 import { getHebrewInitials, getAvatarColor } from '../utils/avatarUtils';
+import { compressImage } from '../utils/imageCompressor';
+import { TeacherAvatar } from './TeacherAvatar';
 
 interface MyProfileTabProps {
   currentUser: { email: string; name: string; role: string } | null;
@@ -31,6 +33,7 @@ export const MyProfileTab: React.FC<MyProfileTabProps> = ({
   const [imageUrl, setImageUrl] = useState('');
   const [isManagement, setIsManagement] = useState(false);
   const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
+  const [isCompressingPhoto, setIsCompressingPhoto] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -40,28 +43,37 @@ export const MyProfileTab: React.FC<MyProfileTabProps> = ({
     if (!currentUser) return;
     const cleanEmail = currentUser.email.trim().toLowerCase();
     
+    // Check if the logged-in user is Guy Tsizner
+    const isGuy = isGuyTsizner(currentUser);
+
     // Find matching staff member
-    let match = staffMembers.find(s => s.email?.trim().toLowerCase() === cleanEmail);
-    if (!match && currentUser.name) {
-      match = staffMembers.find(s => s.name.trim().toLowerCase() === currentUser.name.trim().toLowerCase());
+    let match: StaffMember | undefined;
+    if (isGuy) {
+      match = staffMembers.find(s => isGuyTsizner(s));
+    } else {
+      match = staffMembers.find(s => s.email?.trim().toLowerCase() === cleanEmail);
+      if (!match && currentUser.name) {
+        match = staffMembers.find(s => s.name.trim().toLowerCase() === currentUser.name.trim().toLowerCase());
+      }
     }
 
     if (match) {
-      setSelectedStaffId(match.id);
-      setName(match.name || '');
-      setRole(match.role || '');
-      setRoleDescription(match.roleDescription || '');
-      setEmail(match.email || currentUser.email || '');
-      setBio(match.bio || '');
+      setSelectedStaffId(isGuy ? 'staff-108' : match.id);
+      setName(isGuy ? 'גיא ציזנר' : (match.name || ''));
+      setRole(match.role || (isGuy ? 'רכז מגמת מדעי המחשב והנדסת תוכנה, ורכז תקשוב' : ''));
+      setRoleDescription(match.roleDescription || (isGuy ? 'רכז מגמת מדעי המחשב והנדסת תוכנה חט"ע, מורה למדעי המחשב ורכז תקשוב בית ספרי' : ''));
+      setEmail(isGuy ? 'ciznerguy@taded.org.il' : (match.email || currentUser.email || ''));
+      setBio(match.bio || (isGuy ? 'רכז מגמת מדעי המחשב והנדסת תוכנה בחטיבה העליונה, מורה להנדסת תוכנה ורכז תקשוב בית ספרי.' : ''));
       setImageUrl(match.imageUrl || '');
-      setIsManagement(!!match.isManagement);
+      setIsManagement(isGuy ? false : !!match.isManagement);
     } else {
       // New profile for this teacher
-      setName(currentUser.name || '');
-      setRole(currentUser.role || 'מורה');
-      setEmail(currentUser.email || '');
-      setRoleDescription('');
-      setBio('');
+      setSelectedStaffId(isGuy ? 'staff-108' : '');
+      setName(isGuy ? 'גיא ציזנר' : (currentUser.name || ''));
+      setRole(isGuy ? 'רכז מגמת מדעי המחשב והנדסת תוכנה, ורכז תקשוב' : (currentUser.role || 'מורה'));
+      setEmail(isGuy ? 'ciznerguy@taded.org.il' : (currentUser.email || ''));
+      setRoleDescription(isGuy ? 'רכז מגמת מדעי המחשב והנדסת תוכנה חט"ע, מורה למדעי המחשב ורכז תקשוב בית ספרי' : '');
+      setBio(isGuy ? 'רכז מגמת מדעי המחשב והנדסת תוכנה בחטיבה העליונה, מורה להנדסת תוכנה ורכז תקשוב בית ספרי.' : '');
       setImageUrl('');
       setIsManagement(false);
     }
@@ -82,23 +94,30 @@ export const MyProfileTab: React.FC<MyProfileTabProps> = ({
     }
   };
 
-  const handlePhotoFile = (file: File) => {
+  const handlePhotoFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       alert('נא להעלות קובץ תמונה בלבד.');
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      alert('קובץ התמונה גדול מ-2MB. אנא בחר תמונה קטנה יותר.');
-      return;
+    
+    setIsCompressingPhoto(true);
+    try {
+      // Compress and resize image to max 400px width ~30KB for lightning-fast save and rendering
+      const compressedDataUrl = await compressImage(file, 400, 0.85);
+      setImageUrl(compressedDataUrl);
+    } catch (err: any) {
+      console.error('Failed to compress image:', err);
+      // Fallback: read directly if canvas fails
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setImageUrl(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setIsCompressingPhoto(false);
     }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        setImageUrl(e.target.result as string);
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   const handlePhotoDrop = (e: React.DragEvent) => {
@@ -124,16 +143,17 @@ export const MyProfileTab: React.FC<MyProfileTabProps> = ({
 
     setIsSaving(true);
     try {
-      const memberId = selectedStaffId || ('staff-' + Date.now());
+      const isGuy = isGuyTsizner({ id: selectedStaffId, name, email }) || isGuyTsizner(currentUser);
+      const memberId = isGuy ? 'staff-108' : (selectedStaffId || ('staff-' + Date.now()));
       const updatedMember: StaffMember = {
         id: memberId,
-        name: name.trim(),
-        role: role.trim() || 'מורה',
-        roleDescription: roleDescription.trim(),
-        email: email.trim() || currentUser?.email || undefined,
+        name: isGuy ? 'גיא ציזנר' : name.trim(),
+        role: role.trim() || (isGuy ? 'רכז מגמת מדעי המחשב והנדסת תוכנה, ורכז תקשוב' : 'מורה'),
+        roleDescription: roleDescription.trim() || (isGuy ? 'רכז מגמת מדעי המחשב והנדסת תוכנה חט"ע, מורה למדעי המחשב ורכז תקשוב בית ספרי' : ''),
+        email: isGuy ? 'ciznerguy@taded.org.il' : (email.trim() || currentUser?.email || undefined),
         bio: bio.trim(),
         imageUrl: imageUrl || '',
-        isManagement
+        isManagement: isGuy ? false : isManagement
       };
 
       await saveStaffMember(updatedMember);
@@ -165,13 +185,7 @@ export const MyProfileTab: React.FC<MyProfileTabProps> = ({
               <User className="w-7 h-7" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl md:text-2xl font-black text-white">הפרופיל האישי שלי</h2>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                  <ShieldCheck className="w-3 h-3" />
-                  סנכרון ענן מלא (Firestore)
-                </span>
-              </div>
+              <h2 className="text-xl md:text-2xl font-black text-white">הפרופיל האישי שלי</h2>
               <p className="text-xs text-school-muted mt-1">
                 כאן ניתן לערוך את כרטיס המורה שלך: שם, תפקיד, פילוסופיה חינוכית, אימייל ליצירת קשר ותמונת פרופיל אישית.
               </p>
@@ -307,7 +321,12 @@ export const MyProfileTab: React.FC<MyProfileTabProps> = ({
                     : 'border-school-line/60 hover:border-school-cyan/50 bg-[#080d19]/80'
                 }`}
               >
-                {imageUrl && !imageUrl.includes('placeholder') ? (
+                {isCompressingPhoto ? (
+                  <div className="space-y-2 flex flex-col items-center justify-center py-4">
+                    <Loader2 className="w-8 h-8 animate-spin text-school-cyan" />
+                    <p className="text-xs text-school-cyan font-bold">מעבד וממטב את התמונה לשמירה מהירה...</p>
+                  </div>
+                ) : imageUrl && !imageUrl.includes('placeholder') ? (
                   <div className="space-y-3 w-full">
                     <img 
                       src={imageUrl} 
@@ -330,11 +349,11 @@ export const MyProfileTab: React.FC<MyProfileTabProps> = ({
                       <Camera className="w-6 h-6" />
                     </div>
                     <p className="text-xs text-white font-bold">לחצו כאן או גררו קובץ תמונה מהמחשב או הטלפון</p>
-                    <p className="text-[10px] text-school-muted">תומך בפורמטים JPG, PNG עד גודל 2MB</p>
+                    <p className="text-[10px] text-school-muted">התמונה תותאם אוטומטית לתצוגה חדה ומהירה</p>
                   </div>
                 )}
 
-                {!imageUrl && (
+                {!imageUrl && !isCompressingPhoto && (
                   <input 
                     type="file"
                     accept="image/*"
@@ -412,21 +431,13 @@ export const MyProfileTab: React.FC<MyProfileTabProps> = ({
             {/* Staff Card Preview */}
             <div className="bg-[#121a2c] border border-school-line/60 rounded-2xl p-4 space-y-3 shadow-md">
               <div className="flex items-center gap-3.5">
-                <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 border border-school-cyan/40">
-                  {imageUrl && !imageUrl.includes('placeholder') ? (
-                    <img 
-                      src={imageUrl} 
-                      alt={name || 'מורה'} 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className={`w-full h-full bg-gradient-to-br ${getAvatarColor(name || 'מורה').bg} flex items-center justify-center select-none`}>
-                      <span className={`text-base font-black ${getAvatarColor(name || 'מורה').text}`}>
-                        {getHebrewInitials(name || 'מורה')}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                <TeacherAvatar 
+                  name={name || 'מורה'} 
+                  imageUrl={imageUrl}
+                  className="w-14 h-14 rounded-2xl"
+                  textClassName="text-base font-black"
+                  borderClassName="border border-school-cyan/40"
+                />
 
                 <div className="overflow-hidden">
                   <h4 className="text-sm font-extrabold text-white truncate">

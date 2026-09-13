@@ -14,7 +14,8 @@ import {
   registerTeacherForWorkshop,
   formatToIsraeliDate,
   subscribeToTeacherEvents,
-  subscribeToRegistrations
+  subscribeToRegistrations,
+  isEventFutureOrToday
 } from '../services/eventsStorage';
 
 interface TeacherEventRegistrationProps {
@@ -32,10 +33,12 @@ export const TeacherEventRegistration: React.FC<TeacherEventRegistrationProps> =
 }) => {
   const handleBack = onBackToPortal || onBack;
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
-  const [events, setEvents] = useState<TeacherEvent[]>(getStoredEvents());
+  const [events, setEvents] = useState<TeacherEvent[]>(() => {
+    return getStoredEvents().filter(e => (e.status as string) !== 'archived' && isEventFutureOrToday(e.date));
+  });
   const [selectedEventId, setSelectedEventId] = useState<string>(() => {
     if (initialEventId) return initialEventId;
-    const list = getStoredEvents();
+    const list = getStoredEvents().filter(e => (e.status as string) !== 'archived' && isEventFutureOrToday(e.date));
     const openEvent = list.find(e => e.status === 'open');
     return openEvent ? openEvent.id : (list[0]?.id || '');
   });
@@ -71,13 +74,13 @@ export const TeacherEventRegistration: React.FC<TeacherEventRegistrationProps> =
   // Listen to storage sync events
   useEffect(() => {
     const unsubEvents = subscribeToTeacherEvents((liveEvents) => {
-      setEvents(liveEvents);
+      setEvents(liveEvents.filter(e => (e.status as string) !== 'archived' && isEventFutureOrToday(e.date)));
     });
     const unsubRegs = subscribeToRegistrations((liveRegs) => {
       setRegistrations(liveRegs);
     });
     const syncData = () => {
-      setEvents(getStoredEvents());
+      setEvents(getStoredEvents().filter(e => (e.status as string) !== 'archived' && isEventFutureOrToday(e.date)));
       setRegistrations(getStoredRegistrations());
     };
     window.addEventListener('arens_events_updated', syncData);
