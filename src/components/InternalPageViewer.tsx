@@ -34,7 +34,9 @@ import {
   ZoomIn,
   Footprints,
   HeartHandshake,
-  Target
+  Target,
+  ExternalLink,
+  Maximize2
 } from 'lucide-react';
 import { 
   getInternalPage, 
@@ -770,6 +772,49 @@ export default function InternalPageViewer({
               </div>
             );
           })()}
+
+          {/* Dedicated Heyzine / Flipbook Embed Player */}
+          {((page as any).flipbookUrl || pageUrl.includes('אורחות-חיים') || pageUrl.includes('%d7%90%d7%95%d7%a8%d7%97%d7%95%d7%aa-%d7%97%d7%99%d7%99%d7%9d')) && (
+            <div className="space-y-4 pt-4">
+              <div className="bg-gradient-to-r from-school-cyan/15 via-school-panel2 to-school-panel border border-school-cyan/30 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-school-cyan" />
+                    <h3 className="text-base sm:text-lg font-black text-white">
+                      {(page as any).flipbookTitle || 'חוברת אורחות החיים הדיגיטלית של ארנס'}
+                    </h3>
+                  </div>
+                  <p className="text-xs text-school-muted">
+                    דפדפו בחוברת האינטראקטיבית המלאה, או פתחו אותה לצפייה במסך מלא.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                  <a
+                    href={(page as any).flipbookUrl || "https://heyzine.com/flip-book/1d61aa33cb.html"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-school-cyan text-school-bg font-bold text-xs hover:bg-cyan-300 transition-all shadow-md shadow-school-cyan/20 cursor-pointer"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>פתיחה במסך מלא</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Responsive Flipbook Iframe Container */}
+              <div className="relative w-full rounded-2xl overflow-hidden border border-school-line/80 shadow-2xl bg-[#0b1329]">
+                <div className="w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] min-h-[480px] max-h-[750px]">
+                  <iframe
+                    src={(page as any).flipbookUrl || "https://heyzine.com/flip-book/1d61aa33cb.html"}
+                    title={(page as any).flipbookTitle || "חוברת אורחות החיים"}
+                    className="w-full h-full border-0"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Interactive Banner for Newsletter Page */}
           {(page.title.includes('מידעון') || pageUrl.includes('מידעון') || pageUrl.includes('%d7%9e%d7%99%d7%93%d7%a2%d7%95%d7%9f')) && (

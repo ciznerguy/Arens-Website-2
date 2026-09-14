@@ -73,6 +73,8 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
     category: "אודותינו",
     subtitle: "תקנון בית הספר, נורמות התנהגות ואקלים מכבד",
     icon: "FileText",
+    flipbookUrl: "https://heyzine.com/flip-book/1d61aa33cb.html",
+    flipbookTitle: "חוברת אורחות החיים של שש-שנתי ארנס",
     content: [
       "אורחות החיים בבית הספר משקפים את הערכים שאנו מאמינים בהם: כבוד הדדי, אחריות, יושרה, מצוינות וסבלנות.",
       "התקנון שלהלן נכתב בשיתוף הנהלת ביה\"ס, נציגות ההורים ומועצת התלמידים, והוא מהווה קוד התנהגות מחייב לכל קהילת ארנס.",

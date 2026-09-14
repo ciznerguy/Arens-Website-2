@@ -7,6 +7,32 @@ export interface Editor {
   role: string;
 }
 
+export interface SecretaryContactEmails {
+  juniorHigh: string; // חטיבת הנעורים (חט"נ)
+  highSchool: string; // חטיבה עליונה (חט"ע)
+  generalPhone?: string;
+  fax?: string;
+}
+
+export const DEFAULT_CONTACT_EMAILS: SecretaryContactEmails = {
+  juniorHigh: 'arens2244@gmail.com',
+  highSchool: 'arens2244@gmail.com',
+  generalPhone: '03-7349373',
+  fax: '03-7349680'
+};
+
+export const getStoredContactEmails = (): SecretaryContactEmails => {
+  try {
+    const raw = localStorage.getItem('arens_contact_emails');
+    if (raw) {
+      return { ...DEFAULT_CONTACT_EMAILS, ...JSON.parse(raw) };
+    }
+  } catch (e) {
+    console.error('Failed reading stored contact emails', e);
+  }
+  return DEFAULT_CONTACT_EMAILS;
+};
+
 export const DEFAULT_EDITORS: Editor[] = [
   { email: '1003045545@taded.org.il', name: 'מנהל ראשי', role: 'מנהל ראשי' },
   { email: '1002641566@taded.org.il', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
@@ -70,6 +96,10 @@ export const subscribeToAdminSettings = (callback?: (editors: Editor[]) => void)
           localStorage.setItem('arens_hero_balls', JSON.stringify(data.heroBalls));
           window.dispatchEvent(new Event('hero_balls_updated'));
         }
+        if (data.contactEmails) {
+          localStorage.setItem('arens_contact_emails', JSON.stringify(data.contactEmails));
+          window.dispatchEvent(new Event('contact_emails_updated'));
+        }
         if (data.customTheme) {
           localStorage.setItem('arens_school_custom_theme', JSON.stringify(data.customTheme));
           window.dispatchEvent(new Event('arens_school_theme_updated'));
@@ -97,6 +127,10 @@ export const syncAdminConfigToCloud = async (key: string, value: any) => {
     if (key === 'editors' && Array.isArray(value)) {
       localStorage.setItem('arens_cms_editors', JSON.stringify(value));
       window.dispatchEvent(new CustomEvent('arens_cms_editors_updated', { detail: value }));
+    }
+    if (key === 'contactEmails') {
+      localStorage.setItem('arens_contact_emails', JSON.stringify(value));
+      window.dispatchEvent(new Event('contact_emails_updated'));
     }
     // Write directly to cloud Firestore
     await setDoc(doc(db, 'settings', 'admin_config'), {

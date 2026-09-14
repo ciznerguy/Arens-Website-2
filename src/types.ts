@@ -94,6 +94,8 @@ export interface InternalPage {
     url: string;
     size?: string;
   }[];
+  flipbookUrl?: string;
+  flipbookTitle?: string;
 }
 
 export interface GalleryPhoto {

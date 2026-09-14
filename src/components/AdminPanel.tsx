@@ -1,7 +1,7 @@
 import { saveStaffMember, deleteStaffMember, resetStaffToDefaults, getStoredStaffMembers, subscribeToStaffMembers, isGuyTsizner } from '../services/staffStorage';
 import { saveNewsArticle, deleteNewsArticle, resetNewsToDefaults, getStoredNews, saveSetting } from '../services/cmsStorage';
 import { syncPageOverrideToCloud, syncGradeClassesToCloud } from '../services/pagesStorage';
-import { syncAdminConfigToCloud, subscribeToAdminSettings, fetchAdminConfigFromCloud, getStoredEditors } from '../services/adminStorage';
+import { syncAdminConfigToCloud, subscribeToAdminSettings, fetchAdminConfigFromCloud, getStoredEditors, getStoredContactEmails, SecretaryContactEmails, DEFAULT_CONTACT_EMAILS } from '../services/adminStorage';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -56,7 +56,11 @@ import {
   Info,
   FileSpreadsheet,
   AlertCircle,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Mail,
+  Phone,
+  Building,
+  Send
 } from 'lucide-react';
 import { TeacherEventsAdmin } from './TeacherEventsAdmin';
 import { MajorsAdmin } from './MajorsAdmin';
@@ -155,7 +159,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [currentUser, setCurrentUser] = useState<Editor | null>(null);
 
   // CMS Tabs
-  const [activeTab, setActiveTab] = useState<'homepage' | 'pages' | 'my-grade' | 'majors' | 'news' | 'editors' | 'theme' | 'staff' | 'socials' | 'quick-links' | 'teachers-events' | 'my-profile'>('homepage');
+  const [activeTab, setActiveTab] = useState<'homepage' | 'pages' | 'my-grade' | 'majors' | 'news' | 'editors' | 'theme' | 'staff' | 'socials' | 'quick-links' | 'teachers-events' | 'my-profile' | 'contact-settings'>('homepage');
 
   // Homepage Settings State
   const [hpSubtitle, setHpSubtitle] = useState<string>('שש שנתי ע"ש משה ארנס');
@@ -300,6 +304,10 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   // PDF Files state
   const [pagePdfFiles, setPagePdfFiles] = useState<{name: string; url: string; size?: string;}[]>([]);
   const [isDraggingPdf, setIsDraggingPdf] = useState<boolean>(false);
+
+  // Digital Flipbook / Heyzine embed state
+  const [pageFlipbookUrl, setPageFlipbookUrl] = useState<string>('');
+  const [pageFlipbookTitle, setPageFlipbookTitle] = useState<string>('');
   
   // JSON Raw string state for code editor
   const [rawJsonStr, setRawJsonStr] = useState<string>('');
@@ -680,6 +688,10 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [socialInstagram, setSocialInstagram] = useState('');
   const [socialYoutube, setSocialYoutube] = useState('');
 
+  // Secretary & Contact Emails state
+  const [contactEmails, setContactEmails] = useState<SecretaryContactEmails>(getStoredContactEmails);
+  const [isSavingContacts, setIsSavingContacts] = useState<boolean>(false);
+
   // Save feedback state
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [pageSaveError, setPageSaveError] = useState<string | null>(null);
@@ -875,14 +887,20 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       }
     };
 
+    const handleContactEmailsUpdate = () => {
+      setContactEmails(getStoredContactEmails());
+    };
+
     window.addEventListener('internal_pages_updated', handleUpdate);
     window.addEventListener('quick_links_updated', handleQuickLinksUpdate);
     window.addEventListener('arens_cms_editors_updated', handleEditorsUpdate);
+    window.addEventListener('contact_emails_updated', handleContactEmailsUpdate);
     return () => {
       unsubAdmin();
       window.removeEventListener('internal_pages_updated', handleUpdate);
       window.removeEventListener('quick_links_updated', handleQuickLinksUpdate);
       window.removeEventListener('arens_cms_editors_updated', handleEditorsUpdate);
+      window.removeEventListener('contact_emails_updated', handleContactEmailsUpdate);
     };
   }, []);
 
@@ -1506,6 +1524,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       setPageContent(page.content && page.content.length > 0 ? [...page.content] : ['']);
       setPageSections(page.sections ? JSON.parse(JSON.stringify(page.sections)) : []);
       setPagePdfFiles(page.pdfFiles ? JSON.parse(JSON.stringify(page.pdfFiles)) : []);
+      setPageFlipbookUrl(page.flipbookUrl || '');
+      setPageFlipbookTitle(page.flipbookTitle || '');
       
       // Update code string
       setRawJsonStr(JSON.stringify(page, null, 2));
@@ -1528,6 +1548,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     setPageContent(['']);
     setPageSections([]);
     setPagePdfFiles([]);
+    setPageFlipbookUrl('');
+    setPageFlipbookTitle('');
     
     const defaultPageObj: InternalPage = {
       title: 'כותרת דף חדש',
@@ -1898,7 +1920,9 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
           text: sec.text ? (typeof sec.text === 'string' ? sec.text.trim() : sec.text) : undefined,
           list: sec.list ? sec.list.map((li: string) => li.trim()).filter(Boolean) : undefined
         })).filter(sec => sec.title),
-        pdfFiles: pagePdfFiles.length > 0 ? pagePdfFiles : undefined
+        pdfFiles: pagePdfFiles.length > 0 ? pagePdfFiles : undefined,
+        flipbookUrl: pageFlipbookUrl.trim() || undefined,
+        flipbookTitle: pageFlipbookTitle.trim() || undefined
       };
     }
 
@@ -2242,6 +2266,21 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     window.dispatchEvent(new Event('internal_pages_updated'));
     setSaveSuccess('הקישורים לרשתות החברתיות נשמרו בהצלחה!');
     setTimeout(() => setSaveSuccess(null), 3000);
+  };
+
+  const handleSaveContactEmails = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingContacts(true);
+    try {
+      await syncAdminConfigToCloud('contactEmails', contactEmails);
+      setSaveSuccess('פרטי המזכירות וכתובות האימייל נשמרו וסונכרנו בהצלחה לענן!');
+      setTimeout(() => setSaveSuccess(null), 3500);
+    } catch (err) {
+      console.error(err);
+      alert('שגיאה בשמירת פרטי המזכירות');
+    } finally {
+      setIsSavingContacts(false);
+    }
   };
 
   const handleStaffPhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -2777,6 +2816,23 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         </span>
                         <span className="text-[9px] bg-pink-500/10 text-pink-400 px-2 py-0.5 rounded-full border border-pink-500/20 font-bold font-mono">
                           3
+                        </span>
+                      </button>
+
+                      <button 
+                        onClick={() => { setActiveTab('contact-settings'); setEditingStaffId(null); }}
+                        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                          activeTab === 'contact-settings' 
+                            ? 'bg-school-cyan/15 text-white border border-school-cyan/30' 
+                            : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-cyan-400" />
+                          <span>מזכירות ויצירת קשר</span>
+                        </span>
+                        <span className="text-[9px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/20 font-bold">
+                          חט״נ / חט״ע
                         </span>
                       </button>
 
@@ -3746,6 +3802,42 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                                     ))}
                                   </div>
                                 )}
+                              </div>
+
+                              {/* DIGITAL FLIPBOOK / HEYZINE EMBED SECTION */}
+                              <div className="space-y-4 border-t border-school-line/40 pt-5">
+                                <div className="space-y-1">
+                                  <h4 className="text-xs font-bold text-white flex items-center gap-2">
+                                    <BookOpen className="w-4 h-4 text-school-cyan" />
+                                    <span>חוברת דיגיטלית אינטראקטיבית (Flipbook / Heyzine)</span>
+                                  </h4>
+                                  <p className="text-[10px] text-school-muted leading-relaxed">
+                                    ניתן לשלב קישור לחוברת דפדוף אינטראקטיבית (כגון Heyzine) שתוצג בנגן דיגיטלי מובנה ישירות בתוך הדף.
+                                  </p>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-school-bg/60 p-4 rounded-xl border border-school-line/50">
+                                  <div className="space-y-1.5">
+                                    <label className="text-[11px] text-white font-bold">קישור לחוברת (Flipbook URL)</label>
+                                    <input
+                                      type="url"
+                                      value={pageFlipbookUrl}
+                                      onChange={(e) => setPageFlipbookUrl(e.target.value)}
+                                      placeholder="https://heyzine.com/flip-book/..."
+                                      className="w-full text-xs text-white bg-school-bg border border-school-line rounded-xl px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-school-cyan text-left dir-ltr font-mono"
+                                    />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <label className="text-[11px] text-white font-bold">כותרת החוברת (אופציונלי)</label>
+                                    <input
+                                      type="text"
+                                      value={pageFlipbookTitle}
+                                      onChange={(e) => setPageFlipbookTitle(e.target.value)}
+                                      placeholder="לדוגמה: חוברת אורחות החיים של ארנס"
+                                      className="w-full text-xs text-white bg-school-bg border border-school-line rounded-xl px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-school-cyan text-right"
+                                    />
+                                  </div>
+                                </div>
                               </div>
 
                               {/* PDF FILES ATTACHMENTS SECTION */}
@@ -6247,6 +6339,170 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                             </div>
                           </div>
                         </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              )}
+
+              {/* 3.6. SECRETARY & CONTACT SETTINGS WORKSPACE */}
+              {activeTab === 'contact-settings' && isFullSiteAdmin(effectiveRole) && (
+                <div className="space-y-6 animate-fade-in">
+                  <div className="border-b border-school-line/30 pb-4">
+                    <h2 className="text-xl font-black text-white">הגדרות מזכירות ויצירת קשר</h2>
+                    <p className="text-xs text-school-muted mt-1">
+                      הגדרת כתובות הדוא"ל של מזכירות חטיבת הנעורים (חט"נ) ומזכירות החטיבה העליונה (חט"ע), ופרטי יצירת הקשר המוצגים באתר.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    
+                    {/* Form Panel */}
+                    <form onSubmit={handleSaveContactEmails} className="lg:col-span-7 bg-[#101b33] border border-school-line rounded-2xl p-6 space-y-6">
+                      <div className="space-y-5">
+
+                        {/* Junior High (חט"נ) Email */}
+                        <div className="space-y-2 bg-school-bg/60 p-4 rounded-xl border border-school-line/50">
+                          <label className="text-xs text-white font-bold flex items-center gap-2">
+                            <Building className="w-4 h-4 text-cyan-400 shrink-0" />
+                            <span>אימייל מזכירות חטיבת הנעורים (חט"נ - כיתות ז'-ט') *</span>
+                          </label>
+                          <input 
+                            type="email"
+                            required
+                            value={contactEmails.juniorHigh}
+                            onChange={(e) => setContactEmails({ ...contactEmails, juniorHigh: e.target.value.trim() })}
+                            placeholder="arens2244@gmail.com"
+                            className="w-full text-xs text-white bg-school-bg border border-school-line rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-school-cyan/50 focus:border-school-cyan transition-all text-left dir-ltr font-mono"
+                          />
+                          <p className="text-[10px] text-school-muted">
+                            כתובת זו תקבל פניות מהורים ותלמידים המסמנים "חטיבת הנעורים (חט״נ)" בטופס יצירת הקשר באתר.
+                          </p>
+                        </div>
+
+                        {/* High School (חט"ע) Email */}
+                        <div className="space-y-2 bg-school-bg/60 p-4 rounded-xl border border-school-line/50">
+                          <label className="text-xs text-white font-bold flex items-center gap-2">
+                            <GraduationCap className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span>אימייל מזכירות חטיבה עליונה (חט"ע - כיתות י'-י"ב) *</span>
+                          </label>
+                          <input 
+                            type="email"
+                            required
+                            value={contactEmails.highSchool}
+                            onChange={(e) => setContactEmails({ ...contactEmails, highSchool: e.target.value.trim() })}
+                            placeholder="arens2244@gmail.com"
+                            className="w-full text-xs text-white bg-school-bg border border-school-line rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-school-cyan/50 focus:border-school-cyan transition-all text-left dir-ltr font-mono"
+                          />
+                          <p className="text-[10px] text-school-muted">
+                            כתובת זו תקבל פניות מהורים ותלמידים המסמנים "חטיבה עליונה (חט״ע)" בטופס יצירת הקשר באתר.
+                          </p>
+                        </div>
+
+                        {/* Phone & Fax */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-xs text-white font-bold flex items-center gap-2">
+                              <Phone className="w-4 h-4 text-amber-400 shrink-0" />
+                              <span>טלפון מזכירות ראשי</span>
+                            </label>
+                            <input 
+                              type="text"
+                              value={contactEmails.generalPhone || ''}
+                              onChange={(e) => setContactEmails({ ...contactEmails, generalPhone: e.target.value })}
+                              placeholder="03-7349373"
+                              className="w-full text-xs text-white bg-school-bg border border-school-line rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-school-cyan/50 focus:border-school-cyan transition-all text-left dir-ltr font-mono"
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="text-xs text-white font-bold flex items-center gap-2">
+                              <Phone className="w-4 h-4 text-purple-400 shrink-0" />
+                              <span>פקס מזכירות</span>
+                            </label>
+                            <input 
+                              type="text"
+                              value={contactEmails.fax || ''}
+                              onChange={(e) => setContactEmails({ ...contactEmails, fax: e.target.value })}
+                              placeholder="03-7349680"
+                              className="w-full text-xs text-white bg-school-bg border border-school-line rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-school-cyan/50 focus:border-school-cyan transition-all text-left dir-ltr font-mono"
+                            />
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {/* Save Button */}
+                      <div className="pt-4 border-t border-school-line/40 flex items-center justify-between gap-4">
+                        <button 
+                          type="submit"
+                          disabled={isSavingContacts}
+                          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-school-cyan to-cyan-400 text-school-bg font-bold rounded-xl hover:shadow-lg hover:shadow-school-cyan/20 hover:-translate-y-0.5 transition-all text-xs disabled:opacity-50 cursor-pointer"
+                        >
+                          <Save className="w-4 h-4" />
+                          <span>{isSavingContacts ? 'שומר ומסנכרן לענן...' : 'שמור והחל שינויים'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setContactEmails(DEFAULT_CONTACT_EMAILS);
+                          }}
+                          className="text-xs text-school-muted hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          <span>איפוס לברירת מחדל</span>
+                        </button>
+                      </div>
+                    </form>
+
+                    {/* Preview Panel */}
+                    <div className="lg:col-span-5 bg-[#101b33] border border-school-line rounded-2xl p-6 space-y-5">
+                      <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                        <Eye className="w-4 h-4 text-school-cyan" />
+                        <span>תצוגה מקדימה באתר</span>
+                      </h3>
+                      <p className="text-xs text-school-muted">
+                        כך יוצגו נתוני המזכירות למשתמשים בעמוד הבית ובטופס הפנייה הדיגיטלית:
+                      </p>
+
+                      <div className="bg-school-bg border border-school-line rounded-xl p-4 space-y-4 text-xs">
+                        <div className="flex items-start gap-3 p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-lg">
+                          <Building className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="font-bold text-white text-xs">מזכירות חטיבת הנעורים (חט״נ)</p>
+                            <p className="text-cyan-300 font-mono text-[11px] mt-0.5">{contactEmails.juniorHigh || 'לא הוגדר'}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                          <GraduationCap className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="font-bold text-white text-xs">מזכירות חטיבה עליונה (חט״ע)</p>
+                            <p className="text-emerald-300 font-mono text-[11px] mt-0.5">{contactEmails.highSchool || 'לא הוגדר'}</p>
+                          </div>
+                        </div>
+
+                        <div className="pt-2 border-t border-school-line/40 space-y-2 text-[11px] text-school-muted">
+                          <div className="flex items-center justify-between">
+                            <span>טלפון מזכירות:</span>
+                            <span className="font-mono text-white font-bold">{contactEmails.generalPhone || '03-7349373'}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span>פקס מזכירות:</span>
+                            <span className="font-mono text-white font-bold">{contactEmails.fax || '03-7349680'}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-3.5 bg-school-cyan/5 border border-school-cyan/20 rounded-xl space-y-1.5">
+                        <p className="text-xs font-bold text-school-cyan flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>סנכרון ענן מיידי ל-Firestore</span>
+                        </p>
+                        <p className="text-[11px] text-school-muted leading-relaxed">
+                          כל שינוי נשמר מיידית ב-Firestore (קולקציית <code className="text-white">settings/admin_config</code>) ומשתקף לכל המשתמשים באתר בזמן אמת.
+                        </p>
                       </div>
                     </div>
 

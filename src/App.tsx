@@ -1,7 +1,7 @@
 import { subscribeToStaffMembers, getStoredStaffMembers } from './services/staffStorage';
 import { subscribeToNews, subscribeToSettings } from './services/cmsStorage';
 import { subscribeToPageOverrides } from './services/pagesStorage';
-import { subscribeToAdminSettings } from './services/adminStorage';
+import { subscribeToAdminSettings, getStoredContactEmails, SecretaryContactEmails } from './services/adminStorage';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -44,7 +44,8 @@ import {
   Moon,
   Facebook,
   Instagram,
-  Youtube
+  Youtube,
+  Building
 } from 'lucide-react';
 import { 
   schoolLogoSvg, 
@@ -283,11 +284,16 @@ export default function App() {
       loadStaff();
     };
 
+    const handleContactEmailsUpdate = () => {
+      setContactEmails(getStoredContactEmails());
+    };
+
     window.addEventListener('internal_pages_updated', handlePagesUpdate);
     window.addEventListener('quick_links_updated', handleQuickLinksUpdate);
     window.addEventListener('arens_events_updated', handleEventsUpdate);
     window.addEventListener('arens_registrations_updated', handleEventsUpdate);
     window.addEventListener('arens_cms_staff_updated', handleStaffUpdate);
+    window.addEventListener('contact_emails_updated', handleContactEmailsUpdate);
     return () => {
       unsubStaff();
       unsubNews();
@@ -298,6 +304,7 @@ export default function App() {
       window.removeEventListener('arens_events_updated', handleEventsUpdate);
       window.removeEventListener('arens_registrations_updated', handleEventsUpdate);
       window.removeEventListener('arens_cms_staff_updated', handleStaffUpdate);
+      window.removeEventListener('contact_emails_updated', handleContactEmailsUpdate);
     };
   }, []);
 
@@ -504,12 +511,16 @@ export default function App() {
   
   const [contactSuccess, setContactSuccess] = useState<boolean>(false);
   
+  // Secretary & Contact Emails state
+  const [contactEmails, setContactEmails] = useState<SecretaryContactEmails>(getStoredContactEmails);
+
   // Custom Contact Form State
   const [contactForm, setContactForm] = useState({
     name: '',
     email: '',
     phone: '',
     role: 'parent', // 'parent' | 'student' | 'guest'
+    division: 'junior', // 'junior' (חט"נ) | 'high' (חט"ע)
     message: ''
   });
 
@@ -605,11 +616,35 @@ export default function App() {
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (contactForm.name && contactForm.message) {
+      const isJunior = contactForm.division === 'junior';
+      const targetEmail = (isJunior ? contactEmails.juniorHigh : contactEmails.highSchool) || 'arens2244@gmail.com';
+      const targetDivisionName = isJunior ? 'חטיבת הנעורים (חט"נ)' : 'חטיבה עליונה (חט"ע)';
+      const roleText = contactForm.role === 'parent' ? 'הורה לתלמיד/ה' : contactForm.role === 'student' ? 'תלמיד/ה' : 'אורח/מתעניין ברישום';
+
+      const subject = encodeURIComponent(`פנייה דיגיטלית מאתר בית הספר - ${contactForm.name} (${roleText}) - ${targetDivisionName}`);
+      const body = encodeURIComponent(
+        `שלום רב למזכירות בית הספר (${targetDivisionName}),\n\n` +
+        `להלן פנייה חדשה שנשלחה מאתר בית הספר השש-שנתי משה ארנס:\n\n` +
+        `• שם הפונה: ${contactForm.name}\n` +
+        `• יעד הפנייה: ${targetDivisionName}\n` +
+        `• תפקיד/שיוך: ${roleText}\n` +
+        `• דוא"ל: ${contactForm.email || 'לא צוין'}\n` +
+        `• טלפון: ${contactForm.phone || 'לא צוין'}\n\n` +
+        `תוכן ההודעה:\n${contactForm.message}\n\n` +
+        `בברכה,\n${contactForm.name}`
+      );
+
+      try {
+        window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+      } catch (err) {
+        console.warn('Mailto dispatch error:', err);
+      }
+
       setContactSuccess(true);
       setTimeout(() => {
         setContactSuccess(false);
-        setContactForm({ name: '', email: '', phone: '', role: 'parent', message: '' });
-      }, 4000);
+        setContactForm({ name: '', email: '', phone: '', role: 'parent', division: 'junior', message: '' });
+      }, 5000);
     }
   };
 
@@ -1524,12 +1559,59 @@ export default function App() {
               className="max-w-4xl mx-auto px-4 py-16 space-y-12 text-right"
             >
               
-              <div className="text-center space-y-2 max-w-2xl mx-auto mb-12">
+              <div className="text-center space-y-2 max-w-2xl mx-auto mb-8">
                 <span className="text-xs font-black tracking-widest text-school-cyan uppercase">תקנון בית הספר</span>
                 <h2 className="text-3xl md:text-4xl font-black text-white">אורחות חיים וקוד התנהגות</h2>
                 <p className="text-xs text-school-muted leading-relaxed">
                   תקנון בית הספר נועד להסדיר סביבה לימודית מכבדת, בטוחה ותומכת המאפשרת לכל תלמיד לפרוח. אנא הקפידו לקרוא ולשמור על הנהלים.
                 </p>
+              </div>
+
+              {/* Heyzine Flipbook Callout Banner */}
+              <div className="bg-gradient-to-r from-school-cyan/20 via-school-panel2 to-school-panel border border-school-cyan/40 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-school-cyan/15 text-school-cyan text-[11px] font-bold">
+                      <Sparkles className="w-3 h-3" />
+                      <span>חוברת דיגיטלית אינטראקטיבית</span>
+                    </span>
+                    <h3 className="text-xl sm:text-2xl font-black text-white">חוברת אורחות החיים של ארנס</h3>
+                    <p className="text-xs text-school-muted max-w-xl leading-relaxed">
+                      עיינו בחוברת אורחות החיים המלאה בפורמט דיגיטלי אינטראקטיבי ודפדפו בין עמודי התקנון, הערכים והנהלים הבית-ספריים.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2.5 w-full sm:w-auto">
+                    <button
+                      onClick={() => {
+                        setSelectedInternalPageUrl("course/%d7%90%d7%95%d7%93%d7%95%d7%aa%d7%99%d7%a0%d7%95/%d7%90%d7%95%d7%a8%d7%97%d7%95%d7%aa-%d7%97%d7%99%d7%99%d7%9d-%d7%91%d7%a8%d7%a0%d7%a1/");
+                        setActiveTab('internal-page');
+                      }}
+                      className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-school-cyan text-school-bg font-bold text-xs hover:bg-cyan-300 transition-all shadow-md shadow-school-cyan/20 flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span>מעבר לדף אורחות החיים</span>
+                    </button>
+                    <a
+                      href="https://heyzine.com/flip-book/1d61aa33cb.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-school-bg/60 border border-school-line hover:border-school-cyan text-white font-bold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <ExternalLink className="w-4 h-4 text-school-cyan" />
+                      <span>פתיחת החוברת במסך מלא</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div className="w-full rounded-2xl overflow-hidden border border-school-line/80 shadow-2xl bg-[#0b1329] aspect-[16/10] sm:aspect-[16/9] min-h-[420px] max-h-[640px]">
+                  <iframe
+                    src="https://heyzine.com/flip-book/1d61aa33cb.html"
+                    title="חוברת אורחות החיים של ארנס"
+                    className="w-full h-full border-0"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
               </div>
 
               <div className="space-y-6">
@@ -1585,6 +1667,49 @@ export default function App() {
                     </div>
                   ) : (
                     <form onSubmit={handleContactSubmit} className="space-y-4">
+                      {/* Division Selector */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs text-white font-bold flex items-center justify-between">
+                          <span>חטיבה מבוקשת לפנייה *</span>
+                          <span className="text-[10px] text-school-cyan">
+                            הפנייה תנותב ישירות למזכירות החטיבה המתאימה
+                          </span>
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                          <button
+                            type="button"
+                            onClick={() => setContactForm({ ...contactForm, division: 'junior' })}
+                            className={`flex items-center gap-2.5 p-3 rounded-xl border text-right transition-all cursor-pointer ${
+                              contactForm.division === 'junior'
+                                ? 'bg-cyan-500/15 border-school-cyan text-white shadow-sm ring-1 ring-school-cyan/40'
+                                : 'bg-school-panel2 border-school-line/60 text-school-muted hover:border-school-line hover:text-white'
+                            }`}
+                          >
+                            <Building className={`w-4 h-4 shrink-0 ${contactForm.division === 'junior' ? 'text-school-cyan' : 'text-school-muted'}`} />
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold leading-tight">חטיבת הנעורים (חט״נ)</p>
+                              <p className="text-[10px] text-cyan-300/80 mt-0.5 font-mono truncate">{contactEmails.juniorHigh || 'arens2244@gmail.com'}</p>
+                            </div>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setContactForm({ ...contactForm, division: 'high' })}
+                            className={`flex items-center gap-2.5 p-3 rounded-xl border text-right transition-all cursor-pointer ${
+                              contactForm.division === 'high'
+                                ? 'bg-emerald-500/15 border-emerald-400 text-white shadow-sm ring-1 ring-emerald-400/40'
+                                : 'bg-school-panel2 border-school-line/60 text-school-muted hover:border-school-line hover:text-white'
+                            }`}
+                          >
+                            <GraduationCap className={`w-4 h-4 shrink-0 ${contactForm.division === 'high' ? 'text-emerald-400' : 'text-school-muted'}`} />
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold leading-tight">חטיבה עליונה (חט״ע)</p>
+                              <p className="text-[10px] text-emerald-300/80 mt-0.5 font-mono truncate">{contactEmails.highSchool || 'arens2244@gmail.com'}</p>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1.5">
                           <label className="text-xs text-white font-bold">שם מלא *</label>
@@ -1648,9 +1773,10 @@ export default function App() {
 
                       <button 
                         type="submit"
-                        className="w-full btn py-3 rounded-xl font-bold bg-gradient-to-r from-school-cyan to-cyan-400 text-school-bg shadow-md hover:-translate-y-0.5 transition-all text-center"
+                        className="w-full btn py-3 rounded-xl font-bold bg-gradient-to-r from-school-cyan to-cyan-400 text-school-bg shadow-md hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-2 cursor-pointer"
                       >
-                        שלח פנייה דיגיטלית
+                        <Send className="w-4 h-4" />
+                        <span>שלח פנייה ישירה למזכירות</span>
                       </button>
                     </form>
                   )}
@@ -1677,7 +1803,9 @@ export default function App() {
                         <Phone className="w-5 h-5 text-school-cyan mt-0.5 shrink-0" />
                         <div>
                           <p className="font-bold text-white">טלפון מזכירות</p>
-                          <p className="font-mono">03-7349373</p>
+                          <a href={`tel:${contactEmails.generalPhone || '03-7349373'}`} className="font-mono text-white hover:text-school-cyan transition-colors">
+                            {contactEmails.generalPhone || '03-7349373'}
+                          </a>
                         </div>
                       </div>
 
@@ -1685,55 +1813,80 @@ export default function App() {
                         <Phone className="w-5 h-5 text-school-cyan mt-0.5 shrink-0" />
                         <div>
                           <p className="font-bold text-white">פקס מזכירות</p>
-                          <p className="font-mono">03-7349680</p>
+                          <p className="font-mono">{contactEmails.fax || '03-7349680'}</p>
                         </div>
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <Mail className="w-5 h-5 text-school-cyan mt-0.5 shrink-0" />
+                        <Building className="w-5 h-5 text-cyan-400 mt-0.5 shrink-0" />
                         <div>
-                          <p className="font-bold text-white">כתובת אימייל</p>
-                          <p className="font-mono">arens2244@gmail.com</p>
+                          <p className="font-bold text-white">מזכירות חטיבת הנעורים (חט״נ)</p>
+                          <a 
+                            href={`mailto:${contactEmails.juniorHigh || 'arens2244@gmail.com'}`}
+                            className="font-mono text-cyan-300 hover:underline inline-block mt-0.5"
+                          >
+                            {contactEmails.juniorHigh || 'arens2244@gmail.com'}
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <GraduationCap className="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" />
+                        <div>
+                          <p className="font-bold text-white">מזכירות חטיבה עליונה (חט״ע)</p>
+                          <a 
+                            href={`mailto:${contactEmails.highSchool || 'arens2244@gmail.com'}`}
+                            className="font-mono text-emerald-300 hover:underline inline-block mt-0.5"
+                          >
+                            {contactEmails.highSchool || 'arens2244@gmail.com'}
+                          </a>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* SVG Interactive Simulated Map */}
+                  {/* Google Maps Real Embed */}
                   <div className="bg-school-panel border border-school-line rounded-3xl p-6 space-y-3">
                     <div className="flex items-center justify-between">
                       <h4 className="font-bold text-xs text-white flex items-center gap-1.5">
                         <Map className="w-4 h-4 text-school-cyan" />
                         <span>מיקום שש-שנתי ארנס במפה</span>
                       </h4>
-                      <span className="text-[9px] bg-school-panel2 border border-school-line text-school-muted px-2 py-0.5 rounded-md font-mono">פתח תקווה</span>
+                      <a 
+                        href="https://maps.google.com/?q=%D7%A8%D7%97%D7%95%D7%91+%D7%95%D7%99%D7%A6%D7%9E%D7%9F+46,+%D7%A4%D7%AA%D7%97+%D7%AA%D7%A7%D7%95%D7%95%D7%94"
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="text-[10px] bg-school-panel2 hover:bg-school-cyan/20 border border-school-line hover:border-school-cyan text-school-cyan px-2.5 py-1 rounded-md font-bold transition-all flex items-center gap-1 cursor-pointer"
+                        title="פתח ב-Google Maps"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>פתח ב-Google Maps</span>
+                      </a>
                     </div>
 
-                    <div className="relative aspect-video rounded-2xl overflow-hidden bg-school-panel2 border border-school-line flex items-center justify-center">
-                      {/* SVG Canvas Map Pattern Grid */}
-                      <svg viewBox="0 0 400 200" className="absolute inset-0 w-full h-full opacity-35">
-                        <line x1="0" y1="50" x2="400" y2="50" stroke="rgba(148,163,184,0.15)" strokeWidth="1" />
-                        <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(148,163,184,0.15)" strokeWidth="1" />
-                        <line x1="0" y1="150" x2="400" y2="150" stroke="rgba(148,163,184,0.15)" strokeWidth="1" />
-                        <line x1="100" y1="0" x2="100" y2="200" stroke="rgba(148,163,184,0.15)" strokeWidth="1" />
-                        <line x1="200" y1="0" x2="200" y2="200" stroke="rgba(148,163,184,0.15)" strokeWidth="1" />
-                        <line x1="300" y1="0" x2="300" y2="200" stroke="rgba(148,163,184,0.15)" strokeWidth="1" />
-                        {/* Streets routes simulation */}
-                        <path d="M 20,40 L 380,40" stroke="rgba(148,163,184,0.25)" strokeWidth="8" fill="none" />
-                        <path d="M 200,10 L 200,190" stroke="rgba(148,163,184,0.25)" strokeWidth="8" fill="none" />
-                        <path d="M 320,10 L 320,190" stroke="rgba(148,163,184,0.25)" strokeWidth="6" fill="none" />
-                      </svg>
+                    <div className="relative aspect-video rounded-2xl overflow-hidden bg-school-panel2 border border-school-line shadow-inner">
+                      <iframe
+                        title="מפת שש-שנתי ע&quot;ש משה ארנס - רחוב ויצמן 46 פתח תקווה"
+                        src="https://maps.google.com/maps?q=%D7%A8%D7%97%D7%95%D7%91%20%D7%95%D7%99%D7%A6%D7%9E%D7%9F%2046%20%D7%A4%D7%AA%D7%97%20%D7%AA%D7%A7%D7%95%D7%95%D7%94&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                        className="w-full h-full border-0"
+                        loading="lazy"
+                        allowFullScreen
+                      />
+                    </div>
 
-                      {/* Map pointer pin indicator */}
-                      <div className="absolute top-[80px] left-[180px] flex flex-col items-center select-none">
-                        <div className="relative animate-bounce">
-                          <MapPin className="w-8 h-8 text-school-cyan fill-school-cyan/20 drop-shadow-[0_4px_8px_rgba(34,211,238,0.4)]" />
-                        </div>
-                        <div className="bg-school-bg/95 border border-school-line text-white px-3 py-1.5 rounded-lg text-[9px] font-bold text-center shadow-2xl">
-                          <p>שש-שנתי ע"ש משה ארנס</p>
-                          <p className="text-[8px] text-school-muted font-normal">שרגא רפאלי 6, פתח תקווה</p>
-                        </div>
-                      </div>
+                    <div className="flex items-center justify-between text-[11px] text-school-muted pt-1">
+                      <span className="flex items-center gap-1 font-medium text-white/90">
+                        <MapPin className="w-3.5 h-3.5 text-school-cyan shrink-0" />
+                        <span>רחוב ויצמן 46, פתח תקווה</span>
+                      </span>
+                      <a
+                        href="https://waze.com/ul?q=%D7%A8%D7%97%D7%95%D7%91+%D7%95%D7%99%D7%A6%D7%9E%D7%9F+46+%D7%A4%D7%AA%D7%97+%D7%AA%D7%A7%D7%95%D7%95%D7%94&navigate=yes"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[10px] text-sky-400 hover:text-sky-300 hover:underline flex items-center gap-1 font-bold"
+                      >
+                        ניווט ב-Waze 🚗
+                      </a>
                     </div>
                   </div>
 
