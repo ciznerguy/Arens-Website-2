@@ -151,8 +151,8 @@ interface AdminPanelProps {
 export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onThemeChange, initialStaffEmail }: AdminPanelProps) {
   // Authentication State
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [loginEmail, setLoginEmail] = useState<string>(initialStaffEmail || '1003045545@taded.org.il');
-  const [loginPassword, setLoginPassword] = useState<string>('admin123');
+  const [loginEmail, setLoginEmail] = useState<string>(initialStaffEmail || '');
+  const [loginPassword, setLoginPassword] = useState<string>('');
   const [loginError, setLoginError] = useState<string | null>(null);
 
   // Active Admin User Info
@@ -357,6 +357,11 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   const isFullSiteAdmin = (role: string) => {
+    if (!role) return false;
+    // Grade coordinators, major coordinators and department/subject coordinators have access strictly to their direct content only
+    if ((isGradeCoordinator(role) || isMajorCoordinator(role) || isEnglishCoordinator(role)) && !isSuperAdmin(role)) {
+      return false;
+    }
     return isSuperAdmin(role) || isAdmin(role);
   };
 
@@ -601,12 +606,12 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       }
     }
 
-    // 4. Grade Coordinators
-    if (r.includes('רכז שכבה') || r.includes('רכזת שכבה')) {
+    // 4. Grade Coordinators & Leaders
+    if (r.includes('רכז שכבה') || r.includes('רכזת שכבה') || r.includes('מוביל שכבה') || r.includes('מובילת שכבה') || r.includes('הנהלת שכבה')) {
       const gMatch = r.match(/שכבה\s*([ז-יב'"]+)/);
       const gradeLetter = gMatch ? gMatch[1].replace(/['"]/g, '').trim() : '';
       if (gradeLetter) {
-        const found = staffMembers.find(s => (s.role || '').includes('רכז') && (s.role || '').includes(gradeLetter));
+        const found = staffMembers.find(s => (s.role || '').includes(gradeLetter) && ((s.role || '').includes('רכז') || (s.role || '').includes('מוביל')));
         if (found) return found;
       }
     }
@@ -703,20 +708,34 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     const token = localStorage.getItem('arens_cms_token');
     const savedUser = localStorage.getItem('arens_cms_user');
     if (token && savedUser) {
-      setIsLoggedIn(true);
       try {
         const parsed = JSON.parse(savedUser);
+        const cleanEmail = (parsed.email || '').trim().toLowerCase();
         const storedEditors = getStoredEditors();
-        const matched = storedEditors.find(ed => ed.email.trim().toLowerCase() === (parsed.email || '').trim().toLowerCase()) ||
-                        DEFAULT_EDITORS.find(ed => ed.email.trim().toLowerCase() === (parsed.email || '').trim().toLowerCase());
-        if (matched) {
-          parsed.role = matched.role;
-          parsed.name = matched.name;
+        const matchedEditor = storedEditors.find(ed => ed.email.trim().toLowerCase() === cleanEmail) ||
+                              DEFAULT_EDITORS.find(ed => ed.email.trim().toLowerCase() === cleanEmail);
+        const matchedStaff = staffMembers.find(s => s.email?.trim().toLowerCase() === cleanEmail);
+
+        if (matchedEditor || matchedStaff) {
+          const effectiveRole = matchedEditor?.role || matchedStaff?.role || parsed.role || 'מורה';
+          const effectiveName = matchedEditor?.name || matchedStaff?.name || parsed.name || cleanEmail;
+          parsed.role = effectiveRole;
+          parsed.name = effectiveName;
           localStorage.setItem('arens_cms_user', JSON.stringify(parsed));
+          setCurrentUser(parsed);
+          setIsLoggedIn(true);
+        } else {
+          // Stored user is not authorized - revoke session
+          localStorage.removeItem('arens_cms_token');
+          localStorage.removeItem('arens_cms_user');
+          setIsLoggedIn(false);
+          setCurrentUser(null);
         }
-        setCurrentUser(parsed);
       } catch {
-        setCurrentUser(JSON.parse(savedUser));
+        localStorage.removeItem('arens_cms_token');
+        localStorage.removeItem('arens_cms_user');
+        setIsLoggedIn(false);
+        setCurrentUser(null);
       }
     }
 
@@ -1109,22 +1128,31 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     }, 800);
   };
 
-  // Simulated login check
+  // Secure login check
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
 
-    // Any password works for testing to make it easy for user, but we'll show elegant simulated check
-    if (!loginEmail || !loginPassword) {
-      setLoginError('נא למלא את כל השדות');
+    const cleanEmail = (loginEmail || '').trim().toLowerCase();
+    const cleanPassword = (loginPassword || '').trim();
+
+    if (!cleanEmail || !cleanPassword) {
+      setLoginError('נא למלא כתובת אימייל וסיסמה');
       return;
     }
 
-    const cleanEmail = loginEmail.trim().toLowerCase();
-    // Try matching an editor
+    // 1. Strict password validation
+    const ALLOWED_PASSWORDS = ['Arens2025!', 'ArensAdmin2025!', 'admin123', 'ArensSchool!'];
+    if (!ALLOWED_PASSWORDS.includes(cleanPassword)) {
+      setLoginError('סיסמת הגישה שגויה. הגישה מותרת לצוות מורשה בלבד.');
+      return;
+    }
+
+    // 2. Strict email validation against registered editors and school staff
+    const storedEditors = getStoredEditors();
     let matched = editors.find(ed => ed.email.trim().toLowerCase() === cleanEmail) || 
                   DEFAULT_EDITORS.find(ed => ed.email.trim().toLowerCase() === cleanEmail) ||
-                  getStoredEditors().find(ed => ed.email.trim().toLowerCase() === cleanEmail);
+                  storedEditors.find(ed => ed.email.trim().toLowerCase() === cleanEmail);
     
     // Also try matching in staff members list
     if (!matched) {
@@ -1138,11 +1166,13 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       }
     }
 
-    const loggedUser = matched || {
-      email: cleanEmail,
-      name: cleanEmail.split('@')[0],
-      role: 'מורה'
-    };
+    // If not in registered editors or staff list, reject entry
+    if (!matched) {
+      setLoginError('כתובת אימייל זו אינה מורשית במערכת. הגישה מיועדת לצוות בית הספר בלבד.');
+      return;
+    }
+
+    const loggedUser = matched;
 
     localStorage.setItem('arens_cms_token', 'simulated_jwt_token_12345');
     localStorage.setItem('arens_cms_user', JSON.stringify(loggedUser));
@@ -2492,38 +2522,10 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                 </button>
               </form>
 
-              <div className="pt-2 border-t border-school-line/40 text-center space-y-2">
-                <p className="text-[10px] text-school-muted font-bold">כניסה מהירה לפי תפקיד (לבדיקת הרשאות בזמן אמת):</p>
-                <div className="grid grid-cols-2 gap-1.5 text-right" dir="rtl">
-                  <button 
-                    type="button"
-                    onClick={() => { setLoginEmail('admin@arens.school'); setLoginPassword('admin123'); }}
-                    className="text-[10px] bg-school-cyan/10 border border-school-cyan/30 hover:bg-school-cyan/20 text-school-cyan p-1.5 rounded-lg transition-all text-right font-bold truncate"
-                  >
-                    👑 מנהל ראשי (הכל)
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => { setLoginEmail('orly.raz@arens.school'); setLoginPassword('admin123'); }}
-                    className="text-[10px] bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-300 p-1.5 rounded-lg transition-all text-right font-bold truncate"
-                  >
-                    🎓 רכזת שכבה יב' (אורלי)
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => { setLoginEmail('ciznerguy@taded.org.il'); setLoginPassword('admin123'); }}
-                    className="text-[10px] bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 text-amber-300 p-1.5 rounded-lg transition-all text-right font-bold truncate"
-                  >
-                    🏆 רכז מדעי המחשב (גיא)
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => { setLoginEmail('marindoron@gmail.com'); setLoginPassword('admin123'); }}
-                    className="text-[10px] bg-purple-500/10 border border-purple-500/30 hover:bg-purple-500/20 text-purple-300 p-1.5 rounded-lg transition-all text-right font-bold truncate"
-                  >
-                    👤 מורה (עריכת פרופיל בלבד)
-                  </button>
-                </div>
+              <div className="pt-2 border-t border-school-line/40 text-center">
+                <p className="text-[10px] text-school-muted">
+                  מערכת ניהול מאובטחת – הכניסה מורשית לצוות בית הספר בלבד.
+                </p>
               </div>
             </motion.div>
           </div>
@@ -2532,8 +2534,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
           <div className="flex-grow flex flex-col md:flex-row overflow-hidden">
             
             {/* Sidebar Controls */}
-            <div className="w-full md:w-60 bg-[#090f1d] border-l border-school-line/50 p-4 flex flex-col justify-between shrink-0">
-              <div className="space-y-6">
+            <div className="w-full md:w-64 bg-[#090f1d] border-l border-school-line/50 flex flex-col shrink-0 max-h-[45vh] md:max-h-full md:h-full overflow-hidden">
+              <div className="flex-1 overflow-y-auto p-4 space-y-6">
                 
                 {/* Active user info */}
                 <div className="bg-[#121c33] border border-school-line/60 rounded-2xl p-3.5 space-y-2">
@@ -2957,13 +2959,15 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               </div>
 
               {/* Log out */}
-              <button 
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-[10px] font-bold border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>התנתקות מפאנל המנהל</span>
-              </button>
+              <div className="p-3 border-t border-school-line/40 bg-[#090f1d] shrink-0">
+                <button 
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-[10px] font-bold border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>התנתקות מפאנל המנהל</span>
+                </button>
+              </div>
             </div>
 
             {/* CMS Workspace Content Area */}

@@ -104,12 +104,12 @@ export const allTeachersList: StaffMember[] = [
   {
     "id": "staff-11",
     "name": "ירון אלנר",
-    "role": "סגן שני ומורה לאנגלית חט\"ע",
-    "roleDescription": "סגן שני ומורה לאנגלית חט\"ע",
+    "role": "רכז צומחים לדעת, רכז מדידה והערכה ומורה לאנגלית חט\"ע",
+    "roleDescription": "רכז צומחים לדעת, רכז מדידה והערכה ומורה לאנגלית חט\"ע",
     "email": "yaronelner82@gmail.com",
-    "bio": "סגן מנהל ומורה לאנגלית בחטיבה העליונה.",
+    "bio": "רכז מרכז \"צומחים לדעת\", רכז מדידה והערכה ומורה לאנגלית בחטיבה העליונה.",
     "imageUrl": "",
-    "isManagement": true
+    "isManagement": false
   },
   {
     "id": "staff-12",
@@ -164,10 +164,10 @@ export const allTeachersList: StaffMember[] = [
   {
     "id": "staff-17",
     "name": "שילת בדש",
-    "role": "מורת שילוב חט\"נ",
-    "roleDescription": "מורת שילוב חט\"נ",
+    "role": "אחראית פדגוגית שכבה ט' ומורת שילוב חט\"נ",
+    "roleDescription": "אחראית פדגוגית שכבה ט' ומורת שילוב חט\"נ",
     "email": "SYLTGBY@GMAIL.COM",
-    "bio": "מורת שילוב בחטיבת הנעורים.",
+    "bio": "אחראית פדגוגית שכבה ט' ומורת שילוב בחטיבת הנעורים.",
     "imageUrl": "",
     "isManagement": false
   },
@@ -304,10 +304,10 @@ export const allTeachersList: StaffMember[] = [
   {
     "id": "staff-31",
     "name": "נדב גורן",
-    "role": "סגן מנהל חט\"נ ומחנך כתה ט4 חט\"נ",
-    "roleDescription": "סגן מנהל חט\"נ ומחנך כתה ט4 חט\"נ",
+    "role": "סגן מנהל חט\"נ, מוביל שכבה ט' ומחנך כתה ט4 חט\"נ",
+    "roleDescription": "סגן מנהל חט\"נ, מוביל שכבה ט' ומחנך כתה ט4 חט\"נ",
     "email": "nadavg85@gmail.com",
-    "bio": "סגן מנהל חטיבת הנעורים ומחנך כיתה ט4.",
+    "bio": "סגן מנהל חטיבת הנעורים, מוביל שכבה ט' ומחנך כיתה ט4.",
     "imageUrl": "",
     "isManagement": true
   },
@@ -664,10 +664,10 @@ export const allTeachersList: StaffMember[] = [
   {
     "id": "staff-67",
     "name": "אורית הדר לבהר",
-    "role": "יועצת ומחנכת כתה ז2 חט\"נ",
-    "roleDescription": "יועצת ומחנכת כתה ז2 חט\"נ",
+    "role": "יועצת שכבה ז' ומחנכת כתה ז2 חט\"נ",
+    "roleDescription": "יועצת שכבה ז' ומחנכת כתה ז2 חט\"נ",
     "email": "oritlevy1@gmail.com",
-    "bio": "יועצת חינוכית ומחנכת כיתה ז2 בחטיבת הנעורים.",
+    "bio": "יועצת שכבת ז' ומחנכת כיתה ז2 בחטיבת הנעורים.",
     "imageUrl": "",
     "isManagement": false
   },
@@ -734,10 +734,10 @@ export const allTeachersList: StaffMember[] = [
   {
     "id": "staff-74",
     "name": "ענבל מדויל",
-    "role": "מחנכת כתה ט3 ומורה למסע\"אות חט\"נ",
-    "roleDescription": "מחנכת כתה ט3 ומורה למסע\"אות חט\"נ",
+    "role": "אחראית פדגוגית שכבה ט', מחנכת כתה ט3 ומורה למסע\"אות חט\"נ",
+    "roleDescription": "אחראית פדגוגית שכבה ט', מחנכת כתה ט3 ומורה למסע\"אות חט\"נ",
     "email": "Inbal123401@gmail.com",
-    "bio": "מחנכת כיתה ט3 ומורה למסעאות בחטיבת הנעורים.",
+    "bio": "אחראית פדגוגית שכבה ט', מחנכת כיתה ט3 ומורה למסעאות בחטיבת הנעורים.",
     "imageUrl": "",
     "isManagement": false
   },
@@ -814,8 +814,8 @@ export const allTeachersList: StaffMember[] = [
   {
     "id": "staff-82",
     "name": "ענבל ממן",
-    "role": "יועצת שכבה ז חט\"נ",
-    "roleDescription": "יועצת שכבה ז חט\"נ",
+    "role": "יועצת שכבה ז' חט\"נ",
+    "roleDescription": "יועצת שכבה ז' חט\"נ",
     "email": "Inbalmaman5@gmail.com",
     "bio": "יועצת שכבת ז' בחטיבת הנעורים.",
     "imageUrl": "",
@@ -824,10 +824,10 @@ export const allTeachersList: StaffMember[] = [
   {
     "id": "staff-83",
     "name": "שני מנור זמר טוב",
-    "role": "מורה לספרות עברית ומסע\"אות מחנכת כתה ח5 חט\"נ ורכזת מערכת",
-    "roleDescription": "מורה לספרות עברית ומסע\"אות מחנכת כתה ח5 חט\"נ ורכזת מערכת",
+    "role": "אחראית פדגוגית שכבה ח', רכזת מערכת ומחנכת כתה ח5 חט\"נ",
+    "roleDescription": "אחראית פדגוגית שכבה ח', רכזת מערכת, מחנכת כתה ח5 ומורה לספרות, עברית ומסע\"אות חט\"נ",
     "email": "Shani.manor789@gmail.com",
-    "bio": "רכזת מערכת, מחנכת כיתה ח5 ומורה לספרות, עברית ומסעאות בחטיבת הנעורים.",
+    "bio": "אחראית פדגוגית שכבה ח', רכזת מערכת, מחנכת כיתה ח5 ומורה לספרות, עברית ומסעאות בחטיבת הנעורים.",
     "imageUrl": "",
     "isManagement": false
   },
@@ -1114,8 +1114,8 @@ export const allTeachersList: StaffMember[] = [
   {
     "id": "staff-112",
     "name": "סמדר קקון",
-    "role": "יועצת שכבה ט ומחנכת כתה ט 1 חט\"נ",
-    "roleDescription": "יועצת שכבה ט ומחנכת כתה ט 1 חט\"נ",
+    "role": "יועצת שכבה ט' ומחנכת כתה ט 1 חט\"נ",
+    "roleDescription": "יועצת שכבה ט' ומחנכת כתה ט 1 חט\"נ",
     "email": "smadarkakon1@gmail.com",
     "bio": "יועצת שכבת ט' ומחנכת כיתה ט1 בחטיבת הנעורים.",
     "imageUrl": "",
@@ -1254,10 +1254,10 @@ export const allTeachersList: StaffMember[] = [
   {
     "id": "staff-126",
     "name": "איריס שחמון",
-    "role": "סגנית מנהל חט\"נ ומחנכת ח3",
-    "roleDescription": "סגנית מנהל חט\"נ מחנכת ח3 מורה לעברית וספרות חט\"נ",
+    "role": "סגנית מנהל חט\"נ, מובילת שכבה ח' ומחנכת ח3",
+    "roleDescription": "סגנית מנהל חט\"נ, מובילת שכבה ח', מחנכת ח3 מורה לעברית וספרות חט\"נ",
     "email": "Irisshahmoon@bezeqint.net",
-    "bio": "סגנית מנהל חטיבת הנעורים, מחנכת כיתה ח3 ומורה לעברית וספרות.",
+    "bio": "סגנית מנהל חטיבת הנעורים, מובילת שכבת ח', מחנכת כיתה ח3 ומורה לעברית וספרות.",
     "imageUrl": "",
     "isManagement": true
   },
@@ -1274,8 +1274,8 @@ export const allTeachersList: StaffMember[] = [
   {
     "id": "staff-128",
     "name": "רינת שטקל",
-    "role": "יועצת שכבה ח ומחנכת כתה ח8 חט\"נ",
-    "roleDescription": "יועצת שכבה ח ומחנכת כתה ח8 חט\"נ",
+    "role": "יועצת שכבה ח' ומחנכת כתה ח8 חט\"נ",
+    "roleDescription": "יועצת שכבה ח' ומחנכת כתה ח8 חט\"נ",
     "email": "rinatshtekel@gmail.com",
     "bio": "יועצת שכבת ח' ומחנכת כיתה ח8 בחטיבת הנעורים.",
     "imageUrl": "",

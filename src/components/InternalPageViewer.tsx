@@ -206,9 +206,9 @@ export default function InternalPageViewer({
   }) : [];
 
   // Find grade level classes (using local storage overrides if available)
-  const gradeLevelInfo = currentGrade ? gradesData.find(g => g.grade === currentGrade) : null;
+  const cleanGradeKey = (currentGrade || 'ז').replace(/['"״]/g, '').trim();
+  const gradeLevelInfo = currentGrade ? gradesData.find(g => g.grade.replace(/['"״]/g, '').trim() === cleanGradeKey) : null;
   const defaultClasses = gradeLevelInfo?.classes || [];
-  const cleanGradeKey = (currentGrade || 'ז').replace(/'/g, '').trim();
   const gradeClasses = (currentGrade && classesOverrides[cleanGradeKey] !== undefined) 
     ? classesOverrides[cleanGradeKey] 
     : defaultClasses;
@@ -493,31 +493,71 @@ export default function InternalPageViewer({
               {/* Coordinator / Leadership Card */}
               {(() => {
                 // Find all matching staff members for this grade
-                const coordinatorsList: StaffMember[] = [];
-                const names = gradeCoordinator.split(/ ו|&|,/).map(n => n.trim()).filter(Boolean);
-                
-                names.forEach(name => {
-                  const match = allTeachersList.find(t => t.name.includes(name) || name.includes(t.name));
-                  if (match) {
-                    coordinatorsList.push(match);
-                  } else {
+                interface LeaderItem {
+                  name: string;
+                  role: string;
+                  staff?: StaffMember;
+                }
+                const coordinatorsList: LeaderItem[] = [];
+
+                const standardLeadershipByGrade: Record<string, { role: string; name: string }[]> = {
+                  'ז': [
+                    { role: "רכז שכבה", name: "רועי רותם" },
+                    { role: "יועצת השכבה", name: "ענבל ממן" },
+                    { role: "יועצת השכבה", name: "אורית הדר לבהר" }
+                  ],
+                  'ח': [
+                    { role: "מובילת שכבה", name: "איריס שחמון" },
+                    { role: "אחראית פדגוגית", name: "שני מנור זמר טוב" },
+                    { role: "יועצת השכבה", name: "רינת שטקל" }
+                  ],
+                  'ט': [
+                    { role: "מוביל שכבה", name: "נדב גורן" },
+                    { role: "אחראית פדגוגית", name: "ענבל מדויל" },
+                    { role: "אחראית פדגוגית", name: "שילת בדש" },
+                    { role: "יועצת השכבה", name: "סמדר קקון" }
+                  ]
+                };
+
+                const resolvedLeadership = (gradeLevelInfo?.leadership && gradeLevelInfo.leadership.length > 0)
+                  ? gradeLevelInfo.leadership
+                  : (standardLeadershipByGrade[cleanGradeKey] || null);
+
+                if (resolvedLeadership && resolvedLeadership.length > 0) {
+                  resolvedLeadership.forEach(leader => {
+                    const match = allTeachersList.find(t => 
+                      t.name === leader.name || 
+                      t.name.includes(leader.name) || 
+                      leader.name.includes(t.name) ||
+                      (leader.name.includes('מנור') && t.name.includes('מנור')) ||
+                      (leader.name.includes('שטקל') && t.name.includes('שטקל')) ||
+                      (leader.name.includes('לבהר') && t.name.includes('לבהר')) ||
+                      (leader.name.includes('מדויל') && t.name.includes('מדויל'))
+                    );
                     coordinatorsList.push({
-                      id: `temp-${name}`,
-                      name: name,
-                      role: `הנהלת שכבה ${currentGrade}`,
-                      bio: `הנהלת וריכוז שכבה ${currentGrade}`,
-                      imageUrl: '',
-                      isManagement: true
+                      name: match?.name || leader.name,
+                      role: leader.role,
+                      staff: match
                     });
-                  }
-                });
+                  });
+                } else {
+                  const names = gradeCoordinator.split(/ ו|&|,/).map(n => n.trim()).filter(Boolean);
+                  names.forEach(name => {
+                    const match = allTeachersList.find(t => t.name.includes(name) || name.includes(t.name));
+                    coordinatorsList.push({
+                      name: match?.name || name,
+                      role: match?.role || `הנהלת שכבה ${cleanGradeKey}`,
+                      staff: match
+                    });
+                  });
+                }
 
                 return (
                   <div className="bg-gradient-to-br from-school-panel2 to-school-panel border border-school-line rounded-3xl p-6 text-center space-y-4 shadow-md relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-[radial-gradient(circle_at_100%_0%,rgba(34,211,238,0.08),transparent_70%)] pointer-events-none" />
                     
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-school-cyan/10 border border-school-cyan/20 text-[10px] font-extrabold text-school-cyan">
-                      <span>הנהלת וריכוז שכבה {currentGrade}</span>
+                      <span>הנהלת וריכוז שכבה {cleanGradeKey}</span>
                     </div>
 
                     <div className="space-y-4">
@@ -526,7 +566,7 @@ export default function InternalPageViewer({
                           {/* Avatar with Hebrew initials or uploaded photo */}
                           <TeacherAvatar
                             name={coord.name}
-                            imageUrl={coord.imageUrl}
+                            imageUrl={coord.staff?.imageUrl}
                             className="w-16 h-16 rounded-full shadow-sm"
                             textClassName="text-xl font-black"
                             borderClassName="border-2 border-school-cyan/40"
@@ -535,8 +575,8 @@ export default function InternalPageViewer({
                           <div className="space-y-0.5">
                             <h3 className="font-black text-sm text-school-text">{coord.name}</h3>
                             <p className="text-[11px] text-school-cyan font-bold">{coord.role || `רכז/ת שכבה ${currentGrade}`}</p>
-                            {coord.email && (
-                              <p className="text-[10px] text-school-muted mt-1 select-all hover:text-white transition-colors">{coord.email}</p>
+                            {coord.staff?.email && (
+                              <p className="text-[10px] text-school-muted mt-1 select-all hover:text-white transition-colors">{coord.staff.email}</p>
                             )}
                           </div>
                         </div>

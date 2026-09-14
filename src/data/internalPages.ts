@@ -227,7 +227,7 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
         title: "צוות מוביל ותכניות השכבה",
         list: [
           "רכז השכבה: רועי רותם",
-          "יועצת השכבה: רינת שטקל",
+          "יועצות השכבה: ענבל ממן, אורית הדר לבהר",
           "תכנית חברתית ז' וסדנאות גיבוש",
           "לוח אירועים ומדדי הערכה שכבתיים",
           "שבועי שכבת ז' ועדכונים שוטפים",
@@ -263,8 +263,9 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
       {
         title: "צוות מוביל ותכניות השכבה",
         list: [
-          "רכזת השכבה: רות אסף",
-          "יועצת השכבה: סמדר קקון",
+          "מובילת השכבה: איריס שחמון",
+          "אחראית פדגוגית: שני מנור זמר טוב",
+          "יועצת השכבה: רינת שטקל",
           "תכנית חברתית ח' וימי שדה",
           "לוח אירועים ומדדי הערכה שכבתיים",
           "שבועי שכבת ח' ועדכונים שוטפים"
@@ -298,8 +299,9 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
       {
         title: "צוות מוביל ודפי משנה",
         list: [
-          "רכזת השכבה: נירית גרובר",
-          "יועצת השכבה: ענבל ממן",
+          "מוביל השכבה: נדב גורן",
+          "אחראיות פדגוגיות: ענבל מדויל, שילת בדש",
+          "יועצת השכבה: סמדר קקון",
           "תכנית חברתית ט' ופרויקטי מנהיגות",
           "מהי תעודת בגרות?",
           "ממוטיבציה לבחירה - בוקר מגמות לכיתות ט'",
@@ -1177,6 +1179,29 @@ export function getInternalPageOverrides(): Record<string, InternalPage> {
       if (!page || !page.title) return;
       const canonKey = toCanonicalPageKey(rawKey, page);
       const titleSig = page.title.trim().replace(/['"״]/g, '');
+
+      // Update any legacy leadership in sections for grades ז, ח, ט
+      const detectedG = detectGradeFromKey(canonKey) || (page.title ? detectGradeFromKey(page.title) : null);
+      if (detectedG && page.sections && page.sections.length > 0) {
+        page.sections = page.sections.map(sec => {
+          if (!sec.list || sec.list.length === 0) return sec;
+          let list = [...sec.list];
+          if (detectedG === 'ז') {
+            list = list.filter(item => !item.includes('רינת שטקל'));
+            if (!list.some(item => item.includes('ענבל ממן') || item.includes('לבהר'))) {
+              const coordIdx = list.findIndex(item => item.includes('רועי רותם') || item.includes('רכז השכבה'));
+              if (coordIdx !== -1) {
+                list.splice(coordIdx + 1, 0, "יועצות השכבה: ענבל ממן, אורית הדר לבהר");
+              }
+            }
+          } else if (detectedG === 'ח') {
+            list = list.map(item => item.includes('רות אסף') ? "מובילת השכבה: איריס שחמון" : item);
+          } else if (detectedG === 'ט') {
+            list = list.map(item => item.includes('נירית גרובר') ? "מוביל השכבה: נדב גורן" : item);
+          }
+          return { ...sec, list };
+        });
+      }
 
       if (!cleaned[canonKey] && !seenTitles.has(titleSig)) {
         cleaned[canonKey] = page;

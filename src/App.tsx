@@ -161,7 +161,7 @@ export default function App() {
   // Dynamic news articles state loaded from localstorage or default school articles
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
   // Dynamic staff members state loaded from localstorage or default school articles
-  const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
+  const [staffMembers, setStaffMembers] = useState<StaffMember[]>(() => getStoredStaffMembers());
   // Selected staff member for bio modal popup
   const [selectedStaffForModal, setSelectedStaffForModal] = useState<StaffMember | null>(null);
   // Keep modal data in sync if staff members change

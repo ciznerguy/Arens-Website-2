@@ -32,9 +32,15 @@ export interface ClassInfo {
   specialty?: string; // e.g. "כיתת מופת", "סייבר"
 }
 
+export interface GradeLeadershipMember {
+  role: string;
+  name: string;
+}
+
 export interface GradeLevel {
   grade: string;
-  coordinator: string; // רכז/ת שכבה
+  coordinator: string; // רכז/ת או מוביל/ת שכבה
+  leadership?: GradeLeadershipMember[];
   description: string;
   classes: ClassInfo[];
 }

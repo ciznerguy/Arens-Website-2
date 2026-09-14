@@ -4,6 +4,7 @@
 - **DO NOT MODIFY ANYTHING ON THE WEBSITE UNLESS EXPLICITLY INSTRUCTED BY THE USER.** (אין לבצע שום שינויים באתר אלא אם מתקבלת הנחיה מפורשת מהמשתמש).
 - **CONFIRMATION BEFORE CHANGES**: לפני כל הנחיה משמעותית לשינוי באתר, ראשית יש להסביר מה הובן שצריך לעשות ורק אחרי אישור מפורש מהמשתמש להטמיע.
 - **NO UNSOLICITED DEPLOYMENTS:** Do not attempt CLI deployments or request secret tokens. All builds compile locally into `dist/`.
+- **NO UNSOLICITED GIT ACTIONS:** Do not perform any Git operations (`git add`, `git commit`, `git push`) unless explicitly and specifically instructed by the user to do so. (אין לבצע פעולות Git כגון commit או push אלא אם התקבלה הנחיה מפורשת מהמשתמש לבצע פעולת Git).
 
 ## Production / External Hosting URL
 - **Netlify External Host URL:** `https://relaxed-eclair-c6a95f.netlify.app/?theme=cosmic-dark`
