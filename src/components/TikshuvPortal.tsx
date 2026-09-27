@@ -186,17 +186,6 @@ export const TikshuvPortal: React.FC<TikshuvPortalProps> = ({
                   <KeyRound className="w-4 h-4 text-amber-400" />
                   <span>מדריך התחברות למייל הארגוני (Google)</span>
                 </button>
-
-                <a
-                  href="https://sites.google.com/view/tad-tikshuv/%D7%93%D7%A3-%D7%94%D7%91%D7%99%D7%AA"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-school-muted hover:text-white border border-school-line text-xs font-semibold transition-all"
-                >
-                  <Globe className="w-4 h-4 text-pink-400" />
-                  <span>פורטל תקשוב מחוז ת"א</span>
-                  <ExternalLink className="w-3 h-3 opacity-70" />
-                </a>
               </div>
             </div>
 

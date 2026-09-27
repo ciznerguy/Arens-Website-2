@@ -18,7 +18,9 @@ export const getStoredTikshuvGuides = (): TikshuvGuide[] => {
     const raw = localStorage.getItem(TIKSHUV_GUIDES_KEY);
     if (!raw) return defaultTikshuvGuides;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed.filter((g: TikshuvGuide) => g.id !== 'guide-video-tad-tikshuv-intro' && !g.externalUrl?.includes('tad-tikshuv'));
+    }
   } catch (e) {
     console.error('Failed loading stored tikshuv guides:', e);
   }
@@ -48,7 +50,9 @@ export const getStoredTikshuvQuickLinks = (): TikshuvQuickLink[] => {
     const raw = localStorage.getItem(TIKSHUV_LINKS_KEY);
     if (!raw) return defaultTikshuvQuickLinks;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed.filter((l: TikshuvQuickLink) => !l.url?.includes('tad-tikshuv'));
+    }
   } catch (e) {
     console.error('Failed loading stored tikshuv quick links:', e);
   }
@@ -64,7 +68,13 @@ export const subscribeToTikshuvGuides = (callback: (guides: TikshuvGuide[]) => v
         if (!snapshot.empty) {
           const list: TikshuvGuide[] = [];
           snapshot.forEach((docSnap) => {
-            list.push({ ...(docSnap.data() as TikshuvGuide), id: docSnap.id });
+            const data = docSnap.data() as TikshuvGuide;
+            if (docSnap.id === 'guide-video-tad-tikshuv-intro' || data.externalUrl?.includes('tad-tikshuv')) {
+              // Delete legacy guide from Firestore automatically
+              deleteDoc(docSnap.ref).catch(console.warn);
+              return;
+            }
+            list.push({ ...data, id: docSnap.id });
           });
           // Sort: pinned first, then updated date
           list.sort((a, b) => {

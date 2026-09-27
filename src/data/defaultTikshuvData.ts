@@ -22,30 +22,12 @@ export const defaultTikshuvQuickLinks: TikshuvQuickLink[] = [
     isExternal: true
   },
   {
-    id: 'link-portal-tikshuv',
-    title: 'תקשוב ללא הפסקה - מחוז תל אביב',
-    description: 'הפורטל המחוזי הרשמי: ידע, מדריכים, השתלמויות וסביבות ענן',
-    url: 'https://sites.google.com/view/tad-tikshuv/%D7%93%D7%A3-%D7%94%D7%91%D7%99%D7%AA',
-    icon: 'Globe',
-    badge: 'פורטל מחוזי',
-    isExternal: true
-  },
-  {
     id: 'link-sso-edu',
     title: 'כניסה בהזדהות אחידה משרד החינוך',
     description: 'פורטל עובדי הוראה, מרחב פדגוגי ושירותי ענן מאושרים',
     url: 'https://edu.gov.il',
     icon: 'KeyRound',
     badge: 'הזדהות אחידה',
-    isExternal: true
-  },
-  {
-    id: 'link-virtual-school',
-    title: 'בית הספר הווירטואלי',
-    description: 'הבית של כל התוכניות והמענים הדיגיטליים של משרד החינוך',
-    url: 'https://sites.google.com/view/tad-tikshuv/%D7%AA%D7%99%D7%A7-%D7%A8%D7%9B%D7%96%D7%AA-%D7%AA%D7%A7%D7%A9%D7%95%D7%91/%D7%90%D7%aa%D7%a8%D7%99-%D7%97%D7%95%D7%91%D7%94-%D7%9c%D7%a8%D7%9b%D7%96%D7%aa',
-    icon: 'Laptop',
-    badge: 'משרד החינוך',
     isExternal: true
   }
 ];
@@ -271,18 +253,6 @@ export const defaultTikshuvGuides: TikshuvGuide[] = [
     ],
     tags: ['Chrome', 'פרופיל נפרד', 'פתרון תקלות', 'הזדהות אחידה'],
     author: 'גיא ציזנר - רכז תקשוב',
-    updatedAt: '2026-09-27'
-  },
-  {
-    id: 'guide-video-tad-tikshuv-intro',
-    title: 'סרטון הדרכה: הכרת סביבות הענן ופורטל התקשוב המחוזי',
-    subtitle: 'מתוך יחידת ההדרכה של מחוז תל אביב',
-    category: 'classroom',
-    type: 'video',
-    summary: 'סקירה מקיפה של כניסה לענן הארגוני, מעבר לבית הספר הווירטואלי ושימוש יעיל בכלי ההוראה הדיגיטליים.',
-    externalUrl: 'https://sites.google.com/view/tad-tikshuv/%D7%A1%D7%91%D7%99%D7%91%D7%95%D7%aa-%D7%A2%D7%a0%D7%9f-%D7%91%D7%97%D7%99%D7%a0%D7%95%D7%9a',
-    tags: ['סרטון הדרכה', 'מחוז תל אביב', 'סביבות ענן', 'הדרכות מורים'],
-    author: 'מחוז תל אביב - תקשוב',
     updatedAt: '2026-09-27'
   },
   {
