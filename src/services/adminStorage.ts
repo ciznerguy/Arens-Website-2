@@ -35,6 +35,8 @@ export const getStoredContactEmails = (): SecretaryContactEmails => {
 
 export const DEFAULT_EDITORS: Editor[] = [
   { email: '1003045545@taded.org.il', name: 'מנהל ראשי', role: 'מנהל ראשי' },
+  { email: 'ciznerguy@taded.org.il', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: 'me@ciznerguy.com', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
   { email: '1002641566@taded.org.il', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
   { email: 'orly.raz.1010@gmail.com', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
   { email: 'kamilroy35@gmail.com', name: 'שקל ששון נאוה', role: 'מנהל מערכת' }

@@ -237,7 +237,7 @@ export const NewsletterViewer: React.FC<NewsletterViewerProps> = ({ onBack }) =>
                 <li>• בעלי תפקידים ודרכי התקשרות עימם</li>
                 <li>• לוח חופשות</li>
                 <li>• לוח שיעורים</li>
-                <li>• לו”ז הסעות – איסוף ופיזור</li>
+                <li>• לו”ז הסעות - איסוף ופיזור</li>
                 <li>• מועדי אסיפות הורים</li>
               </ul>
             </div>

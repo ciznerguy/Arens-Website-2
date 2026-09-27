@@ -57,6 +57,7 @@ import { gradesData } from '../data';
 import { allTeachersList } from '../data/teachersList';
 import { getHebrewInitials, getAvatarColor } from '../utils/avatarUtils';
 import { TeacherAvatar } from './TeacherAvatar';
+import { ParentsMeetingSlideshow } from './ParentsMeetingSlideshow';
 import { getStoredMajors } from '../services/majorsStorage';
 import { SchoolMajor, StaffMember } from '../types';
 
@@ -812,6 +813,13 @@ export default function InternalPageViewer({
               </div>
             );
           })()}
+
+          {/* Dedicated Parents Meeting Presentation Slide Deck */}
+          {(pageUrl.includes('asifat-horim') || page.title.includes('אסיפת הורים') || pageUrl.includes('אסיפת-הורים') || pageUrl.includes('%d7%90%d7%a1%d7%99%d7%a4%d7%aa-%d7%94%d7%95%d7%a8%d7%99%d7%9d')) && (
+            <div className="space-y-4 pt-2">
+              <ParentsMeetingSlideshow />
+            </div>
+          )}
 
           {/* Dedicated Heyzine / Flipbook Embed Player */}
           {((page as any).flipbookUrl || pageUrl.includes('אורחות-חיים') || pageUrl.includes('%d7%90%d7%95%d7%a8%d7%97%d7%95%d7%aa-%d7%97%d7%99%d7%99%d7%9d')) && (

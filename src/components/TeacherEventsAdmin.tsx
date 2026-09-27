@@ -1805,7 +1805,7 @@ export const TeacherEventsAdmin: React.FC<TeacherEventsAdminProps> = ({
                     required
                     value={editingWorkshop.title}
                     onChange={(e) => setEditingWorkshop({ ...editingWorkshop, title: e.target.value })}
-                    placeholder="לדוגמה: בינה מלאכותית בהוראה"
+                    placeholder="לדוגמה: מיומנויות למידה מתקדמות בהוראה"
                     className="w-full bg-[#080d19] border border-school-line rounded-xl p-2.5 text-white font-bold focus:outline-none focus:border-school-cyan"
                   />
                 </div>
@@ -2150,7 +2150,7 @@ export const TeacherEventsAdmin: React.FC<TeacherEventsAdminProps> = ({
                     onChange={(e) => setManualForm({ ...manualForm, workshopId: e.target.value })}
                     className="w-full bg-[#080d19] border border-school-line rounded-xl p-2.5 text-white font-bold"
                   >
-                    <option value="">-- בחר סדנה --</option>
+                    <option value="">- בחר סדנה -</option>
                     {(currentEvent.workshops || []).map(w => (
                       <option key={w.id} value={w.id}>
                         {w.title} ({w.room})

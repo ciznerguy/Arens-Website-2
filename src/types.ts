@@ -223,5 +223,60 @@ export interface SchoolMajor {
   isActive?: boolean;
 }
 
+export type TikshuvCategory = 'classroom' | 'account' | 'cloud' | 'troubleshooting' | 'ai';
+export type TikshuvCategoryFilter = 'all' | TikshuvCategory;
+export type TikshuvType = 'guide' | 'video' | 'quick-link' | 'troubleshooting';
+
+export interface TikshuvStep {
+  stepNumber: number;
+  title: string;
+  description: string;
+  subSteps?: string[];
+  tip?: string;
+  codeSnippet?: string;
+}
+
+export interface TikshuvGuide {
+  id: string;
+  title: string;
+  subtitle?: string;
+  category: TikshuvCategory;
+  type: TikshuvType;
+  summary: string;
+  detailedContent?: string[];
+  steps?: TikshuvStep[];
+  faq?: { q: string; a: string }[];
+  keyDetailsTable?: { label: string; value: string; copyable?: boolean }[];
+  externalUrl?: string;
+  videoUrl?: string;
+  youtubeId?: string;
+  pdfUrl?: string;
+  tags: string[];
+  isPinned?: boolean;
+  author?: string;
+  updatedAt?: string;
+}
+
+export interface TikshuvCoordinatorContact {
+  name: string;
+  title: string;
+  email: string;
+  phone?: string;
+  whatsappUrl?: string;
+  office?: string;
+  hours?: string;
+  supportMessage: string;
+}
+
+export interface TikshuvQuickLink {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  icon: string;
+  badge?: string;
+  isExternal: boolean;
+}
+
 
 

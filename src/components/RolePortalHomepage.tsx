@@ -19,7 +19,8 @@ import {
   PlusCircle,
   HelpCircle,
   FileSpreadsheet,
-  MapPin
+  MapPin,
+  Laptop
 } from 'lucide-react';
 import { getUpcomingTeacherEvents, formatToIsraeliDate, subscribeToTeacherEvents, isEventFutureOrToday } from '../services/eventsStorage';
 
@@ -274,6 +275,38 @@ export const RolePortalHomepage: React.FC<RolePortalHomepageProps> = ({
                 title="פאנל ניהול לאחראי האירוע"
               >
                 <span>ממשק ניהול (Admin)</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* TIKSHUV BANNER FOR TEACHERS */}
+      {role === 'teachers' && (
+        <section className="bg-gradient-to-r from-[#111f38] via-[#0d172a] to-[#122344] border-2 border-school-cyan/40 rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-full bg-gradient-to-l from-school-cyan/15 to-transparent pointer-events-none" />
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-2 max-w-2xl">
+              <div className="inline-flex items-center gap-2 bg-school-cyan/20 border border-school-cyan/40 text-school-cyan px-3 py-1 rounded-full text-xs font-black">
+                <Laptop className="w-3.5 h-3.5" />
+                <span>חדש בפורטל מורים: מרחב תקשוב וחדשנות דיגיטלית</span>
+              </div>
+              <h2 className="text-xl md:text-2xl font-black text-white">
+                מדריכי כלי עבודה דיגיטליים, סביבות ענן ו-Google Classroom
+              </h2>
+              <p className="text-xs md:text-sm text-school-muted leading-relaxed">
+                מדריך התחברות למייל הארגוני (a@taded.org.il), פתיחת כיתת Classroom, יצירת מטלות ומבדקים, ניהול מפגשי Meet, ופתרון תקלות נפוצות.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <button
+                onClick={() => onNavigateToTab('tikshuv')}
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-school-cyan to-blue-400 text-slate-950 font-black text-xs md:text-sm shadow-lg shadow-school-cyan/20 hover:-translate-y-0.5 transition-all cursor-pointer flex items-center gap-2"
+              >
+                <Laptop className="w-4 h-4" />
+                <span>כניסה למרחב התקשוב והמדריכים</span>
+                <ArrowLeft className="w-4 h-4" />
               </button>
             </div>
           </div>

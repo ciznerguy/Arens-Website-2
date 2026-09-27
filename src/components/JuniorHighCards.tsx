@@ -33,7 +33,7 @@ export const JuniorHighCards: React.FC<JuniorHighCardsProps> = ({ onNavigateToPa
       url: "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%96-%d7%94%d7%a6%d7%a2%d7%93-%d7%94%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%91%d7%93%d7%a8%d7%9a-%d7%94%d7%97%d7%93%d7%a9%d7%94/"
     },
     {
-      title: "שכבת ח': צמיחה והעמקה – מגלים את הכוחות שבכם",
+      title: "שכבת ח': צמיחה והעמקה - מגלים את הכוחות שבכם",
       subtitle: "העמקה לימודית, חקר ומנהיגות צעירה",
       desc: "גילוי כוחות אישיים, פיתוח מיומנויות חקר, תכנית 'אקו-ארנס' ועשייה חברתית מובילה.",
       icon: TrendingUp,

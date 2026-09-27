@@ -69,6 +69,7 @@ import AdminPanel from './components/AdminPanel';
 import { RolePortalHomepage } from './components/RolePortalHomepage';
 import { TeacherEventRegistration } from './components/TeacherEventRegistration';
 import { TeacherEventsAdmin } from './components/TeacherEventsAdmin';
+import { TikshuvPortal } from './components/TikshuvPortal';
 import { MajorsExplorer } from './components/MajorsExplorer';
 import { HomepageMajorsSection } from './components/HomepageMajorsSection';
 import { MajorDedicatedPage } from './components/MajorDedicatedPage';
@@ -436,6 +437,9 @@ export default function App() {
         } else if (hash === 'teachers' || pageParam === 'teachers') {
           setActiveTab('teachers');
           setSelectedInternalPageUrl(null);
+        } else if (hash === 'tikshuv' || pageParam === 'tikshuv') {
+          setActiveTab('tikshuv');
+          setSelectedInternalPageUrl(null);
         } else if (hash.startsWith('teachers-events') || pageParam === 'teachers-events') {
           setActiveTab('teachers-events');
           setSelectedInternalPageUrl(null);
@@ -661,6 +665,7 @@ export default function App() {
         { t: "דבר מנהל חטיבת הנעורים", url: "course/%d7%93%d7%91%d7%a8-%d7%9e%d7%a0%d7%94%d7%9c-%d7%97%d7%98%d7%91%d7%aa-%d7%94%d7%a0%d7%a2%d7%95%d7%a8%d7%99%d7%9d/" },
         { t: "אורחות החיים של ארנס", url: "course/%d7%90%d7%95%d7%93%d7%95%d7%aa%d7%99%d7%a0%d7%95/%d7%90%d7%95%d7%a8%d7%97%d7%95%d7%aa-%d7%97%d7%99%d7%99%d7%9d-%d7%91%d7%a8%d7%a0%d7%a1/" },
         { t: "חזון", url: "course/%d7%97%d7%96%d7%95%d7%9f-%d7%91/" },
+        { t: "מצגת אסיפת הורים תשפ״ז", url: "course/asifat-horim-2026" },
         { t: "צומחים לדעת - מרחב למידה בתיכון", url: "course/tzomchim-ladaat" }
       ]
     },
@@ -683,7 +688,9 @@ export default function App() {
       t: "למורים",
       tab: "teachers",
       sub: [
-        { t: "למורים 🍎", tab: "teachers" }
+        { t: "למורים 🍎", tab: "teachers" },
+        { t: "תקשוב וחדשנות דיגיטלית 💻", tab: "tikshuv" },
+        { t: "אירועים וסדנאות מורים 📅", tab: "teachers-events" }
       ]
     }
   ];
@@ -715,6 +722,10 @@ export default function App() {
       setSelectedInternalPageUrl(null);
       setActiveTab('majors');
       window.location.hash = 'majors';
+    } else if (item.tab === 'tikshuv' || item.url === 'tikshuv') {
+      setSelectedInternalPageUrl(null);
+      setActiveTab('tikshuv');
+      window.location.hash = 'tikshuv';
     } else if (item.tab === 'teachers-events') {
       if (item.eventId) {
         setSelectedEventIdForRegistration(item.eventId);
@@ -1951,6 +1962,27 @@ export default function App() {
             </motion.div>
           )}
 
+          {/* TIKSHUV & DIGITAL INNOVATION HUB FOR TEACHERS */}
+          {activeTab === 'tikshuv' && (
+            <motion.div
+              key="tikshuv"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+            >
+              <TikshuvPortal 
+                onNavigateToTab={(tab) => {
+                  setActiveTab(tab);
+                  window.location.hash = tab;
+                }}
+                onOpenAdminTikshuv={() => {
+                  setIsAdminOpen(true);
+                }}
+                isAdmin={true}
+              />
+            </motion.div>
+          )}
+
           {/* TEACHERS WORKSHOPS ADMIN & GOOGLE WORKSPACE SYNC */}
           {activeTab === 'teachers-events-admin' && (
             <motion.div
@@ -2094,7 +2126,7 @@ export default function App() {
           {/* Copyright legal stuff */}
           <div className="space-y-2 text-[11px] text-school-muted/80">
             <p className="font-medium text-white/90 flex flex-wrap justify-center items-center gap-2">
-              <span>מצמיח אדם וחברה • הדגמת עיצוב מחודש — כל הזכויות שמורות לביה"ס</span>
+              <span>ארנס מצמיח אדם וחברה - כל הזכויות שמורות לבית הספר שש-שנתי ע״ש משה ארנס</span>
               <span className="text-school-line/60">|</span>
               <button 
                 onClick={() => setIsAdminOpen(true)}
@@ -2118,8 +2150,14 @@ export default function App() {
             setAdminInitialEmail(undefined);
           }} 
           onNavigateToPage={(url) => {
-            setSelectedInternalPageUrl(url);
-            setActiveTab('internal-page');
+            if (url === 'tikshuv') {
+              setSelectedInternalPageUrl(null);
+              setActiveTab('tikshuv');
+              window.location.hash = 'tikshuv';
+            } else {
+              setSelectedInternalPageUrl(url);
+              setActiveTab('internal-page');
+            }
           }}
           activeTheme={activeTheme}
           onThemeChange={setActiveTheme}

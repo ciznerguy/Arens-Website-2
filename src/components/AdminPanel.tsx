@@ -60,11 +60,13 @@ import {
   Mail,
   Phone,
   Building,
-  Send
+  Send,
+  Laptop
 } from 'lucide-react';
 import { TeacherEventsAdmin } from './TeacherEventsAdmin';
 import { MajorsAdmin } from './MajorsAdmin';
 import { MyProfileTab } from './MyProfileTab';
+import { TikshuvAdmin } from './TikshuvAdmin';
 import { getStoredMajors } from '../services/majorsStorage';
 import { 
   INTERNAL_PAGES, 
@@ -92,14 +94,14 @@ import { compressImage } from '../utils/imageCompressor';
 const DEFAULT_EDITORS = [
   { email: 'nava.ss@arens.school', name: 'נאווה שקל ששון', role: 'מנהלת שש-שנתי' },
   { email: 'dan.p@arens.school', name: 'דן פנחס', role: 'מנהל חטיבת נעורים' },
-  { email: '1003045545@taded.org.il', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: '1003045545@taded.org.il', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
   { email: 'admin@arens.school', name: 'מנהל מערכת', role: 'מנהל ראשי' },
   { email: 'orly.raz@arens.school', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
   { email: '1002641566@taded.org.il', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
   { email: 'orly.raz.1010@gmail.com', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
-  { email: 'ciznerguy@taded.org.il', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
-  { email: 'me@ciznerguy.com', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
-  { email: 'guy.tzizner@arens.school', name: 'גיא ציזנר', role: 'רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: 'ciznerguy@taded.org.il', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: 'me@ciznerguy.com', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: 'guy.tzizner@arens.school', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
   { email: 'tomer.naaman@arens.school', name: 'תומר נעמן', role: 'רכז מגמת פיזיקה' },
   { email: 'marindoron@gmail.com', name: 'דורון מרין', role: 'מורה' },
   { email: 'teacher@arens.school', name: 'מורה לדוגמה', role: 'מורה' }
@@ -159,7 +161,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [currentUser, setCurrentUser] = useState<Editor | null>(null);
 
   // CMS Tabs
-  const [activeTab, setActiveTab] = useState<'homepage' | 'pages' | 'my-grade' | 'majors' | 'news' | 'editors' | 'theme' | 'staff' | 'socials' | 'quick-links' | 'teachers-events' | 'my-profile' | 'contact-settings'>('homepage');
+  const [activeTab, setActiveTab] = useState<'homepage' | 'pages' | 'my-grade' | 'majors' | 'news' | 'editors' | 'theme' | 'staff' | 'socials' | 'quick-links' | 'teachers-events' | 'my-profile' | 'contact-settings' | 'tikshuv'>('homepage');
 
   // Homepage Settings State
   const [hpSubtitle, setHpSubtitle] = useState<string>('שש שנתי ע"ש משה ארנס');
@@ -381,6 +383,15 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     const isCoordinator = r.includes('רכז') || r.includes('רכזת') || r.includes('מוביל') || r.includes('מובילת') || r.includes('ראש צוות');
     const isOrly = r.includes('אורלי רז') || (r.includes('יב') && (r.includes('רכז') || r.includes('רכזת')));
     return (hasEnglish && isCoordinator) || isOrly;
+  };
+
+  const isTikshuvCoordinator = (role?: string, email?: string) => {
+    const userMail = (email || currentUser?.email || loginEmail || '').toLowerCase().trim();
+    if (userMail === 'me@ciznerguy.com' || userMail === 'ciznerguy@taded.org.il' || userMail === 'guy.tzizner@arens.school' || userMail === '1003045545@taded.org.il') {
+      return true;
+    }
+    const r = (role || '').toLowerCase();
+    return r.includes('תקשוב') || r.includes('טכנו-פדגוגי') || r.includes('רכז תקשוב');
   };
 
   const isHomeroomTeacher = (role: string) => {
@@ -789,13 +800,15 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     };
   }, []);
 
-  // Automatically select relevant tab for grade coordinators, english coordinators, or major coordinators
+  // Automatically select relevant tab for grade coordinators, tikshuv coordinators, english coordinators, or major coordinators
   useEffect(() => {
     if (isLoggedIn) {
       if (isFullSiteAdmin(effectiveRole)) {
         // Full site admins keep their tab
       } else if (isGradeCoordinator(effectiveRole)) {
         setActiveTab('my-grade');
+      } else if (isTikshuvCoordinator(effectiveRole, currentUser?.email)) {
+        setActiveTab('tikshuv');
       } else if (isEnglishCoordinator(effectiveRole)) {
         setActiveTab('pages');
         setSearchPageQuery('אנגלית');
@@ -1185,6 +1198,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       setActiveTab('my-profile');
     } else if (isFullSiteAdmin(userRole)) {
       setActiveTab('homepage');
+    } else if (isTikshuvCoordinator(userRole, loggedUser.email)) {
+      setActiveTab('tikshuv');
     } else if (isGradeCoordinator(userRole)) {
       setActiveTab('my-grade');
     } else if (isMajorCoordinator(userRole)) {
@@ -2524,7 +2539,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
               <div className="pt-2 border-t border-school-line/40 text-center">
                 <p className="text-[10px] text-school-muted">
-                  מערכת ניהול מאובטחת – הכניסה מורשית לצוות בית הספר בלבד.
+                  מערכת ניהול מאובטחת - הכניסה מורשית לצוות בית הספר בלבד.
                 </p>
               </div>
             </motion.div>
@@ -2580,6 +2595,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                             setActiveTab('homepage');
                           } else if (isGradeCoordinator(targetRole)) {
                             setActiveTab('my-grade');
+                          } else if (isTikshuvCoordinator(targetRole)) {
+                            setActiveTab('tikshuv');
                           } else if (isMajorCoordinator(targetRole)) {
                             setActiveTab('majors');
                           } else if (isEnglishCoordinator(targetRole)) {
@@ -2596,6 +2613,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           <option value="מורה לחינוך גופני">מורה לחינוך גופני (טאב פרופיל בלבד)</option>
                         </optgroup>
                         <optgroup label="סימולציית תפקידים מיוחדים">
+                          <option value="רכז תקשוב וטכנו-פדגוגיה">גיא ציזנר (רכז תקשוב וטכנו-פדגוגיה)</option>
                           <option value="רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1">אורלי רז (רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1)</option>
                         </optgroup>
                         <optgroup label="רכזי שכבות (פרופיל + שכבה)">
@@ -2782,9 +2800,6 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           <Palette className="w-4 h-4 text-emerald-400" />
                           <span>עיצוב ותמות האתר</span>
                         </span>
-                        <span className="text-[10px] text-emerald-400 select-none">
-                          🔮 AI
-                        </span>
                       </button>
 
                       <button 
@@ -2854,6 +2869,24 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           Google Sync
                         </span>
                       </button>
+
+                      {/* Tikshuv Hub Management for Admins */}
+                      <button 
+                        onClick={() => { setActiveTab('tikshuv'); }}
+                        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                          activeTab === 'tikshuv' 
+                            ? 'bg-school-cyan/20 text-white border border-school-cyan/40 shadow-sm' 
+                            : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <Laptop className="w-4 h-4 text-school-cyan" />
+                          <span>מרחב תקשוב ודיגיטל</span>
+                        </span>
+                        <span className="text-[9px] bg-school-cyan/20 text-school-cyan px-2 py-0.5 rounded-full font-bold">
+                          רכז תקשוב
+                        </span>
+                      </button>
                     </>
                   ) : (
                     /* Role-restricted Navigation for Co-ordinators & Teachers */
@@ -2879,6 +2912,26 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           כרטיס מורה
                         </span>
                       </button>
+
+                      {/* Tikshuv Coordinator Tab */}
+                      {isTikshuvCoordinator(effectiveRole, currentUser?.email) && (
+                        <button 
+                          onClick={() => { setActiveTab('tikshuv'); }}
+                          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                            activeTab === 'tikshuv' 
+                              ? 'bg-school-cyan/20 text-white border border-school-cyan/40 shadow-sm' 
+                              : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <Laptop className="w-4 h-4 text-school-cyan" />
+                            <span>מרחב תקשוב ודיגיטל</span>
+                          </span>
+                          <span className="text-[9px] bg-school-cyan/20 text-school-cyan px-2 py-0.5 rounded-full font-bold">
+                            רכז תקשוב
+                          </span>
+                        </button>
+                      )}
 
                       {/* Grade Coordinator Tab */}
                       {isGradeCoordinator(effectiveRole) && (
@@ -2947,7 +3000,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         </button>
                       )}
 
-                      {!isGradeCoordinator(effectiveRole) && !isEnglishCoordinator(effectiveRole) && !isMajorCoordinator(effectiveRole) && (
+                      {!isGradeCoordinator(effectiveRole) && !isEnglishCoordinator(effectiveRole) && !isMajorCoordinator(effectiveRole) && !isTikshuvCoordinator(effectiveRole, currentUser?.email) && (
                         <div className="p-3 bg-school-cyan/5 border border-school-cyan/20 rounded-xl text-school-muted text-[11px] leading-relaxed">
                           <span className="text-school-cyan font-bold block mb-0.5">הרשאת מורה:</span>
                           חשבונך מוגדר להרשאת עריכת הפרופיל האישי שלך בלבד.
@@ -6081,14 +6134,14 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                             <option value="עורך תוכן">עורך תוכן (עריכת דפים ועדכונים)</option>
                             <option value="מנהל מערכת">מנהל מערכת (ניהול דפים, מנהלים וקוד)</option>
                             <option value="עורך אורח">עורך אורח (הרשאת צפייה ועדכונים בלבד)</option>
-                            <option disabled className="text-school-muted font-bold pt-2">--- רכזי שכבות ---</option>
+                            <option disabled className="text-school-muted font-bold pt-2">- רכזי שכבות -</option>
                             <option value="רכז שכבה ז'">רכז שכבה ז' (ניהול דפי שכבה ז' בלבד)</option>
                             <option value="רכז שכבה ח'">רכז שכבה ח' (ניהול דפי שכבה ח' בלבד)</option>
                             <option value="רכז שכבה ט'">רכז שכבה ט' (ניהול דפי שכבה ט' בלבד)</option>
                             <option value="רכז שכבה י'">רכז שכבה י' (ניהול דפי שכבה י' בלבד)</option>
                             <option value="רכז שכבה יא'">רכז שכבה יא' (ניהול דפי שכבה יא' בלבד)</option>
                             <option value="רכז שכבה יב'">רכז שכבה יב' (ניהול דפי שכבה יב' בלבד)</option>
-                            <option disabled className="text-school-muted font-bold pt-2">--- רכזי 11 המגמות (תשפ"ז) ---</option>
+                            <option disabled className="text-school-muted font-bold pt-2">- רכזי 11 המגמות (תשפ"ז) -</option>
                             <option value="רכז מגמת דאטה אנליסט">רכז מגמת דאטה אנליסט (ניהול תוכן וסילבוס)</option>
                             <option value="רכז מגמת תיאטרון ומחזות זמר">רכז מגמת תיאטרון ומחזות זמר (ניהול תוכן וסילבוס)</option>
                             <option value="רכז מגמת פיזיקה">רכז מגמת פיזיקה (ניהול תוכן וסילבוס)</option>
@@ -6546,7 +6599,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         }`}
                       >
                         <Palette className="w-3.5 h-3.5" />
-                        <span>התאמה אישית ובינה מלאכותית</span>
+                        <span>התאמה אישית של צבעים וסגנון</span>
                       </button>
                     </div>
                   </div>
@@ -6715,21 +6768,21 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                   {/* SUB-TAB 2: ADVANCED CUSTOMIZATION */}
                   {themeSubTab === 'manual' && (
                     <div className="space-y-6 animate-fade-in">
-                      {/* AI Design Prompt Generator */}
+                      {/* Custom Design Style Generator */}
                       <div className="bg-[#101b33] border border-school-line rounded-2xl p-6 space-y-4">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <Palette className="w-5 h-5 text-emerald-400" />
-                            <h3 className="font-extrabold text-white text-base">מחולל סגנונות מבוסס בינה מלאכותית (AI Styling Prompt Engine)</h3>
+                            <h3 className="font-extrabold text-white text-base">מחולל סגנונות ועיצובים מתקדם (Styling Engine)</h3>
                           </div>
                           <p className="text-xs text-school-muted leading-relaxed">
-                            כתוב פרומפט המאפשר לשלוט בעיצוב האתר. המערכת תפענח את הפרומפט שלך ותשנה את צבעי האתר בצורה אופטימלית ונקייה, ללא פגיעה בתכנים ובמידע!
+                            הגדר תיאור סגנון לשליטה בצבעי האתר. המערכת תפעיל את הסגנון ותשנה את צבעי האתר בצורה אופטימלית ונקייה, ללא פגיעה בתכנים ובמידע!
                           </p>
                         </div>
 
                         <div className="space-y-4">
                           <div className="space-y-1.5">
-                            <label className="text-xs text-white font-black">הפרומפט לעיצוב האתר:</label>
+                            <label className="text-xs text-white font-black">תיאור סגנון העיצוב:</label>
                             <textarea
                               rows={3}
                               value={themePrompt}
@@ -6754,7 +6807,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                                 ) : (
                                   <>
                                     <Palette className="w-4 h-4" />
-                                    <span>החל עיצוב מבוסס פרומפט</span>
+                                    <span>החל עיצוב מבוקש</span>
                                   </>
                                 )}
                               </button>
@@ -6884,6 +6937,20 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               {activeTab === 'teachers-events' && isFullSiteAdmin(effectiveRole) && (
                 <div className="max-w-7xl mx-auto -m-6">
                   <TeacherEventsAdmin />
+                </div>
+              )}
+
+              {/* 9.5. TIKSHUV & DIGITAL INNOVATION HUB ADMIN */}
+              {activeTab === 'tikshuv' && (isFullSiteAdmin(effectiveRole) || isTikshuvCoordinator(effectiveRole, currentUser?.email)) && (
+                <div className="max-w-7xl mx-auto">
+                  <TikshuvAdmin 
+                    currentUserEmail={currentUser?.email || loginEmail}
+                    currentUserName={currentUser?.name}
+                    onPreviewPortal={() => {
+                      onClose();
+                      onNavigateToPage?.('tikshuv');
+                    }}
+                  />
                 </div>
               )}
 
