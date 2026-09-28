@@ -22,12 +22,30 @@ export const defaultTikshuvQuickLinks: TikshuvQuickLink[] = [
     isExternal: true
   },
   {
-    id: 'link-sso-edu',
-    title: 'כניסה בהזדהות אחידה משרד החינוך',
-    description: 'פורטל עובדי הוראה, מרחב פדגוגי ושירותי ענן מאושרים',
-    url: 'https://edu.gov.il',
+    id: 'link-poh-edu',
+    title: 'פורטל עובדי הוראה (משרד החינוך)',
+    description: 'כניסה ישירה לפורטל עובדי הוראה בהזדהות אחידה, משאבים ופדגוגיה',
+    url: 'https://poh.education.gov.il/',
     icon: 'KeyRound',
     badge: 'הזדהות אחידה',
+    isExternal: true
+  },
+  {
+    id: 'link-virtual-school',
+    title: 'בית הספר הווירטואלי',
+    description: 'המרחב הווירטואלי של משרד החינוך, סביבות הוראה ותכנים דיגיטליים',
+    url: 'http://my.edu.gov.il/home',
+    icon: 'Laptop',
+    badge: 'משרד החינוך',
+    isExternal: true
+  },
+  {
+    id: 'link-mashov-teachers',
+    title: 'משו״ב מורים',
+    description: 'כניסה למערכת משו״ב לניהול פדגוגי, יומן כיתה, נוכחות וציונים',
+    url: 'https://web.mashov.info/teachers/login',
+    icon: 'FileText',
+    badge: 'ניהול פדגוגי',
     isExternal: true
   }
 ];

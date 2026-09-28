@@ -502,7 +502,14 @@ export const TikshuvPortal: React.FC<TikshuvPortalProps> = ({
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <div className="w-9 h-9 rounded-xl bg-school-cyan/15 text-school-cyan flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Laptop className="w-4 h-4" />
+                      {link.icon === 'GraduationCap' && <GraduationCap className="w-4 h-4" />}
+                      {link.icon === 'KeyRound' && <KeyRound className="w-4 h-4" />}
+                      {link.icon === 'Laptop' && <Laptop className="w-4 h-4" />}
+                      {link.icon === 'FileText' && <FileText className="w-4 h-4" />}
+                      {link.icon === 'Globe' && <Globe className="w-4 h-4" />}
+                      {!['GraduationCap', 'KeyRound', 'Laptop', 'FileText', 'Globe'].includes(link.icon || '') && (
+                        <Laptop className="w-4 h-4" />
+                      )}
                     </div>
                     {link.badge && (
                       <span className="text-[10px] font-bold bg-white/5 text-school-muted border border-white/10 px-2 py-0.5 rounded-full">

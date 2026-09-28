@@ -51,6 +51,13 @@ export const getStoredTikshuvQuickLinks = (): TikshuvQuickLink[] => {
     if (!raw) return defaultTikshuvQuickLinks;
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
+      // If cached data still has old edu.gov.il or tad-tikshuv or is missing mashov, upgrade to new default list
+      const hasOldEdu = parsed.some((l: TikshuvQuickLink) => l.url === 'https://edu.gov.il' || l.url?.includes('tad-tikshuv'));
+      const hasMashov = parsed.some((l: TikshuvQuickLink) => l.url?.includes('mashov'));
+      if (hasOldEdu || !hasMashov) {
+        localStorage.setItem(TIKSHUV_LINKS_KEY, JSON.stringify(defaultTikshuvQuickLinks));
+        return defaultTikshuvQuickLinks;
+      }
       return parsed.filter((l: TikshuvQuickLink) => !l.url?.includes('tad-tikshuv'));
     }
   } catch (e) {
