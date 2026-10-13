@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 
 interface BallState {
   text: string;
@@ -21,6 +22,26 @@ export default function FloatingHeroBalls() {
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
+
+  const [isHidden, setIsHidden] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('arens_hide_hero_balls') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const toggleHide = () => {
+    setIsHidden((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('arens_hide_hero_balls', String(next));
+      } catch (e) {
+        console.error(e);
+      }
+      return next;
+    });
+  };
 
   const [ballTexts, setBallTexts] = useState<string[]>(() => {
     try {
@@ -109,6 +130,7 @@ export default function FloatingHeroBalls() {
   }, [ballTexts]);
 
   useEffect(() => {
+    if (isHidden) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -242,7 +264,7 @@ export default function FloatingHeroBalls() {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [isHidden]);
 
   // Pointer drag event handlers
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>, index: number) => {
@@ -282,84 +304,111 @@ export default function FloatingHeroBalls() {
       ref={containerRef} 
       className="absolute inset-0 z-30 w-full h-full overflow-hidden pointer-events-none select-none"
     >
-      {/* Styles defined here to make the component fully self-contained and accurate */}
-      <style>{`
-        .pball {
-          position: absolute;
-          top: 0;
-          left: 0;
-          z-index: 30;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          border-radius: 50%;
-          font-weight: 900;
-          color: #fff;
-          cursor: grab;
-          user-select: none;
-          -webkit-user-select: none;
-          line-height: 1.3;
-          padding: 12px;
-          will-change: transform;
-          transition: box-shadow 0.3s;
-          touch-action: none;
-          backdrop-filter: blur(4px);
-          -webkit-backdrop-filter: blur(4px);
-          pointer-events: auto;
-        }
-        .pball:active {
-          cursor: grabbing;
-        }
-        .pball.c1 {
-          background: radial-gradient(circle at 32% 26%, rgba(34, 211, 238, 0.4), rgba(10, 16, 30, 0.88) 74%);
-          border: 1.5px solid rgba(34, 211, 238, 0.6);
-          box-shadow: 0 0 34px rgba(34, 211, 238, 0.3), inset 0 0 26px rgba(34, 211, 238, 0.16);
-        }
-        .pball.c2 {
-          background: radial-gradient(circle at 32% 26%, rgba(129, 140, 248, 0.42), rgba(10, 16, 30, 0.88) 74%);
-          border: 1.5px solid rgba(129, 140, 248, 0.6);
-          box-shadow: 0 0 34px rgba(129, 140, 248, 0.32), inset 0 0 26px rgba(129, 140, 248, 0.17);
-        }
-        .pball.c3 {
-          background: radial-gradient(circle at 32% 26%, rgba(45, 212, 191, 0.4), rgba(10, 16, 30, 0.88) 74%);
-          border: 1.5px solid rgba(45, 212, 191, 0.6);
-          box-shadow: 0 0 34px rgba(45, 212, 191, 0.3), inset 0 0 26px rgba(45, 212, 191, 0.16);
-        }
-        .pball:hover {
-          box-shadow: 0 0 55px rgba(34, 211, 238, 0.5), inset 0 0 26px rgba(34, 211, 238, 0.22);
-        }
-      `}</style>
-
-      {ballsRef.current.map((b, i) => (
-        <div
-          key={i}
-          ref={ballRefs[i]}
-          className={`pball ${b.className}`}
-          onPointerDown={(e) => handlePointerDown(e, i)}
-          onPointerMove={(e) => handlePointerMove(e, i)}
-          onPointerUp={() => handlePointerUp(i)}
-          onPointerCancel={() => handlePointerUp(i)}
-          onDoubleClick={() => {
-            const newText = prompt(`ערוך את הטקסט של כדור ${i + 1}:`, b.text);
-            if (newText && newText.trim()) {
-              const updated = [...ballTexts];
-              updated[i] = newText.trim();
-              setBallTexts(updated);
-              localStorage.setItem('arens_hero_balls', JSON.stringify(updated));
-              window.dispatchEvent(new Event('hero_balls_updated'));
+      {!isHidden && (
+        <>
+          {/* Styles defined here to make the component fully self-contained and accurate */}
+          <style>{`
+            .pball {
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 30;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-align: center;
+              border-radius: 50%;
+              font-weight: 900;
+              color: #fff;
+              cursor: grab;
+              user-select: none;
+              -webkit-user-select: none;
+              line-height: 1.3;
+              padding: 12px;
+              will-change: transform;
+              transition: box-shadow 0.3s;
+              touch-action: none;
+              backdrop-filter: blur(4px);
+              -webkit-backdrop-filter: blur(4px);
+              pointer-events: auto;
             }
-          }}
-          title="גרור עם העכבר או לחץ פעמיים לעריכת הטקסט"
-        >
-          <span>{b.text}</span>
-        </div>
-      ))}
+            .pball:active {
+              cursor: grabbing;
+            }
+            .pball.c1 {
+              background: radial-gradient(circle at 32% 26%, rgba(34, 211, 238, 0.4), rgba(10, 16, 30, 0.88) 74%);
+              border: 1.5px solid rgba(34, 211, 238, 0.6);
+              box-shadow: 0 0 34px rgba(34, 211, 238, 0.3), inset 0 0 26px rgba(34, 211, 238, 0.16);
+            }
+            .pball.c2 {
+              background: radial-gradient(circle at 32% 26%, rgba(129, 140, 248, 0.42), rgba(10, 16, 30, 0.88) 74%);
+              border: 1.5px solid rgba(129, 140, 248, 0.6);
+              box-shadow: 0 0 34px rgba(129, 140, 248, 0.32), inset 0 0 26px rgba(129, 140, 248, 0.17);
+            }
+            .pball.c3 {
+              background: radial-gradient(circle at 32% 26%, rgba(45, 212, 191, 0.4), rgba(10, 16, 30, 0.88) 74%);
+              border: 1.5px solid rgba(45, 212, 191, 0.6);
+              box-shadow: 0 0 34px rgba(45, 212, 191, 0.3), inset 0 0 26px rgba(45, 212, 191, 0.16);
+            }
+            .pball:hover {
+              box-shadow: 0 0 55px rgba(34, 211, 238, 0.5), inset 0 0 26px rgba(34, 211, 238, 0.22);
+            }
+          `}</style>
 
-      {/* Touch/Drag interaction tip */}
-      <div className="absolute bottom-6 left-6 z-40 text-[12px] text-school-muted flex items-center gap-2 pointer-events-auto bg-slate-900/80 border border-school-cyan/40 px-3 py-1.5 rounded-xl shadow-lg backdrop-blur-md">
-        <span className="w-2 h-2 rounded-full bg-school-cyan animate-pulse" />
-        <span>✋ ניתן לגרור ולשחק עם כדורי הערכים</span>
+          {ballsRef.current.map((b, i) => (
+            <div
+              key={i}
+              ref={ballRefs[i]}
+              className={`pball ${b.className}`}
+              onPointerDown={(e) => handlePointerDown(e, i)}
+              onPointerMove={(e) => handlePointerMove(e, i)}
+              onPointerUp={() => handlePointerUp(i)}
+              onPointerCancel={() => handlePointerUp(i)}
+              onDoubleClick={() => {
+                const newText = prompt(`ערוך את הטקסט של כדור ${i + 1}:`, b.text);
+                if (newText && newText.trim()) {
+                  const updated = [...ballTexts];
+                  updated[i] = newText.trim();
+                  setBallTexts(updated);
+                  localStorage.setItem('arens_hero_balls', JSON.stringify(updated));
+                  window.dispatchEvent(new Event('hero_balls_updated'));
+                }
+              }}
+              title="גרור עם העכבר או לחץ פעמיים לעריכת הטקסט"
+            >
+              <span>{b.text}</span>
+            </div>
+          ))}
+        </>
+      )}
+
+      {/* Hero Accessibility & ADHD Focus Control */}
+      <div className="absolute bottom-20 left-4 sm:left-8 z-40 flex items-center gap-2 pointer-events-auto">
+        <button
+          onClick={toggleHide}
+          type="button"
+          className="flex items-center gap-2 text-xs md:text-sm font-bold px-3.5 py-2 rounded-xl bg-slate-900/90 border border-school-cyan/50 hover:border-school-cyan text-school-cyan hover:text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all active:scale-95 cursor-pointer"
+          title={isHidden ? "הצגת כדורי הערכים המרחפים" : "הסתרת כדורים למניעת הסחת דעת (קשב וריכוז)"}
+        >
+          {isHidden ? (
+            <>
+              <Eye className="w-4 h-4 text-school-cyan" />
+              <span>הצגת כדורים</span>
+            </>
+          ) : (
+            <>
+              <EyeOff className="w-4 h-4 text-school-cyan" />
+              <span>הסתרת כדורים</span>
+            </>
+          )}
+        </button>
+
+        {!isHidden && (
+          <div className="hidden md:flex text-[12px] text-school-muted items-center gap-2 bg-slate-900/80 border border-school-cyan/30 px-3 py-1.5 rounded-xl shadow-lg backdrop-blur-md select-none">
+            <span className="w-2 h-2 rounded-full bg-school-cyan animate-pulse" />
+            <span>✋ ניתן לגרור את כדורי הערכים</span>
+          </div>
+        )}
       </div>
     </div>
   );

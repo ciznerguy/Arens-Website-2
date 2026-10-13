@@ -873,26 +873,85 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
     ]
   },
   "course/%d7%98%d7%a4%d7%a1%d7%99-%d7%a8%d7%99%d7%a9%d7%95%d7%9d/": {
-    title: "טפסים חשובים",
+    title: "טפסים ואישורים",
     category: "טפסים ורישום",
-    subtitle: "טפסי רישום, הצהרות בריאות ואישורי פעילות להורדה ישירה",
+    audience: "כללי",
+    subtitle: "כל טפסי הרישום, כרטיסי התלמיד, הצהרות הבריאות ואישורי הפעילות להורדה ישירה ולהגשה",
     icon: "FileText",
     content: [
-      "לנוחיותכם, ריכזנו בעמוד זה את כל הטפסים והאישורים הנדרשים לאורך שנת הלימודים בבית הספר השש-שנתי משה ארנס.",
-      "אין צורך לשלוח פנייה מוקדמת או להמתין לאישור - פשוט הורידו את הקבצים הנדרשים ישירות מכאן, מלאו אותם והגישו אותם במרוכז.",
-      "מילוי מדויק ומהיר של הטפסים מסייע לצוות המנהלי והפדגוגי להעניק לילדיכם מענה בטוח ומיטבי."
+      "ברוכים הבאים לפורטל הטפסים והאישורים הרשמי של בית הספר השש-שנתי ע\"ש משה ארנס.",
+      "לנוחיות התלמידים וההורים, ריכזנו בעמוד זה את כל הטפסים והאישורים הנדרשים לאורך שנת הלימודים בחטיבת הנעורים ובחטיבה העליונה.",
+      "כל הטפסים זמינים להורדה ישירה ומיידית ללא צורך בהמתנה. ניתן להוריד, להדפיס, למלא ולמסור למזכירות או למחנך הכיתה, או לבצע פנייה דיגיטלית ישירה בתחתית העמוד."
     ],
     sections: [
       {
-        title: "הנחיות להגשת טפסים",
-        text: "לאחר הורדת הקובץ הרלוונטי והדפסתו, אנא הגישו אותו חתום למחנך או למזכירות בהתאם להנחיות המופיעות בראש הטופס."
+        title: "הנחיות להגשת טפסים ומסמכים",
+        text: "1. יש לוודא מילוי ברור ומלא של כל פרטי התלמיד וההורים, כולל מספרי תעודת זהות וטלפונים עדכניים.\n2. טפסים הדורשים חתימת הורה (כגון הצהרת בריאות או ויתור סודיות) חייבים להיחתם ידנית או דיגיטלית על ידי הורה/אפוטרופוס.\n3. הגשת הטפסים מתבצעת למחנך/ת הכיתה בפתיחת שנת הלימודים, או ישירות למזכירות השכבה המתאימה בשעות קבלת הקהל."
+      },
+      {
+        title: "כרטיסי תלמיד וקליטה (חט\"ב וחט\"ע)",
+        text: "כרטיס התלמיד הינו מסמך יסוד מרכזי המאפשר לצוות בית הספר להכיר את התלמיד, צרכיו הלימודיים והאישיים, ולהיערך באופן מיטבי לקליטתו. יש למלא את הכרטיס המיועד לשכבת הגיל הרלוונטית (חט\"ב: ז'-ט', חט\"ע: י'-יב')."
+      },
+      {
+        title: "בריאות ובטיחות בפעילויות חוץ",
+        text: "הצהרת בריאות שנתית הינה חובת משרד החינוך לכל תלמיד טרם השתתפות בשיעורי חינוך גופני, סיורים וטיולים. אישור הורים כולל לפעילויות חוץ מאפשר יציאה בטוחה ומסודרת לכל אירועי החינוך החברתי והשל\"ח לאורך השנה כולה."
+      },
+      {
+        title: "ויתור סודיות וליווי רגשי-ייעוצי",
+        text: "כתבי ויתור סודיות נדרשים לצורך תיאום מקצועי בין הצוות החינוכי והייעוצי לבין גורמי טיפול מוסמכים (השירות הפסיכולוגי החינוכי - שפ\"ח, מאבחנים או רופאים מומחים), במטרה לבנות תוכנית התאמה וסיוע מותאמת אישית."
+      },
+      {
+        title: "ערעור על ציונים והערכות",
+        text: "תלמיד המבקש לערער על ציון בחינה תקופתית, מתכונת או ציון מגן יגיש את טופס הערעור לרכז המקצוע תוך 7 ימי עבודה מפרסום הציון, בצירוף מחברת הבחינה והסבר מנומק."
+      }
+    ],
+    interactiveFields: [
+      {
+        label: "שם מלא של התלמיד/ה",
+        placeholder: "לדוגמה: ישראל ישראלי",
+        type: "text"
+      },
+      {
+        label: "מספר תעודת זהות של התלמיד/ה",
+        placeholder: "9 ספרות",
+        type: "text"
+      },
+      {
+        label: "שכבת לימוד",
+        placeholder: "בחר שכבה",
+        type: "select",
+        options: ["שכבה ז׳", "שכבה ח׳", "שכבה ט׳", "שכבה י׳", "שכבה יא׳", "שכבה יב׳"]
+      },
+      {
+        label: "סוג הטופס / נושא הפנייה",
+        placeholder: "בחר נושא פנייה",
+        type: "select",
+        options: [
+          "הגשת כרטיס תלמיד וקליטה",
+          "הצהרת בריאות ואישור רפואי",
+          "ויתור סודיות ליועצת / שפ\"ח",
+          "ערעור על ציון או בחינה",
+          "השאלת ספרים תשפ\"ז",
+          "בקשת מלגה או הסדר תשלום",
+          "אישור פעילות חוץ / טיול שנתי"
+        ]
+      },
+      {
+        label: "טלפון לחזרה ופרטי קשר של ההורה",
+        placeholder: "מספר טלפון וכתובת דוא\"ל",
+        type: "text"
       }
     ],
     pdfFiles: [
       {
-        name: "טופס רישום והצטרפות לבית הספר השש-שנתי (תשפ\"ז)",
+        name: "כרטיס תלמיד עולה לחטיבת הנעורים (ז'-ט')",
         url: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNjaG9vbCBEb2N1bWVudCkKL0NyZWF0b3IgKEFyZW5zIFNjaG9vbCkKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwovS2lkcyBbNCAwIFJdCi9Db3VudCAxCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KL0NvbnRlbnRzIDYgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKNiAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNTQgNzAwIFRkCihTY2hvb2wgRG9jdW1lbnQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDEyMCAwMDAwMCBuIAowMDAwMDAwMTcxIDAwMDAwIG4gCjAwMDAwMDAzMDIgMDAwMDAgbiAKMDAwMDAwMDM4MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKPj4Kc3RhcnR4cmVmCjQ3OQolJUVPRgo=",
-        size: "450 KB"
+        size: "480 KB"
+      },
+      {
+        name: "כרטיס תלמיד עולה לחטיבה העליונה (י'-יב')",
+        url: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNjaG9vbCBEb2N1bWVudCkKL0NyZWF0b3IgKEFyZW5zIFNjaG9vbCkKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwovS2lkcyBbNCAwIFJdCi9Db3VudCAxCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KL0NvbnRlbnRzIDYgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKNiAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNTQgNzAwIFRkCihTY2hvb2wgRG9jdW1lbnQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDEyMCAwMDAwMCBuIAowMDAwMDAwMTcxIDAwMDAwIG4gCjAwMDAwMDAzMDIgMDAwMDAgbiAKMDAwMDAwMDM4MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKPj4Kc3RhcnR4cmVmCjQ3OQolJUVPRgo=",
+        size: "510 KB"
       },
       {
         name: "הצהרת בריאות שנתית חתומה על ידי הורה (חובה)",
@@ -900,14 +959,34 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
         size: "280 KB"
       },
       {
-        name: "אישור הורים קבוע ליציאה לסיורים וטיולים שנתיים",
+        name: "כתב ויתור סודיות כללי לבית הספר",
         url: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNjaG9vbCBEb2N1bWVudCkKL0NyZWF0b3IgKEFyZW5zIFNjaG9vbCkKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwovS2lkcyBbNCAwIFJdCi9Db3VudCAxCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KL0NvbnRlbnRzIDYgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKNiAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNTQgNzAwIFRkCihTY2hvb2wgRG9jdW1lbnQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDEyMCAwMDAwMCBuIAowMDAwMDAwMTcxIDAwMDAwIG4gCjAwMDAwMDAzMDIgMDAwMDAgbiAKMDAwMDAwMDM4MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKPj4Kc3RhcnR4cmVmCjQ3OQolJUVPRgo=",
-        size: "320 KB"
+        size: "310 KB"
+      },
+      {
+        name: "כתב ויתור סודיות עבור השירות הפסיכולוגי-חינוכי (שפ\"ח)",
+        url: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNjaG9vbCBEb2N1bWVudCkKL0NyZWF0b3IgKEFyZW5zIFNjaG9vbCkKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwovS2lkcyBbNCAwIFJdCi9Db3VudCAxCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KL0NvbnRlbnRzIDYgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKNiAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNTQgNzAwIFRkCihTY2hvb2wgRG9jdW1lbnQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDEyMCAwMDAwMCBuIAowMDAwMDAwMTcxIDAwMDAwIG4gCjAwMDAwMDAzMDIgMDAwMDAgbiAKMDAwMDAwMDM4MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKPj4Kc3RhcnR4cmVmCjQ3OQolJUVPRgo=",
+        size: "340 KB"
+      },
+      {
+        name: "טופס ערעור על ציונים (מחצית / שנתי / מגן)",
+        url: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNjaG9vbCBEb2N1bWVudCkKL0NyZWF0b3IgKEFyZW5zIFNjaG9vbCkKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwovS2lkcyBbNCAwIFJdCi9Db3VudCAxCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KL0NvbnRlbnRzIDYgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKNiAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNTQgNzAwIFRkCihTY2hvb2wgRG9jdW1lbnQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDEyMCAwMDAwMCBuIAowMDAwMDAwMTcxIDAwMDAwIG4gCjAwMDAwMDAzMDIgMDAwMDAgbiAKMDAwMDAwMDM4MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKPj4Kc3RhcnR4cmVmCjQ3OQolJUVPRgo=",
+        size: "390 KB"
+      },
+      {
+        name: "טופס הצטרפות ורישום לפרויקט השאלת ספרים תשפ\"ז",
+        url: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNjaG9vbCBEb2N1bWVudCkKL0NyZWF0b3IgKEFyZW5zIFNjaG9vbCkKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwovS2lkcyBbNCAwIFJdCi9Db3VudCAxCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KL0NvbnRlbnRzIDYgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKNiAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNTQgNzAwIFRkCihTY2hvb2wgRG9jdW1lbnQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDEyMCAwMDAwMCBuIAowMDAwMDAwMTcxIDAwMDAwIG4gCjAwMDAwMDAzMDIgMDAwMDAgbiAKMDAwMDAwMDM4MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKPj4Kc3RhcnR4cmVmCjQ3OQolJUVPRgo=",
+        size: "420 KB"
       },
       {
         name: "בקשת מלגה או הנחה באגרות חינוך ותשלומי הורים",
         url: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNjaG9vbCBEb2N1bWVudCkKL0NyZWF0b3IgKEFyZW5zIFNjaG9vbCkKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwovS2lkcyBbNCAwIFJdCi9Db3VudCAxCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KL0NvbnRlbnRzIDYgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKNiAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNTQgNzAwIFRkCihTY2hvb2wgRG9jdW1lbnQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDEyMCAwMDAwMCBuIAowMDAwMDAwMTcxIDAwMDAwIG4gCjAwMDAwMDAzMDIgMDAwMDAgbiAKMDAwMDAwMDM4MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKPj4Kc3RhcnR4cmVmCjQ3OQolJUVPRgo=",
         size: "610 KB"
+      },
+      {
+        name: "אישור הורים קבוע ליציאה לסיורים וטיולים שנתיים",
+        url: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNjaG9vbCBEb2N1bWVudCkKL0NyZWF0b3IgKEFyZW5zIFNjaG9vbCkKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwovS2lkcyBbNCAwIFJdCi9Db3VudCAxCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KL0NvbnRlbnRzIDYgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKNiAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNTQgNzAwIFRkCihTY2hvb2wgRG9jdW1lbnQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDEyMCAwMDAwMCBuIAowMDAwMDAwMTcxIDAwMDAwIG4gCjAwMDAwMDAzMDIgMDAwMDAgbiAKMDAwMDAwMDM4MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKPj4Kc3RhcnR4cmVmCjQ3OQolJUVPRgo=",
+        size: "320 KB"
       }
     ]
   },
@@ -976,6 +1055,51 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
         name: "אנגלית - משימות קריאה שכבת ח-ט (Book Report)",
         url: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKFNjaG9vbCBEb2N1bWVudCkKL0NyZWF0b3IgKEFyZW5zIFNjaG9vbCkKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwovS2lkcyBbNCAwIFJdCi9Db3VudCAxCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KL0NvbnRlbnRzIDYgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKNiAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNTQgNzAwIFRkCihTY2hvb2wgRG9jdW1lbnQpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDcKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDEyMCAwMDAwMCBuIAowMDAwMDAwMTcxIDAwMDAwIG4gCjAwMDAwMDAzMDIgMDAwMDAgbiAKMDAwMDAwMDM4MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKPj4Kc3RhcnR4cmVmCjQ3OQolJUVPRgo=",
         size: "950 KB"
+      }
+    ]
+  },
+  "course/%d7%99%d7%a2%d7%95%d7%a5/": {
+    title: "שירותי ייעוץ חינוכי ורווחת התלמיד",
+    category: "ייעוץ ורווחה",
+    subtitle: "מעטפת רגשית, תמיכה אישית וליווי התפתחותי לאורך כל שנות הלימודים בארנס",
+    icon: "HeartHandshake",
+    content: [
+      "השירות הייעוצי בשש-שנתי ע\"ש משה ארנס רואה בכל תלמיד ותלמידה עולם ומלואו. מטרתנו להעניק מרחב בטוח, מכיל ומקצועי המאפשר צמיחה אישית, התמודדות עם אתגרים ומיצוי הפוטנציאל הייחודי של כל אחד ואחת.",
+      "צוות היועצות עובד בשיתוף פעולה הדוק עם צוותי ההוראה, המחנכים, ההנהלה וההורים, תוך שמירה מוקפדת על סודיות, כבוד ואמון הדדי.",
+      "אנו כאן עבורכם לכל התייעצות, קושי, שאלה או התלבטות אישית, לימודית או חברתית."
+    ],
+    sections: [
+      {
+        title: "צוות הייעוץ לפי שכבות",
+        text: "• שכבה ז׳: ענבל ממן (Inbalmaman5@gmail.com) | אורית הדר לבהר (oritlevy1@gmail.com)\n• שכבה ח׳: רינת שטקל אקשטיין (rinatshtekel@gmail.com)\n• שכבה ט׳: סמדר קקון (smadarkakon1@gmail.com)\n• שכבה י׳: ענבל ישראלי לונדין (buli1774@gmail.com) | עופרי טל לובינסקי (offrilu@gmail.com)\n• שכבה יא׳: ענבל ישראלי לונדין (buli1774@gmail.com)\n• שכבה יב׳: עופרי טל לובינסקי (offrilu@gmail.com)"
+      },
+      {
+        title: "תחומי המענה והפעילות הייעוצית",
+        text: "• ליווי ותמיכה במעברים (מעבר מבית הספר היסודי לחט\"ב ומעבר לחטיבה העליונה).\n• סדנאות כישורי חיים, חוסן נפשי והתמודדות עם לחצים וחרדת בחינות.\n• שיחות אישיות וקבוצתיות במרחב ייעוצי נעים ומכבד.\n• הדרכה וליווי הורים בהתמודדות עם אתגרי גיל ההתבגרות.\n• מענה בחירום וסיוע בעת משבר."
+      },
+      {
+        title: "פנייה לצוות הייעוץ",
+        text: "התלמידים וההורים מוזמנים לפנות ישירות ליועצת השכבה בדוא\"ל, באמצעות המחנכ/ת, או בחדר היועצות בבית הספר. דלתנו תמיד פתוחה בפניכם!"
+      }
+    ]
+  },
+  "course/%d7%97%d7%99%d7%a0%d7%95%d7%9a-%d7%97%d7%91%d7%a8%d7%aa%d7%99/": {
+    title: "חינוך חברתי וערכי - שש שנתי ארנס",
+    category: "חינוך חברתי",
+    subtitle: "מנהיגות, ערכים, מעורבות בקהילה וחוויות מעצבות זהות",
+    icon: "Heart",
+    content: [
+      "החינוך החברתי-ערכי בשש-שנתי ע\"ש משה ארנס הוא אבן יסוד בבניית דמות הבוגר והבוגרת. אנו מאמינים כי מצוינות אקדמית חייבת ללכת יד ביד עם רגישות חברתית, מעורבות אזרחית וערכי נתינה.",
+      "לאורך שנות הלימודים משתלבים התלמידים במגוון רחב של פעילויות שיא, ימי מנהיגות, סמינרים ערכיים, טקסים, מסעות ברחבי הארץ ופרויקטים קהילתיים פורצי דרך."
+    ],
+    sections: [
+      {
+        title: "תחומי הליבה בחינוך החברתי",
+        text: "• מועצת תלמידים פעילה ויוזמת המייצגת את כלל השכבות.\n• תכנית מעורבות חברתית והתנדבות אישית וקבוצתית בקהילת פתח תקווה.\n• מסעות שנתיים, סיורי של\"ח וידיעת הארץ, ומסע ישראלי לשכבה יא'.\n• ימי שיא חברתיים, חגים, אירועי גיבוש והפסקות פעילות מוזיקליות."
+      },
+      {
+        title: "רכזי התחום החברתי",
+        text: "לפרטים והצטרפות לפעילויות החברתיות, ניתן לפנות לרכזי החינוך החברתי בחטיבת הנעורים ובחטיבה העליונה ולרכזי השכבות."
       }
     ]
   }

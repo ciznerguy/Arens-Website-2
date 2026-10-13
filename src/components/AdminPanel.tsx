@@ -2,6 +2,7 @@ import { saveStaffMember, deleteStaffMember, resetStaffToDefaults, getStoredStaf
 import { saveNewsArticle, deleteNewsArticle, resetNewsToDefaults, getStoredNews, saveSetting } from '../services/cmsStorage';
 import { syncPageOverrideToCloud, syncGradeClassesToCloud } from '../services/pagesStorage';
 import { syncAdminConfigToCloud, subscribeToAdminSettings, fetchAdminConfigFromCloud, getStoredEditors, getStoredContactEmails, SecretaryContactEmails, DEFAULT_CONTACT_EMAILS } from '../services/adminStorage';
+import { requestGoogleSignInProfile, processGoogleLoginResult, matchStaffMemberByGoogleProfile, isOrganizationalEmail } from '../services/googleAuth';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -61,12 +62,16 @@ import {
   Phone,
   Building,
   Send,
-  Laptop
+  Laptop,
+  Monitor,
+  Smartphone,
+  Tablet
 } from 'lucide-react';
 import { TeacherEventsAdmin } from './TeacherEventsAdmin';
 import { MajorsAdmin } from './MajorsAdmin';
 import { MyProfileTab } from './MyProfileTab';
 import { TikshuvAdmin } from './TikshuvAdmin';
+import { GradeHubSimulator } from './GradeHubSimulator';
 import { getStoredMajors } from '../services/majorsStorage';
 import { 
   INTERNAL_PAGES, 
@@ -142,6 +147,27 @@ const formatAudience = (selected: { students: boolean; parents: boolean; teacher
   return list.join(', ');
 };
 
+const GoogleIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="#4285F4"
+      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+    />
+    <path
+      fill="#34A853"
+      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+    />
+    <path
+      fill="#FBBC05"
+      d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+    />
+    <path
+      fill="#EA4335"
+      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+    />
+  </svg>
+);
+
 interface AdminPanelProps {
   onClose: () => void;
   onNavigateToPage?: (url: string) => void;
@@ -156,6 +182,9 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [loginEmail, setLoginEmail] = useState<string>(initialStaffEmail || '');
   const [loginPassword, setLoginPassword] = useState<string>('');
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [isGoogleSigningIn, setIsGoogleSigningIn] = useState<boolean>(false);
+  const [isManualGoogleLoginOpen, setIsManualGoogleLoginOpen] = useState<boolean>(false);
+  const [manualGoogleEmail, setManualGoogleEmail] = useState<string>('');
 
   // Active Admin User Info
   const [currentUser, setCurrentUser] = useState<Editor | null>(null);
@@ -321,7 +350,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [isEditingSubPage, setIsEditingSubPage] = useState<boolean>(false);
   const [isCreatingSubPage, setIsCreatingSubPage] = useState<boolean>(false);
   const [adminSelectedGrade, setAdminSelectedGrade] = useState<string>('ז');
-  const [gradeSubWorkspace, setGradeSubWorkspace] = useState<'home' | 'classes' | 'subpages'>('home');
+  const [gradeSubWorkspace, setGradeSubWorkspace] = useState<'home' | 'classes' | 'subpages' | 'simulator'>('home');
   const [gradeClassesList, setGradeClassesList] = useState<any[]>([]);
 
   // Grade Coordinator Invitation State (Super Admin)
@@ -1280,6 +1309,89 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     }
   };
 
+  const navigateAfterLogin = (user: Editor) => {
+    const userRole = user.role || '';
+    if (initialStaffEmail) {
+      setActiveTab('my-profile');
+    } else if (isFullSiteAdmin(userRole)) {
+      setActiveTab('homepage');
+    } else if (isTikshuvCoordinator(userRole, user.email)) {
+      setActiveTab('tikshuv');
+    } else if (isGradeCoordinator(userRole)) {
+      setActiveTab('my-grade');
+    } else if (isMajorCoordinator(userRole)) {
+      setActiveTab('majors');
+    } else if (isEnglishCoordinator(userRole)) {
+      setActiveTab('pages');
+    } else {
+      setActiveTab('my-profile');
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoginError(null);
+    setIsGoogleSigningIn(true);
+    try {
+      const profile = await requestGoogleSignInProfile();
+      const result = await processGoogleLoginResult(profile, editors, setEditors);
+      const loggedUser = result.user;
+
+      localStorage.setItem('arens_cms_token', 'google_session_' + Date.now());
+      localStorage.setItem('arens_cms_user', JSON.stringify(loggedUser));
+      setCurrentUser(loggedUser);
+      setIsLoggedIn(true);
+
+      if (result.updatedProfile) {
+        setSaveSuccess(`ברוך הבא ${loggedUser.name}! עודכן המייל הארגוני שלך במערכת (${loggedUser.email}).`);
+      } else {
+        setSaveSuccess(`שלום ${loggedUser.name}, התחברת בהצלחה למערכת!`);
+      }
+      setTimeout(() => setSaveSuccess(null), 4000);
+
+      navigateAfterLogin(loggedUser);
+    } catch (err: any) {
+      console.error('Google sign-in error:', err);
+      setLoginError(err.message || 'ההתחברות באמצעות Google לא הושלמה. ניתן לנסות שוב.');
+    } finally {
+      setIsGoogleSigningIn(false);
+    }
+  };
+
+  const handleManualGoogleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualGoogleEmail) return;
+    setLoginError(null);
+    setIsGoogleSigningIn(true);
+    try {
+      const clean = manualGoogleEmail.trim().toLowerCase();
+      const profile = {
+        email: clean,
+        name: clean.split('@')[0]
+      };
+      const result = await processGoogleLoginResult(profile, editors, setEditors);
+      const loggedUser = result.user;
+
+      localStorage.setItem('arens_cms_token', 'google_session_' + Date.now());
+      localStorage.setItem('arens_cms_user', JSON.stringify(loggedUser));
+      setCurrentUser(loggedUser);
+      setIsLoggedIn(true);
+      setIsManualGoogleLoginOpen(false);
+
+      if (result.updatedProfile) {
+        setSaveSuccess(`ברוך הבא ${loggedUser.name}! עודכן המייל הארגוני שלך במערכת (${loggedUser.email}).`);
+      } else {
+        setSaveSuccess(`שלום ${loggedUser.name}, התחברת בהצלחה!`);
+      }
+      setTimeout(() => setSaveSuccess(null), 4000);
+
+      navigateAfterLogin(loggedUser);
+    } catch (err: any) {
+      setLoginError(err.message || 'אימייל זה אינו מופיע ברשימת הצוות.');
+    } finally {
+      setIsGoogleSigningIn(false);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('arens_cms_token');
     localStorage.removeItem('arens_cms_user');
@@ -1402,8 +1514,12 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     };
 
     saveInternalPageOverride(mainPageKey, updatedPage);
+    syncPageOverrideToCloud(mainPageKey, updatedPage);
     saveGradeClassesOverride(cleanActiveGrade, gradeClassesList);
+    syncGradeClassesToCloud(cleanActiveGrade, gradeClassesList);
     refreshPagesMap();
+    window.dispatchEvent(new CustomEvent('internal_pages_updated'));
+    window.dispatchEvent(new CustomEvent('grade_classes_updated'));
     setSaveSuccess(`דף הבית והכיתות של שכבת ${cleanActiveGrade} עודכנו בהצלחה!`);
     setTimeout(() => setSaveSuccess(null), 3000);
   };
@@ -1572,6 +1688,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       : adminSelectedGrade).replace(/'/g, '').trim();
 
     saveGradeClassesOverride(cleanActiveGrade, gradeClassesList);
+    syncGradeClassesToCloud(cleanActiveGrade, gradeClassesList);
+    window.dispatchEvent(new CustomEvent('grade_classes_updated'));
     setClassSaveStatus(true);
     setSaveSuccess(`הרכב הכיתות ומסלולי הלימוד של שכבת ${cleanActiveGrade} נשמרו בהצלחה!`);
     setTimeout(() => {
@@ -2564,6 +2682,77 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                   <span>{loginError}</span>
                 </div>
               )}
+
+              {/* Google Fast Login Button */}
+              <div className="space-y-2">
+                <button 
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  disabled={isGoogleSigningIn}
+                  className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl font-bold bg-white hover:bg-slate-50 text-slate-800 shadow-md hover:shadow-lg transition-all text-xs border border-slate-200 active:scale-[0.99] disabled:opacity-75 disabled:cursor-not-allowed group cursor-pointer"
+                >
+                  {isGoogleSigningIn ? (
+                    <div className="w-4 h-4 border-2 border-slate-400 border-t-slate-800 rounded-full animate-spin shrink-0" />
+                  ) : (
+                    <GoogleIcon className="w-4 h-4 shrink-0 group-hover:scale-110 transition-transform" />
+                  )}
+                  <span className="font-extrabold text-slate-800">
+                    {isGoogleSigningIn ? 'מתחבר עם חשבון Google...' : 'כניסה בלחיצה עם חשבון Google'}
+                  </span>
+                </button>
+                <div className="flex items-center justify-between text-[10px] text-school-muted px-1">
+                  <span>כניסה ישירה לכל מורה עם Gmail או מייל ארגוני</span>
+                  <button
+                    type="button"
+                    onClick={() => setIsManualGoogleLoginOpen(!isManualGoogleLoginOpen)}
+                    className="text-school-cyan hover:underline transition-colors"
+                  >
+                    {isManualGoogleLoginOpen ? 'הסתר' : 'חיבור מהיר במייל'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Optional Fast Google Email Fallback if Popups Blocked */}
+              <AnimatePresence>
+                {isManualGoogleLoginOpen && (
+                  <motion.form
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    onSubmit={handleManualGoogleEmailSubmit}
+                    className="p-3 bg-[#080d19] border border-school-cyan/30 rounded-xl space-y-2 text-right"
+                  >
+                    <label className="text-[11px] text-school-cyan font-bold block">
+                      הזן את חשבון ה-Google שלך (למשל: ella.kreiczer@gmail.com או @taded.org.il):
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="email"
+                        required
+                        value={manualGoogleEmail}
+                        onChange={(e) => setManualGoogleEmail(e.target.value)}
+                        placeholder="your.email@gmail.com"
+                        className="flex-1 bg-[#101b33] border border-school-line/60 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-school-cyan"
+                      />
+                      <button
+                        type="submit"
+                        disabled={isGoogleSigningIn}
+                        className="px-3 py-1.5 bg-school-cyan text-school-bg rounded-lg text-xs font-bold hover:brightness-110"
+                      >
+                        התחבר
+                      </button>
+                    </div>
+                  </motion.form>
+                )}
+              </AnimatePresence>
+
+              <div className="relative flex items-center justify-center my-1">
+                <div className="border-t border-school-line/60 w-full" />
+                <span className="bg-[#101b33] px-3 text-[10px] text-school-muted whitespace-nowrap">
+                  או התחברות עם כתובת וסיסמת גישה
+                </span>
+                <div className="border-t border-school-line/60 w-full" />
+              </div>
 
               <form onSubmit={handleLoginSubmit} className="space-y-4">
                 <div className="space-y-1.5">
@@ -4745,6 +4934,24 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           </button>
                         )}
 
+                        {/* Live Grade Hub Simulator Button */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setGradeSubWorkspace('simulator');
+                            setIsEditingSubPage(false);
+                            setIsCreatingSubPage(false);
+                          }}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm ${
+                            gradeSubWorkspace === 'simulator'
+                              ? 'bg-school-cyan text-slate-950 font-black'
+                              : 'bg-school-cyan/15 hover:bg-school-cyan/25 border border-school-cyan/40 text-school-cyan'
+                          }`}
+                        >
+                          <Monitor className="w-3.5 h-3.5" />
+                          <span>הדמיה במערכת הניהול</span>
+                        </button>
+
                         {/* View Page Preview Button */}
                         {mainPageKey && (
                           <button
@@ -4914,7 +5121,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                       </button>
 
                       <button
-                        onClick={() => setGradeSubWorkspace('subpages')}
+                        onClick={() => { setGradeSubWorkspace('subpages'); }}
                         className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                           gradeSubWorkspace === 'subpages'
                             ? 'bg-school-cyan text-slate-950 font-black shadow-md'
@@ -4923,6 +5130,18 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                       >
                         <FileText className="w-3.5 h-3.5" />
                         <span>דפי משנה נוספים ({gradeSubPagesList.length})</span>
+                      </button>
+
+                      <button
+                        onClick={() => { setGradeSubWorkspace('simulator'); setIsEditingSubPage(false); setIsCreatingSubPage(false); }}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          gradeSubWorkspace === 'simulator'
+                            ? 'bg-gradient-to-r from-school-cyan to-cyan-400 text-slate-950 font-black shadow-md'
+                            : 'bg-school-cyan/10 text-school-cyan hover:bg-school-cyan/20 border border-school-cyan/30'
+                        }`}
+                      >
+                        <Monitor className="w-3.5 h-3.5" />
+                        <span>הדמיה חיה של דף השכבה</span>
                       </button>
                     </div>
                   </div>
@@ -5217,6 +5436,25 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                               <li>ניתן לצרף מסמכי PDF ישירים עבור מערכת שעות, הודעות הנהלה וטפסים.</li>
                               <li>כל השינויים נשמרים ישירות ב-CMS המרכזי של בית הספר.</li>
                             </ul>
+                          </div>
+
+                          {/* Quick simulator shortcut */}
+                          <div className="bg-[#080d19] border border-school-cyan/30 p-4 rounded-xl space-y-2">
+                            <div className="flex items-center gap-2 text-school-cyan">
+                              <Monitor className="w-4 h-4" />
+                              <span className="text-xs font-black text-white">הדמיית דף השכבה בזמן אמת</span>
+                            </div>
+                            <p className="text-[11px] text-school-muted leading-relaxed">
+                              רוצה לבדוק איך הדף ייראה לתלמידים ולהורים (מחשב, טאבלט ונייד)?
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => setGradeSubWorkspace('simulator')}
+                              className="w-full py-2 px-3 rounded-lg bg-school-cyan/15 hover:bg-school-cyan/25 border border-school-cyan/40 text-school-cyan text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+                            >
+                              <Monitor className="w-3.5 h-3.5" />
+                              <span>פתח הדמיה אינטראקטיבית</span>
+                            </button>
                           </div>
 
                           <button
@@ -5590,6 +5828,31 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         </div>
                       )}
 
+                    </div>
+                  )}
+
+                  {/* SUB-WORKSPACE 4: GRADE HUB SIMULATOR (הדמיה אינטראקטיבית) */}
+                  {gradeSubWorkspace === 'simulator' && (
+                    <div className="space-y-4">
+                      <GradeHubSimulator
+                        grade={cleanActiveGrade}
+                        onGradeChange={(newG) => {
+                          if (!isGradeCoordinator(effectiveRole)) {
+                            setAdminSelectedGrade(newG);
+                          }
+                        }}
+                        livePreviewData={{
+                          title: gradeMainTitle,
+                          subtitle: gradeMainSubtitle,
+                          content: gradeMainContent.split('\n').map(l => l.trim()).filter(Boolean),
+                          sections: gradeMainSections,
+                          pdfFiles: gradeMainPdfFiles,
+                          classes: gradeClassesList
+                        }}
+                        onEditSection={(section) => {
+                          setGradeSubWorkspace(section);
+                        }}
+                      />
                     </div>
                   )}
 

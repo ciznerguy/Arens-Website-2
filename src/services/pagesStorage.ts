@@ -73,24 +73,49 @@ export const subscribeToPageOverrides = (callback?: () => void) => {
 };
 
 export const syncPageOverrideToCloud = async (
-  overrides: Record<string, InternalPage>,
-  deleted: string[]
+  pageKeyOrOverrides: string | Record<string, InternalPage>,
+  pageOrDeleted?: InternalPage | string[]
 ) => {
   try {
-    await setDoc(doc(db, 'settings', 'pages_overrides'), {
-      overridesJson: JSON.stringify(overrides),
-      deletedJson: JSON.stringify(deleted),
-      updatedAt: new Date().toISOString()
-    }, { merge: true });
+    if (typeof pageKeyOrOverrides === 'string') {
+      const pageKey = pageKeyOrOverrides;
+      const page = pageOrDeleted as InternalPage;
+      const raw = localStorage.getItem('internal_pages_overrides');
+      const currentOverrides = raw ? JSON.parse(raw) : {};
+      currentOverrides[pageKey] = page;
+      await setDoc(doc(db, 'settings', 'pages_overrides'), {
+        overridesJson: JSON.stringify(currentOverrides),
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    } else {
+      const overrides = pageKeyOrOverrides;
+      const deleted = (pageOrDeleted as string[]) || [];
+      await setDoc(doc(db, 'settings', 'pages_overrides'), {
+        overridesJson: JSON.stringify(overrides),
+        deletedJson: JSON.stringify(deleted),
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    }
   } catch (err) {
     console.warn('Failed syncing page overrides to Firestore:', err);
   }
 };
 
-export const syncGradeClassesToCloud = async (gradeClasses: Record<string, any[]>) => {
+export const syncGradeClassesToCloud = async (
+  gradeOrAll: string | Record<string, any[]>,
+  classesList?: any[]
+) => {
   try {
+    let classesToSave: Record<string, any[]>;
+    if (typeof gradeOrAll === 'string' && classesList) {
+      const raw = localStorage.getItem('grade_classes_overrides');
+      classesToSave = raw ? JSON.parse(raw) : {};
+      classesToSave[gradeOrAll] = classesList;
+    } else {
+      classesToSave = gradeOrAll as Record<string, any[]>;
+    }
     await setDoc(doc(db, 'settings', 'pages_overrides'), {
-      gradeClassesJson: JSON.stringify(gradeClasses),
+      gradeClassesJson: JSON.stringify(classesToSave),
       updatedAt: new Date().toISOString()
     }, { merge: true });
   } catch (err) {

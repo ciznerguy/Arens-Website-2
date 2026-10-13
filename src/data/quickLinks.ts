@@ -75,6 +75,16 @@ export const DEFAULT_QUICK_LINKS: QuickLink[] = [
     category: 'מערכות למידה',
     audience: 'מורים',
     showInMenu: true
+  },
+  {
+    id: 'ql-forms-portal',
+    title: 'טפסים ואישורים',
+    url: 'course/%d7%98%d7%a4%d7%a1%d7%99-%d7%a8%d7%99%d7%a9%d7%95%d7%9d/',
+    iconName: 'FileText',
+    badge: 'הורדה',
+    category: 'טפסים ומסמכים',
+    audience: 'הורים',
+    showInMenu: true
   }
 ];
 
