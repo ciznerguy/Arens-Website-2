@@ -99,6 +99,7 @@ export interface InternalPage {
     name: string;
     url: string;
     size?: string;
+    docxUrl?: string;
   }[];
   flipbookUrl?: string;
   flipbookTitle?: string;

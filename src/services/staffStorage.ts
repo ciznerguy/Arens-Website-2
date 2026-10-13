@@ -45,7 +45,7 @@ export const consolidateStaff = (rawStaff: StaffMember[]): StaffMember[] => {
         !member.role?.includes('צומחים לדעת') ||
         !member.role?.includes('מדידה');
       if (needsFix) {
-        const updatedYaron: StaffMember = {
+        return {
           ...member,
           id: 'staff-11',
           name: 'ירון אלנר',
@@ -54,83 +54,67 @@ export const consolidateStaff = (rawStaff: StaffMember[]): StaffMember[] => {
           bio: 'רכז מרכז "צומחים לדעת", רכז מדידה והערכה ומורה לאנגלית בחטיבה העליונה.',
           isManagement: false
         };
-        // Persist correction to Firestore in the background
-        setDoc(doc(db, STAFF_COLLECTION_NAME, 'staff-11'), updatedYaron).catch(console.warn);
-        return updatedYaron;
       }
     }
 
     // Normalize grade leadership roles for grades ז, ח, ט
     if (member.id === 'staff-119' || (member.name && member.name.includes('רועי רותם'))) {
       if (!member.role?.includes("שכבה ז'")) {
-        const fixed = { ...member, role: "רכז שכבה ז' ומחנך ראשי כתה תקשורתית ז 10 חט\"נ" };
-        setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), fixed).catch(console.warn);
-        return fixed;
+        return { ...member, role: "רכז שכבה ז' ומחנך ראשי כתה תקשורתית ז 10 חט\"נ" };
       }
     }
     if (member.id === 'staff-82' || (member.name && member.name.includes('ענבל ממן'))) {
       if (!member.role?.includes("שכבה ז'")) {
-        const fixed = { ...member, role: "יועצת שכבה ז' חט\"נ" };
-        setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), fixed).catch(console.warn);
-        return fixed;
+        return { ...member, role: "יועצת שכבה ז' חט\"נ" };
       }
     }
     if (member.id === 'staff-67' || (member.name && member.name.includes('לבהר'))) {
       if (!member.role?.includes("שכבה ז'")) {
-        const fixed = { ...member, role: "יועצת שכבה ז' ומחנכת כתה ז2 חט\"נ" };
-        setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), fixed).catch(console.warn);
-        return fixed;
+        return { ...member, role: "יועצת שכבה ז' ומחנכת כתה ז2 חט\"נ" };
       }
     }
     if (member.id === 'staff-126' || (member.name && member.name.includes('שחמון'))) {
       if (!member.role?.includes("מובילת שכבה ח'")) {
-        const fixed = { ...member, role: "סגנית מנהל חט\"נ, מובילת שכבה ח' ומחנכת ח3" };
-        setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), fixed).catch(console.warn);
-        return fixed;
+        return { ...member, role: "סגנית מנהל חט\"נ, מובילת שכבה ח' ומחנכת ח3" };
       }
     }
     if (member.id === 'staff-83' || (member.name && member.name.includes('שני מנור'))) {
       if (!member.role?.includes("אחראית פדגוגית שכבה ח'")) {
-        const fixed = { ...member, role: "אחראית פדגוגית שכבה ח', רכזת מערכת ומחנכת כתה ח5 חט\"נ" };
-        setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), fixed).catch(console.warn);
-        return fixed;
+        return { ...member, role: "אחראית פדגוגית שכבה ח', רכזת מערכת ומחנכת כתה ח5 חט\"נ" };
       }
     }
     if (member.id === 'staff-128' || (member.name && member.name.includes('שטקל'))) {
       if (!member.role?.includes("שכבה ח'")) {
-        const fixed = { ...member, role: "יועצת שכבה ח' ומחנכת כתה ח8 חט\"נ" };
-        setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), fixed).catch(console.warn);
-        return fixed;
+        return { ...member, role: "יועצת שכבה ח' ומחנכת כתה ח8 חט\"נ" };
       }
     }
     if (member.id === 'staff-31' || (member.name && member.name.includes('נדב גורן'))) {
       if (!member.role?.includes("מוביל שכבה ט'")) {
-        const fixed = { ...member, role: "סגן מנהל חט\"נ, מוביל שכבה ט' ומחנך כתה ט4 חט\"נ" };
-        setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), fixed).catch(console.warn);
-        return fixed;
+        return { ...member, role: "סגן מנהל חט\"נ, מוביל שכבה ט' ומחנך כתה ט4 חט\"נ" };
       }
     }
     if (member.id === 'staff-74' || (member.name && member.name.includes('מדויל'))) {
       if (!member.role?.includes("אחראית פדגוגית שכבה ט'")) {
-        const fixed = { ...member, role: "אחראית פדגוגית שכבה ט', מחנכת כתה ט3 ומורה למסע\"אות חט\"נ" };
-        setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), fixed).catch(console.warn);
-        return fixed;
+        return { ...member, role: "אחראית פדגוגית שכבה ט', מחנכת כתה ט3 ומורה למסע\"אות חט\"נ" };
       }
     }
     if (member.id === 'staff-17' || (member.name && member.name.includes('שילת בדש'))) {
       if (!member.role?.includes("אחראית פדגוגית שכבה ט'")) {
-        const fixed = { ...member, role: "אחראית פדגוגית שכבה ט' ומורת שילוב חט\"נ" };
-        setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), fixed).catch(console.warn);
-        return fixed;
+        return { ...member, role: "אחראית פדגוגית שכבה ט' ומורת שילוב חט\"נ" };
       }
     }
     if (member.id === 'staff-112' || (member.name && member.name.includes('קקון'))) {
       if (!member.role?.includes("שכבה ט'")) {
-        const fixed = { ...member, role: "יועצת שכבה ט' ומחנכת כתה ט 1 חט\"נ" };
-        setDoc(doc(db, STAFF_COLLECTION_NAME, member.id), fixed).catch(console.warn);
-        return fixed;
+        return { ...member, role: "יועצת שכבה ט' ומחנכת כתה ט 1 חט\"נ" };
       }
     }
+
+    // Synchronize email with official school list if member email is not yet updated
+    const defaultMatch = defaultStaffMembers.find(d => d.id === member.id);
+    if (defaultMatch && defaultMatch.email?.endsWith('@taded.org.il') && member.email !== defaultMatch.email) {
+      return { ...member, email: defaultMatch.email };
+    }
+
     return member;
   });
 
@@ -154,21 +138,11 @@ export const consolidateStaff = (rawStaff: StaffMember[]): StaffMember[] => {
       name: 'גיא ציזנר',
       role: 'רכז מגמת מדעי המחשב והנדסת תוכנה, ורכז תקשוב',
       roleDescription: 'רכז מגמת מדעי המחשב והנדסת תוכנה חט"ע, מורה למדעי המחשב ורכז תקשוב בית ספרי',
-      email: 'ciznerguy@taded.org.il',
+      email: '1003045545@taded.org.il',
       bio: customBio,
       imageUrl: photo,
       isManagement: false
     };
-
-    // Remove any extra duplicate entries from Firestore in the background
-    guyEntries.forEach(g => {
-      if (g.id !== 'staff-108') {
-        deleteDoc(doc(db, STAFF_COLLECTION_NAME, g.id)).catch(console.warn);
-      }
-    });
-
-    // Make sure staff-108 is saved to Firestore
-    setDoc(doc(db, STAFF_COLLECTION_NAME, 'staff-108'), unifiedGuy).catch(console.warn);
 
     return [...otherStaff, unifiedGuy];
   }
@@ -202,11 +176,6 @@ export const subscribeToStaffMembers = (callback: (staff: StaffMember[]) => void
           window.dispatchEvent(new Event('arens_cms_staff_updated'));
           callback(staff);
         } else {
-          // Initialize collection with all default teachers
-          defaultStaffMembers.forEach(s => {
-            const cleanedMember = { ...s, imageUrl: (s.imageUrl && s.imageUrl.includes('unsplash.com')) ? '' : (s.imageUrl || '') };
-            setDoc(doc(db, STAFF_COLLECTION_NAME, s.id), cleanedMember).catch(console.warn);
-          });
           const consolidatedDefaults = consolidateStaff(defaultStaffMembers);
           try {
             localStorage.setItem(STAFF_STORAGE_KEY, JSON.stringify(consolidatedDefaults));
@@ -272,7 +241,7 @@ export const saveStaffMember = async (member: StaffMember): Promise<void> => {
       name: 'גיא ציזנר',
       role: member.role || 'רכז מגמת מדעי המחשב והנדסת תוכנה, ורכז תקשוב',
       roleDescription: member.roleDescription || 'רכז מגמת מדעי המחשב והנדסת תוכנה חט"ע, מורה למדעי המחשב ורכז תקשוב בית ספרי',
-      email: 'ciznerguy@taded.org.il',
+      email: '1003045545@taded.org.il',
       isManagement: false
     };
   }

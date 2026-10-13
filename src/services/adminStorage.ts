@@ -37,7 +37,9 @@ export const DEFAULT_EDITORS: Editor[] = [
   { email: '1003045545@taded.org.il', name: 'מנהל ראשי', role: 'מנהל ראשי' },
   { email: 'ciznerguy@taded.org.il', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
   { email: 'me@ciznerguy.com', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: '1002042738@taded.org.il', name: 'נאוה שקל ששון', role: 'סופר אדמין (Super Admin)' },
   { email: 'kamilroy35@gmail.com', name: 'נאוה שקל ששון', role: 'סופר אדמין (Super Admin)' },
+  { email: '1002482479@taded.org.il', name: 'אלי לוין', role: 'מנהל חטיבת נעורים (מורשה חט"ב מלא)' },
   { email: 'eli.levin79@gmail.com', name: 'אלי לוין', role: 'מנהל חטיבת נעורים (מורשה חט"ב מלא)' },
   { email: '1002641566@taded.org.il', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
   { email: 'orly.raz.1010@gmail.com', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" }

@@ -26,9 +26,6 @@ export const subscribeToNews = (callback: (news: Announcement[]) => void) => {
           window.dispatchEvent(new Event('arens_cms_news_updated'));
           callback(news);
         } else {
-          announcementsData.forEach(a => {
-            setDoc(doc(db, 'news', a.id), a).catch(console.warn);
-          });
           localStorage.setItem(NEWS_STORAGE_KEY, JSON.stringify(announcementsData));
           callback(announcementsData);
         }

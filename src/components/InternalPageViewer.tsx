@@ -32,11 +32,14 @@ import {
   Image as ImageIcon,
   X,
   ZoomIn,
+  ZoomOut,
+  ChevronRight,
   Footprints,
   HeartHandshake,
   Target,
   ExternalLink,
-  Maximize2
+  Maximize2,
+  Eye
 } from 'lucide-react';
 import { 
   getInternalPage, 
@@ -240,14 +243,101 @@ export default function InternalPageViewer({
   const [formInputs, setFormInputs] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
-  const [downloadedFileName, setDownloadedFileName] = useState<string | null>(null);
+  const [downloadedFileInfo, setDownloadedFileInfo] = useState<{ name: string; url: string } | null>(null);
   const [activeImageZoom, setActiveImageZoom] = useState<{ url: string; title?: string; caption?: string } | null>(null);
+  const [activePdfPreview, setActivePdfPreview] = useState<{
+    url: string;
+    name: string;
+    size?: string;
+    docxUrl?: string;
+  } | null>(null);
 
-  const handleDownloadFeedback = (fileName: string) => {
-    setDownloadedFileName(fileName);
+  const [docPageIdx, setDocPageIdx] = useState<number>(0);
+  const [docZoom, setDocZoom] = useState<number>(100);
+  const [docViewMode, setDocViewMode] = useState<'sheet' | 'native'>('sheet');
+
+  const openPdfPreview = (pdf: { url: string; name: string; size?: string; docxUrl?: string }) => {
+    setDocPageIdx(0);
+    setDocZoom(100);
+    setDocViewMode('sheet');
+    setActivePdfPreview(pdf);
+  };
+
+  const getDocPreviewPages = (url: string): string[] => {
+    if (!url) return [];
+    const filename = url.split('/').pop()?.replace('.pdf', '') || '';
+    if (filename === 'choveret-megamot-arens') {
+      return [
+        '/forms/previews/choveret-megamot-arens-page-1.png',
+        '/forms/previews/choveret-megamot-arens-page-2.png'
+      ];
+    }
+    if (filename === 'asifat-horim-2026') {
+      return [
+        '/forms/previews/asifat-horim-2026-page-1.png',
+        '/forms/previews/asifat-horim-2026-page-2.png',
+        '/forms/previews/asifat-horim-2026-page-3.png'
+      ];
+    }
+    return [`/forms/previews/${filename}-page-1.png`];
+  };
+
+  const handlePrintDocument = (imgUrl: string, title: string) => {
+    const printWin = window.open('', '_blank');
+    if (printWin) {
+      printWin.document.write(`
+        <!DOCTYPE html>
+        <html dir="rtl">
+          <head>
+            <title>${title}</title>
+            <style>
+              body { margin: 0; padding: 20px; display: flex; justify-content: center; background: #fff; font-family: sans-serif; }
+              img { max-width: 100%; height: auto; box-shadow: none; }
+              @media print { body { padding: 0; } img { width: 100%; } }
+            </style>
+          </head>
+          <body>
+            <img src="${imgUrl}" onload="window.print();" />
+          </body>
+        </html>
+      `);
+      printWin.document.close();
+    }
+  };
+
+  const handleDownloadFeedback = (fileName: string, fileUrl?: string) => {
+    setDownloadedFileInfo({ name: fileName, url: fileUrl || '' });
     setTimeout(() => {
-      setDownloadedFileName(null);
-    }, 4000);
+      setDownloadedFileInfo(null);
+    }, 6000);
+  };
+
+  const handleDirectFileDownload = async (fileUrl: string, defaultName: string) => {
+    handleDownloadFeedback(defaultName, fileUrl);
+    const cleanName = defaultName.endsWith('.pdf') || defaultName.endsWith('.docx') ? defaultName : `${defaultName}.pdf`;
+
+    try {
+      // 1. Fetch file as binary Blob to ensure valid local download
+      const res = await fetch(fileUrl);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = cleanName;
+      document.body.appendChild(a);
+      a.click();
+
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      }, 3000);
+    } catch (err) {
+      console.warn('Direct file download fallback to window.open:', err);
+      // Fallback: open in new tab so user can save or print directly
+      window.open(fileUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -620,19 +710,48 @@ export default function InternalPageViewer({
                   
                   <div className="space-y-2">
                     {finalPage.pdfFiles.map((pdf, idx) => (
-                      <button
+                      <div
                         key={idx}
-                        onClick={() => handleDownloadFeedback(pdf.name)}
-                        className="w-full text-right flex items-center justify-between p-3.5 rounded-xl border border-school-line bg-emerald-500/5 hover:bg-emerald-500/10 border-emerald-500/10 hover:border-emerald-500/30 text-xs text-school-muted font-bold transition-all group"
+                        className="w-full text-right flex items-center justify-between p-3 rounded-xl border border-school-line bg-[#0c1426]/70 hover:bg-emerald-500/5 border-emerald-500/10 hover:border-emerald-500/30 text-xs transition-all group"
                       >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <Download className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
-                          <span className="truncate text-white/90 group-hover:text-emerald-300 transition-colors">{pdf.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => openPdfPreview(pdf)}
+                          className="flex items-center gap-2.5 min-w-0 flex-1 text-right cursor-pointer"
+                          title="לחץ לצפייה מקדימה במסמך"
+                        >
+                          <FileText className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+                          <span className="truncate text-white/90 group-hover:text-emerald-300 transition-colors font-bold text-xs">{pdf.name}</span>
+                        </button>
+
+                        <div className="flex items-center gap-1.5 shrink-0 mr-2">
+                          <button
+                            type="button"
+                            onClick={() => openPdfPreview(pdf)}
+                            className="p-1.5 rounded-lg bg-school-bg/80 border border-school-line text-school-muted hover:text-white hover:border-emerald-500/40 hover:bg-emerald-500/10 transition-all cursor-pointer"
+                            title="צפייה מקדימה בטופס"
+                          >
+                            <Eye className="w-3.5 h-3.5 text-school-cyan" />
+                          </button>
+                          <a
+                            href={pdf.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg bg-school-bg/80 border border-school-line text-school-muted hover:text-white hover:border-school-cyan/40 hover:bg-school-cyan/10 transition-all cursor-pointer"
+                            title="פתיחה בלשונית נפרדת"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5 text-school-cyan" />
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => handleDirectFileDownload(pdf.url, pdf.name)}
+                            className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 transition-all cursor-pointer"
+                            title="הורדת קובץ PDF"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                          </button>
                         </div>
-                        <span className="text-[9px] font-semibold bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full shrink-0">
-                          {downloadedFileName === pdf.name ? 'הורד!' : 'PDF'}
-                        </span>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -995,29 +1114,88 @@ export default function InternalPageViewer({
                   return (
                     <div
                       key={idx}
-                      onClick={() => {
-                        if (isNewsletter && onNavigateToPage) {
-                          onNavigateToPage('newsletter');
-                        } else {
-                          handleDownloadFeedback(file.name);
-                          window.open(file.url, '_blank', 'noopener,noreferrer');
-                        }
-                      }}
-                      className="flex items-center justify-between p-3.5 rounded-xl border border-school-line bg-[#0c1426]/60 hover:bg-emerald-500/5 hover:border-emerald-500/30 hover:text-emerald-400 transition-all group shadow-sm cursor-pointer"
+                      className="flex items-center justify-between p-3.5 rounded-2xl border border-school-line bg-[#0c1426]/70 hover:bg-emerald-500/5 hover:border-emerald-500/30 transition-all group shadow-sm"
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 shrink-0 group-hover:scale-105 transition-transform">
+                      {/* Title & Preview Trigger */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isNewsletter && onNavigateToPage) {
+                            onNavigateToPage('newsletter');
+                          } else {
+                            openPdfPreview(file);
+                          }
+                        }}
+                        className="flex items-center gap-3 min-w-0 flex-1 text-right cursor-pointer"
+                        title={isNewsletter ? "לחץ למעבר למידעון המלא" : "לחץ לצפייה מקדימה במסמך"}
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 shrink-0 group-hover:scale-105 transition-transform">
                           <FileText className="w-5 h-5" />
                         </div>
-                        <div className="text-right min-w-0">
-                          <p className="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors truncate">{file.name}</p>
-                          <p className="text-[10px] text-school-muted mt-0.5">
-                            {isNewsletter ? 'לחץ לצפייה בנגן ה-PDF המלא (17 עמודים) ולהורדה' : (file.size || 'קובץ PDF')}
+                        <div className="text-right min-w-0 flex-1">
+                          <p className="text-xs md:text-sm font-bold text-white group-hover:text-emerald-400 transition-colors truncate">
+                            {file.name}
+                          </p>
+                          <p className="text-[10px] text-school-muted mt-0.5 flex items-center gap-1.5">
+                            <span>{isNewsletter ? '17 עמודים' : (file.size || 'קובץ PDF')}</span>
+                            <span className="text-white/20">•</span>
+                            <span className="text-emerald-400/90 font-medium">צפייה או הורדה</span>
                           </p>
                         </div>
-                      </div>
-                      <div className="w-7 h-7 rounded-lg bg-school-bg/80 border border-school-line flex items-center justify-center text-school-muted hover:text-white group-hover:border-emerald-500/40 transition-colors shrink-0">
-                        {isNewsletter ? <BookOpen className="w-3.5 h-3.5 text-school-cyan" /> : <Download className="w-3.5 h-3.5" />}
+                      </button>
+
+                      {/* Action buttons */}
+                      <div className="flex items-center gap-1.5 shrink-0 mr-2">
+                        {file.docxUrl && (
+                          <button
+                            type="button"
+                            onClick={() => handleDirectFileDownload(file.docxUrl!, `${file.name}.docx`)}
+                            className="text-[10px] font-bold bg-blue-500/15 hover:bg-blue-500/30 text-blue-400 px-2 py-1.5 rounded-lg border border-blue-500/30 transition-all cursor-pointer flex items-center gap-1"
+                            title="הורדת הטופס בפורמט Word (DOCX) למילוי ממוחשב"
+                          >
+                            <FileText className="w-3 h-3" />
+                            <span>Word</span>
+                          </button>
+                        )}
+
+                        {!isNewsletter && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => openPdfPreview(file)}
+                              className="w-8 h-8 rounded-lg bg-school-bg/80 border border-school-line flex items-center justify-center text-school-muted hover:text-white hover:border-emerald-500/40 hover:bg-emerald-500/10 transition-colors cursor-pointer"
+                              title="צפייה מקדימה במסמך"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-school-cyan" />
+                            </button>
+
+                            <a
+                              href={file.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-8 h-8 rounded-lg bg-school-bg/80 border border-school-line flex items-center justify-center text-school-muted hover:text-white hover:border-school-cyan/40 hover:bg-school-cyan/10 transition-colors cursor-pointer"
+                              title="פתיחה בלשונית נפרדת"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5 text-school-cyan" />
+                            </a>
+                          </>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            if (isNewsletter && onNavigateToPage) {
+                              e.preventDefault();
+                              onNavigateToPage('newsletter');
+                            } else {
+                              handleDirectFileDownload(file.url, file.name);
+                            }
+                          }}
+                          className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-colors cursor-pointer"
+                          title={isNewsletter ? "פתיחת מידעון" : "הורדת קובץ PDF"}
+                        >
+                          {isNewsletter ? <BookOpen className="w-3.5 h-3.5 text-school-cyan" /> : <Download className="w-3.5 h-3.5" />}
+                        </button>
                       </div>
                     </div>
                   );
@@ -1027,7 +1205,7 @@ export default function InternalPageViewer({
           )}
 
           {/* Toast Notification for direct instant downloads */}
-          {downloadedFileName && (
+          {downloadedFileInfo && (
             <motion.div
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -1038,11 +1216,24 @@ export default function InternalPageViewer({
               <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
                 <FileCheck className="w-5 h-5" />
               </div>
-              <div className="space-y-1 min-w-0">
-                <h5 className="text-xs font-extrabold text-white">הקובץ ירד בהצלחה!</h5>
+              <div className="space-y-1 min-w-0 flex-1">
+                <h5 className="text-xs font-extrabold text-white">הקובץ מוכן להורדה / פתיחה!</h5>
                 <p className="text-[11px] text-school-muted truncate leading-relaxed">
-                  הקובץ <span className="text-emerald-400 font-bold">"{downloadedFileName}"</span> הורד ישירות למכשירך ללא פנייה למזכירות.
+                  <span className="text-emerald-400 font-bold">"{downloadedFileInfo.name}"</span>
                 </p>
+                {downloadedFileInfo.url && (
+                  <p className="text-[10px] text-school-muted pt-1 border-t border-school-line/40">
+                    לא נפתח אוטומטית?{' '}
+                    <a
+                      href={downloadedFileInfo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-school-cyan underline font-bold hover:text-white"
+                    >
+                      לחץ כאן לפתיחה ישירה
+                    </a>
+                  </p>
+                )}
               </div>
             </motion.div>
           )}
@@ -1244,6 +1435,247 @@ export default function InternalPageViewer({
             </motion.div>
           </motion.div>
         )}
+
+        {/* PDF Document Preview Modal */}
+        {activePdfPreview && (() => {
+          const previewPages = getDocPreviewPages(activePdfPreview.url);
+          const currentImg = previewPages[docPageIdx] || previewPages[0];
+          const hasMultiplePages = previewPages.length > 1;
+
+          return (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActivePdfPreview(null)}
+              className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 cursor-default"
+            >
+              <motion.div
+                initial={{ scale: 0.93, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.93, opacity: 0, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+                className="relative max-w-5xl w-full h-[92vh] bg-[#080d19] border border-school-line rounded-3xl overflow-hidden shadow-2xl flex flex-col text-right"
+                dir="rtl"
+              >
+                {/* Modal Header */}
+                <div className="p-3.5 md:px-6 bg-[#0c1426] border-b border-school-line flex items-center justify-between gap-3 shrink-0">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-sm md:text-base font-extrabold text-white truncate">
+                        {activePdfPreview.name}
+                      </h3>
+                      <p className="text-[11px] text-school-muted">
+                        {activePdfPreview.size || 'קובץ רשמי'} • בית ספר שש-שנתי משה ארנס
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    {/* Print Button */}
+                    {currentImg && (
+                      <button
+                        type="button"
+                        onClick={() => handlePrintDocument(currentImg, activePdfPreview.name)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-xs font-bold transition-all cursor-pointer"
+                        title="הדפסת המסמך ישירות"
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        <span className="hidden md:inline">הדפסה</span>
+                      </button>
+                    )}
+
+                    {/* Download PDF button */}
+                    <button
+                      type="button"
+                      onClick={() => handleDirectFileDownload(activePdfPreview.url, activePdfPreview.name)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-400 text-xs font-bold transition-all cursor-pointer"
+                      title="הורדת קובץ PDF מלא למכשיר"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">הורדת PDF</span>
+                    </button>
+
+                    {/* Word version if available */}
+                    {activePdfPreview.docxUrl && (
+                      <button
+                        type="button"
+                        onClick={() => handleDirectFileDownload(activePdfPreview.docxUrl!, `${activePdfPreview.name}.docx`)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-400 text-xs font-bold transition-all cursor-pointer"
+                        title="הורדת גרסת Word למילוי ממוחשב"
+                      >
+                        <FileText className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">הורדת Word</span>
+                      </button>
+                    )}
+
+                    {/* Open in new tab */}
+                    <a
+                      href={activePdfPreview.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-school-panel hover:bg-white/10 border border-school-line text-school-cyan text-xs font-bold transition-all cursor-pointer"
+                      title="פתיחה בלשונית נפרדת בדפדפן"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">חלון חדש</span>
+                    </a>
+
+                    {/* Close button */}
+                    <button
+                      type="button"
+                      onClick={() => setActivePdfPreview(null)}
+                      className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-school-muted hover:text-white transition-all cursor-pointer"
+                      title="סגור"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Toolbar for Zoom, Pages & Views */}
+                <div className="bg-[#0b1324] px-4 py-2 border-b border-school-line/60 flex items-center justify-between text-xs text-school-muted shrink-0 flex-wrap gap-2">
+                  {/* Zoom controls */}
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setDocZoom(prev => Math.max(50, prev - 15))}
+                      className="p-1 rounded bg-white/5 hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
+                      title="הקטן תצוגה"
+                    >
+                      <ZoomOut className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="text-[11px] font-mono font-bold text-white/90 min-w-[42px] text-center">
+                      {docZoom}%
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setDocZoom(prev => Math.min(200, prev + 15))}
+                      className="p-1 rounded bg-white/5 hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
+                      title="הגדל תצוגה"
+                    >
+                      <ZoomIn className="w-3.5 h-3.5" />
+                    </button>
+                    {docZoom !== 100 && (
+                      <button
+                        type="button"
+                        onClick={() => setDocZoom(100)}
+                        className="text-[10px] text-school-cyan underline hover:text-white mr-1 cursor-pointer"
+                      >
+                        איפוס
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Multi-page switcher */}
+                  {hasMultiplePages && (
+                    <div className="flex items-center gap-2 bg-black/30 px-2.5 py-1 rounded-xl border border-school-line/40">
+                      <button
+                        type="button"
+                        disabled={docPageIdx <= 0}
+                        onClick={() => setDocPageIdx(prev => Math.max(0, prev - 1))}
+                        className="p-1 rounded text-white/80 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                        title="עמוד קודם"
+                      >
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="text-[11px] font-bold text-emerald-400">
+                        עמוד {docPageIdx + 1} מתוך {previewPages.length}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={docPageIdx >= previewPages.length - 1}
+                        onClick={() => setDocPageIdx(prev => Math.min(previewPages.length - 1, prev + 1))}
+                        className="p-1 rounded text-white/80 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                        title="עמוד הבא"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* View Mode Toggle */}
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setDocViewMode('sheet')}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                        docViewMode === 'sheet'
+                          ? 'bg-school-cyan/20 text-school-cyan border border-school-cyan/30'
+                          : 'bg-white/5 text-school-muted hover:text-white'
+                      }`}
+                    >
+                      תצוגת מסמך
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDocViewMode('native')}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                        docViewMode === 'native'
+                          ? 'bg-school-cyan/20 text-school-cyan border border-school-cyan/30'
+                          : 'bg-white/5 text-school-muted hover:text-white'
+                      }`}
+                      title="תצוגת תוסף PDF של הדפדפן (אם נתמך)"
+                    >
+                      תוסף דפדפן
+                    </button>
+                  </div>
+                </div>
+
+                {/* Main Content Area */}
+                <div className="flex-1 w-full bg-[#050914] relative overflow-auto p-4 md:p-8 flex items-start justify-center">
+                  {docViewMode === 'sheet' && currentImg ? (
+                    <div
+                      className="relative transition-transform duration-200 shadow-2xl rounded-xl overflow-hidden bg-white max-w-3xl w-full border border-slate-300"
+                      style={{ transform: `scale(${docZoom / 100})`, transformOrigin: 'top center' }}
+                    >
+                      <img
+                        src={currentImg}
+                        alt={`${activePdfPreview.name} - עמוד ${docPageIdx + 1}`}
+                        className="w-full h-auto block select-none bg-white"
+                        onError={() => setDocViewMode('native')}
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full h-full bg-slate-900 rounded-xl overflow-hidden">
+                      <object
+                        data={`${activePdfPreview.url}#toolbar=1&navpanes=0`}
+                        type="application/pdf"
+                        className="w-full h-full border-none bg-white"
+                      >
+                        <iframe
+                          src={`${activePdfPreview.url}#toolbar=1&navpanes=0`}
+                          className="w-full h-full border-none bg-white"
+                          title={activePdfPreview.name}
+                        />
+                      </object>
+                    </div>
+                  )}
+                </div>
+
+                {/* Modal Footer with quick instructions */}
+                <div className="p-3 px-6 bg-[#0c1426] border-t border-school-line flex items-center justify-between text-[11px] text-school-muted shrink-0">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span>
+                      המסמך מוצג בתצוגה רשמית מלאה. ניתן להדפיס ישירות, להוריד כ-PDF או Word, או לפתוח בכרטיסייה חדשה.
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActivePdfPreview(null)}
+                    className="text-xs text-white/70 hover:text-white underline cursor-pointer"
+                  >
+                    סגירת מסמך
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          );
+        })()}
       </AnimatePresence>
 
     </div>

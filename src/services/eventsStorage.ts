@@ -337,10 +337,6 @@ export const subscribeToRegistrations = (callback: (registrations: WorkshopRegis
           localStorage.setItem(REGISTRATIONS_STORAGE_KEY, JSON.stringify(registrations));
           callback(registrations);
         } else {
-          // If Firestore is empty, seed with initial 11 teachers
-          INITIAL_REGISTERED_TEACHERS.forEach(reg => {
-            setDoc(doc(db, 'registrations', reg.id), reg, { merge: true }).catch(console.warn);
-          });
           localStorage.setItem(REGISTRATIONS_STORAGE_KEY, JSON.stringify(INITIAL_REGISTERED_TEACHERS));
           callback(INITIAL_REGISTERED_TEACHERS);
         }

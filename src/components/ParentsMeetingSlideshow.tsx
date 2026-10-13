@@ -154,6 +154,23 @@ export const ParentsMeetingSlideshow: React.FC = () => {
           <a
             href={PDF_URL}
             download="asifat-horim-2026-mosh-arens.pdf"
+            onClick={() => {
+              fetch(PDF_URL)
+                .then(r => r.blob())
+                .then(b => {
+                  const u = window.URL.createObjectURL(b);
+                  const a = document.createElement('a');
+                  a.href = u;
+                  a.download = "asifat-horim-2026-mosh-arens.pdf";
+                  document.body.appendChild(a);
+                  a.click();
+                  setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(u);
+                  }, 2000);
+                })
+                .catch(() => {});
+            }}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold hover:bg-emerald-600/30 transition-all cursor-pointer shadow-sm"
             title="הורדת קובץ ה-PDF המלא (359 KB) למחשב או לטלפון"
           >

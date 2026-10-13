@@ -98,10 +98,6 @@ export const subscribeToTikshuvGuides = (callback: (guides: TikshuvGuide[]) => v
           window.dispatchEvent(new Event('arens_tikshuv_guides_updated'));
           callback(list);
         } else {
-          // Initialize Firestore with defaults
-          defaultTikshuvGuides.forEach((g) => {
-            setDoc(doc(db, 'tikshuv_guides', g.id), g).catch(console.warn);
-          });
           localStorage.setItem(TIKSHUV_GUIDES_KEY, JSON.stringify(defaultTikshuvGuides));
           callback(defaultTikshuvGuides);
         }
@@ -130,12 +126,10 @@ export const subscribeToTikshuvContact = (callback: (contact: TikshuvCoordinator
           const merged = { ...defaultTikshuvContact, ...data };
           if (!merged.email || merged.email === 'me@ciznerguy.com' || merged.email.includes('ciznerguy.com')) {
             merged.email = 'ciznerguy@taded.org.il';
-            setDoc(settingsDocRef, merged).catch(console.warn);
           }
           localStorage.setItem(TIKSHUV_SETTINGS_KEY, JSON.stringify(merged));
           callback(merged);
         } else {
-          setDoc(settingsDocRef, defaultTikshuvContact).catch(console.warn);
           localStorage.setItem(TIKSHUV_SETTINGS_KEY, JSON.stringify(defaultTikshuvContact));
           callback(defaultTikshuvContact);
         }

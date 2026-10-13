@@ -607,8 +607,29 @@ export const GradeHubSimulator: React.FC<GradeHubSimulatorProps> = ({
                             <button
                               type="button"
                               onClick={() => {
+                                const cleanName = pdf.name.endsWith('.pdf') ? pdf.name : `${pdf.name}.pdf`;
+                                fetch(pdf.url)
+                                  .then(res => {
+                                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                                    return res.blob();
+                                  })
+                                  .then(blob => {
+                                    const blobUrl = window.URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = blobUrl;
+                                    a.download = cleanName;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    setTimeout(() => {
+                                      document.body.removeChild(a);
+                                      window.URL.revokeObjectURL(blobUrl);
+                                    }, 3000);
+                                  })
+                                  .catch(() => {
+                                    window.open(pdf.url, '_blank', 'noopener,noreferrer');
+                                  });
                                 setDownloadFeedback(`הקובץ "${pdf.name}" נפתח/הורד בהצלחה`);
-                                setTimeout(() => setDownloadFeedback(null), 3000);
+                                setTimeout(() => setDownloadFeedback(null), 3500);
                               }}
                               className="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold cursor-pointer"
                             >
