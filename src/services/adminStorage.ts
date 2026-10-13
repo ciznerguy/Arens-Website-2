@@ -1,0 +1,166 @@
+import { db } from './firebase';
+import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
+
+export interface Editor {
+  email: string;
+  name: string;
+  role: string;
+}
+
+export interface SecretaryContactEmails {
+  juniorHigh: string; // חטיבת הנעורים (חט"נ)
+  highSchool: string; // חטיבה עליונה (חט"ע)
+  generalPhone?: string;
+  fax?: string;
+}
+
+export const DEFAULT_CONTACT_EMAILS: SecretaryContactEmails = {
+  juniorHigh: 'arens2244@gmail.com',
+  highSchool: 'arens2244@gmail.com',
+  generalPhone: '03-7349373',
+  fax: '03-7349680'
+};
+
+export const getStoredContactEmails = (): SecretaryContactEmails => {
+  try {
+    const raw = localStorage.getItem('arens_contact_emails');
+    if (raw) {
+      return { ...DEFAULT_CONTACT_EMAILS, ...JSON.parse(raw) };
+    }
+  } catch (e) {
+    console.error('Failed reading stored contact emails', e);
+  }
+  return DEFAULT_CONTACT_EMAILS;
+};
+
+export const DEFAULT_EDITORS: Editor[] = [
+  { email: '1003045545@taded.org.il', name: 'מנהל ראשי', role: 'מנהל ראשי' },
+  { email: 'ciznerguy@taded.org.il', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: 'me@ciznerguy.com', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: 'kamilroy35@gmail.com', name: 'נאוה שקל ששון', role: 'סופר אדמין (Super Admin)' },
+  { email: 'eli.levin79@gmail.com', name: 'אלי לוין', role: 'מנהל חטיבת נעורים (מורשה חט"ב מלא)' },
+  { email: '1002641566@taded.org.il', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" },
+  { email: 'orly.raz.1010@gmail.com', name: 'אורלי רז', role: "רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1" }
+];
+
+/**
+ * Get stored editors from cache or defaults
+ */
+export const getStoredEditors = (): Editor[] => {
+  try {
+    const raw = localStorage.getItem('arens_cms_editors');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Ensure known editors have their correct permissions updated
+        const updated = parsed.map((ed: Editor) => {
+          const match = DEFAULT_EDITORS.find(d => d.email.toLowerCase() === ed.email.toLowerCase());
+          if (match) {
+            return { ...ed, role: match.role, name: match.name };
+          }
+          return ed;
+        });
+        DEFAULT_EDITORS.forEach(def => {
+          if (!updated.some((u: Editor) => u.email.toLowerCase() === def.email.toLowerCase())) {
+            updated.push(def);
+          }
+        });
+        return updated;
+      }
+    }
+  } catch (e) {
+    console.error('Failed reading stored editors', e);
+  }
+  return DEFAULT_EDITORS;
+};
+
+/**
+ * Subscribe to CMS Editors & Config from Firestore in real-time
+ */
+export const subscribeToAdminSettings = (callback?: (editors: Editor[]) => void) => {
+  try {
+    const unsub = onSnapshot(doc(db, 'settings', 'admin_config'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+
+        if (data.editors && Array.isArray(data.editors) && data.editors.length > 0) {
+          localStorage.setItem('arens_cms_editors', JSON.stringify(data.editors));
+          window.dispatchEvent(new CustomEvent('arens_cms_editors_updated', { detail: data.editors }));
+          if (callback) callback(data.editors);
+        } else {
+          // If document exists but has no editors yet, bootstrap it once with the canonical editors
+          syncAdminConfigToCloud('editors', DEFAULT_EDITORS);
+        }
+        if (data.homepageSettings) {
+          localStorage.setItem('arens_homepage_settings', JSON.stringify(data.homepageSettings));
+          window.dispatchEvent(new Event('homepage_settings_updated'));
+        }
+        if (data.heroBalls) {
+          localStorage.setItem('arens_hero_balls', JSON.stringify(data.heroBalls));
+          window.dispatchEvent(new Event('hero_balls_updated'));
+        }
+        if (data.contactEmails) {
+          localStorage.setItem('arens_contact_emails', JSON.stringify(data.contactEmails));
+          window.dispatchEvent(new Event('contact_emails_updated'));
+        }
+        if (data.customTheme) {
+          localStorage.setItem('arens_school_custom_theme', JSON.stringify(data.customTheme));
+          window.dispatchEvent(new Event('arens_school_theme_updated'));
+        }
+      } else {
+        // Bootstrap initial document on Firestore
+        syncAdminConfigToCloud('editors', DEFAULT_EDITORS);
+      }
+    }, (err) => {
+      console.warn('Admin settings Firestore subscription error:', err);
+    });
+    return unsub;
+  } catch (err) {
+    console.warn('Admin settings Firestore subscription setup error:', err);
+    return () => {};
+  }
+};
+
+/**
+ * Write configuration directly to Firestore cloud
+ */
+export const syncAdminConfigToCloud = async (key: string, value: any) => {
+  try {
+    // Update local storage immediately for fast UI feedback
+    if (key === 'editors' && Array.isArray(value)) {
+      localStorage.setItem('arens_cms_editors', JSON.stringify(value));
+      window.dispatchEvent(new CustomEvent('arens_cms_editors_updated', { detail: value }));
+    }
+    if (key === 'contactEmails') {
+      localStorage.setItem('arens_contact_emails', JSON.stringify(value));
+      window.dispatchEvent(new Event('contact_emails_updated'));
+    }
+    // Write directly to cloud Firestore
+    await setDoc(doc(db, 'settings', 'admin_config'), {
+      [key]: value,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch (err) {
+    console.warn('Failed syncing admin config to Firestore:', err);
+  }
+};
+
+/**
+ * Fetch latest admin config from Firestore directly
+ */
+export const fetchAdminConfigFromCloud = async () => {
+  try {
+    const docSnap = await getDoc(doc(db, 'settings', 'admin_config'));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (data.editors && Array.isArray(data.editors) && data.editors.length > 0) {
+        localStorage.setItem('arens_cms_editors', JSON.stringify(data.editors));
+        window.dispatchEvent(new CustomEvent('arens_cms_editors_updated', { detail: data.editors }));
+      }
+      return data;
+    }
+  } catch (e) {
+    console.warn('Could not fetch admin config from cloud:', e);
+  }
+  return null;
+};

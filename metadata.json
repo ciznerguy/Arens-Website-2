@@ -1,0 +1,6 @@
+{
+  "name": "שש שנתי ע״ש משה ארנס פתח תקווה",
+  "description": "האתר הרשמי של בית הספר השש-שנתי ע״ש משה ארנס פתח תקווה - מידעון תשפ״ז, מגמות לימוד, לוחות זמנים ומערכות מידע",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

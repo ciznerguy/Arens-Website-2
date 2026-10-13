@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap');
+
+:root {
+  --color-school-bg: #434e62;
+  --color-school-panel: #505d74;
+  --color-school-panel2: #5d6c86;
+  --color-school-cyan: #22d3ee;
+  --color-school-violet: #818cf8;
+  --color-school-text: #f8fafc;
+  --color-school-muted: #cbd5e1;
+  --color-school-line: rgba(255, 255, 255, 0.22);
+}
+
+@theme {
+  --font-sans: "Heebo", system-ui, sans-serif;
+  
+  --color-school-bg: var(--color-school-bg);
+  --color-school-panel: var(--color-school-panel);
+  --color-school-panel2: var(--color-school-panel2);
+  --color-school-cyan: var(--color-school-cyan);
+  --color-school-violet: var(--color-school-violet);
+  --color-school-text: var(--color-school-text);
+  --color-school-muted: var(--color-school-muted);
+  --color-school-line: var(--color-school-line);
+}
+
+body {
+  background: var(--color-school-bg);
+  color: var(--color-school-text);
+  font-family: "Heebo", sans-serif;
+  overflow-x: hidden;
+  position: relative;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(var(--color-school-line) 1px, transparent 1px), 
+                    linear-gradient(90deg, var(--color-school-line) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(34, 211, 238, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 211, 238, 0.5);
+}
+
+@keyframes marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
