@@ -1487,17 +1487,25 @@ export default function InternalPageViewer({
                 {/* 1. Newest: Grade 9 Interpersonal Communication & Leadership Workshop */}
                 <div 
                   onClick={() => onNavigateToPage('course/junior/grade-9-interpersonal-communication-workshop')}
-                  className="group p-5 rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-purple-500/40 hover:border-purple-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                  className="group rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-purple-500/40 hover:border-purple-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between overflow-hidden"
                 >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
-                        <HeartHandshake className="w-5 h-5" />
+                  <div className="relative h-44 w-full overflow-hidden bg-school-panel2">
+                    <img 
+                      src="/assets/aistudio/2_a7007af7.jpeg" 
+                      alt="סדנת תקשורת בינאישית ומנהיגות בשכבת ט" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#101b33] via-transparent to-black/30" />
+                    <div className="absolute top-3 inset-x-3 flex items-center justify-between">
+                      <div className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-md text-purple-400 flex items-center justify-center font-black">
+                        <HeartHandshake className="w-4 h-4" />
                       </div>
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-purple-500/20 text-purple-300 border-purple-500/40 animate-pulse">
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-purple-500/80 backdrop-blur-md text-white border-purple-400 shadow">
                         פעילות חדשה בשכבה ט׳ 🌟
                       </span>
                     </div>
+                  </div>
+                  <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
                     <div>
                       <h4 className="font-black text-base text-white group-hover:text-purple-300 transition-colors">
                         סדנת תקשורת בינאישית ומנהיגות בשכבת ט׳
@@ -1505,14 +1513,14 @@ export default function InternalPageViewer({
                       <p className="text-xs text-purple-300/80 font-medium mt-0.5">
                         חיזוק האקלים הבית-ספרי בהובלת "מן אנד מיינד"
                       </p>
+                      <p className="text-xs text-school-muted leading-relaxed mt-2 line-clamp-2">
+                        מתודיקה מעשית מעולם התיאטרון והאימפרוביזציה: הקשבה פעילה, שפת גוף ותרבות דיון, יישוב קונפליקטים ומנהיגות חברתית.
+                      </p>
                     </div>
-                    <p className="text-xs text-school-muted leading-relaxed">
-                      מתודיקה מעשית מעולם התיאטרון והאימפרוביזציה: הקשבה פעילה, שפת גוף ותרבות דיון, יישוב קונפליקטים ומנהיגות חברתית.
-                    </p>
-                  </div>
-                  <div className="pt-4 mt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300">
-                    <span>כניסה לדף הפעילות המלא</span>
-                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300">
+                      <span>כניסה לדף הפעילות המלא (גלריית תמונות)</span>
+                      <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </div>
                 </div>
 
@@ -1662,17 +1670,25 @@ export default function InternalPageViewer({
                 {/* 1. Newest: Grade 9 Interpersonal Communication & Leadership Workshop */}
                 <div 
                   onClick={() => onNavigateToPage('course/junior/grade-9-interpersonal-communication-workshop')}
-                  className="group p-5 rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-purple-500/40 hover:border-purple-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                  className="group rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-purple-500/40 hover:border-purple-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between overflow-hidden"
                 >
-                  <div className="space-y-3 text-right">
-                    <div className="flex items-center justify-between">
-                      <div className="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
-                        <HeartHandshake className="w-5 h-5" />
+                  <div className="relative h-44 w-full overflow-hidden bg-school-panel2">
+                    <img 
+                      src="/assets/aistudio/2_a7007af7.jpeg" 
+                      alt="סדנת תקשורת בינאישית ומנהיגות בשכבת ט" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#101b33] via-transparent to-black/30" />
+                    <div className="absolute top-3 inset-x-3 flex items-center justify-between">
+                      <div className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-md text-purple-400 flex items-center justify-center font-black">
+                        <HeartHandshake className="w-4 h-4" />
                       </div>
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-purple-500/20 text-purple-300 border-purple-500/40 animate-pulse">
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-purple-500/80 backdrop-blur-md text-white border-purple-400 shadow">
                         פעילות חדשה בשכבה ט׳ 🌟
                       </span>
                     </div>
+                  </div>
+                  <div className="p-5 space-y-3 flex-1 flex flex-col justify-between text-right">
                     <div>
                       <h4 className="font-black text-base text-white group-hover:text-purple-300 transition-colors">
                         סדנת תקשורת בינאישית ומנהיגות בשכבת ט׳
@@ -1680,14 +1696,14 @@ export default function InternalPageViewer({
                       <p className="text-xs text-purple-300/80 font-medium mt-0.5">
                         חיזוק האקלים הבית-ספרי בהובלת "מן אנד מיינד"
                       </p>
+                      <p className="text-xs text-school-muted leading-relaxed mt-2 line-clamp-2">
+                        מתודיקה מעשית מעולם התיאטרון והאימפרוביזציה: הקשבה פעילה, שפת גוף ותרבות דיון, יישוב קונפליקטים ומנהיגות חברתית.
+                      </p>
                     </div>
-                    <p className="text-xs text-school-muted leading-relaxed">
-                      מתודיקה מעשית מעולם התיאטרון והאימפרוביזציה: הקשבה פעילה, שפת גוף ותרבות דיון, יישוב קונפליקטים ומנהיגות חברתית.
-                    </p>
-                  </div>
-                  <div className="pt-4 mt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300">
-                    <span>כניסה לדף הפעילות המלא</span>
-                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300">
+                      <span>כניסה לדף הפעילות המלא (גלריית תמונות)</span>
+                      <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </div>
                 </div>
 
@@ -1870,7 +1886,48 @@ export default function InternalPageViewer({
                       </ul>
                     )}
 
-                    {!hasText && !hasList && (
+                    {/* Section Images Gallery (e.g. Workshop photos in Grade 9 & Social Education) */}
+                    {sec.images && sec.images.length > 0 && (
+                      <div className="pt-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                          {sec.images.map((img: any, imgIdx: number) => {
+                            const imgObj = typeof img === 'string' ? { url: img } : img;
+                            return (
+                              <div 
+                                key={imgIdx} 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActiveImageZoom(imgObj);
+                                }}
+                                className="group/img relative rounded-xl overflow-hidden border border-school-line/70 bg-[#080d19] shadow-md cursor-pointer hover:border-school-cyan/70 transition-all hover:scale-[1.01]"
+                              >
+                                <div className="aspect-[16/10] overflow-hidden bg-black/40">
+                                  <img 
+                                    src={imgObj.url} 
+                                    alt={imgObj.title || imgObj.caption || 'תמונת פעילות'} 
+                                    className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500"
+                                    loading="lazy"
+                                  />
+                                </div>
+                                {(imgObj.title || imgObj.caption) && (
+                                  <div className="p-3 bg-school-panel/95 border-t border-white/5 text-right flex items-center justify-between gap-2">
+                                    <div className="truncate pr-1">
+                                      {imgObj.title && <p className="text-xs font-bold text-white truncate">{imgObj.title}</p>}
+                                      {imgObj.caption && <p className="text-[11px] text-school-muted truncate mt-0.5">{imgObj.caption}</p>}
+                                    </div>
+                                    <span className="p-1 px-2 rounded-lg bg-school-cyan/15 text-school-cyan text-[10px] font-bold shrink-0 border border-school-cyan/20">
+                                      הגדל 🔍
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {!hasText && !hasList && (!sec.images || sec.images.length === 0) && (
                       <p className="text-xs text-school-muted/70 italic">המידע בסעיף זה יעלה בקרוב</p>
                     )}
                   </div>

@@ -82,6 +82,12 @@ export interface InternalPage {
     text?: string | string[];
     badge?: string;
     list?: string[];
+    images?: Array<{
+      url: string;
+      caption?: string;
+      title?: string;
+      fileName?: string;
+    } | string>;
   }[];
   images?: Array<{
     url: string;

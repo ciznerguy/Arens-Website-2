@@ -30,6 +30,7 @@ export const JuniorHighCards: React.FC<JuniorHighCardsProps> = ({ onNavigateToPa
       accentBorder: "hover:border-purple-400/60",
       iconBg: "bg-purple-500/15 text-purple-400",
       textColor: "group-hover:text-purple-300",
+      image: "/assets/aistudio/2_a7007af7.jpeg",
       url: "course/junior/grade-9-interpersonal-communication-workshop"
     },
     {
@@ -193,38 +194,50 @@ export const JuniorHighCards: React.FC<JuniorHighCardsProps> = ({ onNavigateToPa
   return (
     <div className="pt-2">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {allJuniorItems.map((item, idx) => {
+        {allJuniorItems.map((item: any, idx) => {
           const Icon = item.icon;
           return (
             <div
               key={idx}
               onClick={() => onNavigateToPage(item.url)}
-              className={`group p-5 rounded-2xl bg-[#0b1324] hover:bg-[#101b33] border border-school-line/60 ${item.accentBorder} shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between`}
+              className={`group rounded-2xl bg-[#0b1324] hover:bg-[#101b33] border border-school-line/60 ${item.accentBorder} shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between overflow-hidden`}
             >
-              <div className="space-y-3 text-right">
-                <div className="flex items-center justify-between">
-                  <div className={`w-10 h-10 rounded-xl ${item.iconBg} flex items-center justify-center font-black group-hover:scale-110 transition-transform`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${item.badgeColor}`}>
-                    {item.badge}
-                  </span>
+              {item.image && (
+                <div className="relative h-36 w-full overflow-hidden bg-school-panel2">
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b1324] via-transparent to-transparent" />
                 </div>
-                <div>
-                  <h5 className={`font-black text-sm md:text-base text-white ${item.textColor} transition-colors`}>
-                    {item.title}
-                  </h5>
-                  <p className="text-xs text-school-muted font-medium mt-0.5">
-                    {item.subtitle}
+              )}
+              <div className="p-5 space-y-3 text-right flex-1 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className={`w-10 h-10 rounded-xl ${item.iconBg} flex items-center justify-center font-black group-hover:scale-110 transition-transform`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${item.badgeColor}`}>
+                      {item.badge}
+                    </span>
+                  </div>
+                  <div>
+                    <h5 className={`font-black text-sm md:text-base text-white ${item.textColor} transition-colors`}>
+                      {item.title}
+                    </h5>
+                    <p className="text-xs text-school-muted font-medium mt-0.5">
+                      {item.subtitle}
+                    </p>
+                  </div>
+                  <p className="text-xs text-school-muted/80 leading-relaxed line-clamp-2">
+                    {item.desc}
                   </p>
                 </div>
-                <p className="text-xs text-school-muted/80 leading-relaxed line-clamp-2">
-                  {item.desc}
-                </p>
-              </div>
-              <div className="pt-4 mt-2 border-t border-white/5 flex items-center justify-between text-xs font-bold text-school-cyan group-hover:text-cyan-300">
-                <span>צפייה בתוכן המלא</span>
-                <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                <div className="pt-4 mt-2 border-t border-white/5 flex items-center justify-between text-xs font-bold text-school-cyan group-hover:text-cyan-300">
+                  <span>צפייה בתוכן המלא</span>
+                  <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                </div>
               </div>
             </div>
           );

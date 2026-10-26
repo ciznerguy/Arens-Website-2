@@ -367,6 +367,18 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
           "שפת גוף ותרבות דיון: זיהוי מסרים בלתי-מילוליים ויצירת שיח כיתתי פתוח ומקרב.",
           "דיוק העברת ומענה למסרים: כלים ליישוב אי-הבנות וניהול קונפליקטים ברגישות.",
           "מנהיגות אישית וחברתית: יצירת חיבור, גיבוש ואחריות הדדית בכיתה."
+        ],
+        images: [
+          {
+            url: "/assets/aistudio/2_a7007af7.jpeg",
+            title: "סדנת תקשורת בינאישית ומנהיגות בשכבת ט'",
+            caption: "תלמידי שכבת ט' במעגל שיח ותרגול מתודיקה מעולם התיאטרון והאימפרוביזציה בהובלת 'מן אנד מיינד'"
+          },
+          {
+            url: "/assets/aistudio/1_eb457b14.jpeg",
+            title: "התנסות פעילה ושיח כיתתי פתוח ומקרב",
+            caption: "התנסות מעשית בסיטואציות חברתיות מגוונות, הקשבה פעילה ושפת גוף ותרבות דיון"
+          }
         ]
       },
       {
@@ -454,6 +466,18 @@ export const INTERNAL_PAGES: Record<string, InternalPage> = {
           "שפת גוף ותרבות דיון: זיהוי מסרים בלתי-מילוליים ויצירת שיח כיתתי פתוח ומקרב.",
           "דיוק העברת ומענה למסרים: כלים ליישוב אי-הבנות וניהול קונפליקטים ברגישות.",
           "מנהיגות אישית וחברתית: יצירת חיבור, גיבוש ואחריות הדדית בכיתה."
+        ],
+        images: [
+          {
+            url: "/assets/aistudio/2_a7007af7.jpeg",
+            title: "סדנת תקשורת בינאישית ומנהיגות בשכבת ט'",
+            caption: "תלמידי שכבת ט' במעגל שיח ותרגול מתודיקה מעולם התיאטרון והאימפרוביזציה בהובלת 'מן אנד מיינד'"
+          },
+          {
+            url: "/assets/aistudio/1_eb457b14.jpeg",
+            title: "התנסות פעילה ושיח כיתתי פתוח ומקרב",
+            caption: "התנסות מעשית בסיטואציות חברתיות מגוונות, הקשבה פעילה ושפת גוף ותרבות דיון"
+          }
         ]
       },
       {
@@ -1618,8 +1642,25 @@ export function isCounselorPage(url: string): boolean {
 export function isGradeMainPage(url: string): boolean {
   if (!url) return false;
   const clean = url.replace(/^\/+|\/+$/g, "").toLowerCase();
-  // Subpages, tracks, counselor pages or specific classes are not main grade pages
-  if (clean.includes('subpage') || clean.includes('track') || clean.includes('class-') || clean.includes('כיתה') || clean.includes('counseling') || clean.includes('counselor') || clean.includes('יועצת') || clean.includes('rabin') || clean.includes('רבין')) {
+  // Subpages, workshops, activities, ceremonies, tracks, counselor pages or specific classes are not main grade pages
+  if (
+    clean.includes('workshop') ||
+    clean.includes('סדנ') ||
+    clean.includes('activity') ||
+    clean.includes('פעילות') ||
+    clean.includes('ceremony') ||
+    clean.includes('טקס') ||
+    clean.includes('subpage') || 
+    clean.includes('track') || 
+    clean.includes('class-') || 
+    clean.includes('כיתה') || 
+    clean.includes('counseling') || 
+    clean.includes('counselor') || 
+    clean.includes('יועצת') || 
+    clean.includes('rabin') || 
+    clean.includes('רבין') ||
+    clean.includes('חוברת')
+  ) {
     return false;
   }
   const sanitized = clean;
@@ -1630,13 +1671,14 @@ export function isGradeMainPage(url: string): boolean {
     sanitized.includes("course/%d7%97%d7%98%d7%a2-2/%d7%a4%d7%95%d7%a1%d7%98-%d7%90%d7%91%d7%90-%d7%a9%d7%9b%d7%91%d7%aa-%d7%99") ||
     sanitized.includes("course/%d7%97%d7%98%d7%a2-2/%d7%90%d7%91%d7%90-%d7%a9%d7%9b%d7%91%d7%aa-%d7%99%d7%90") ||
     sanitized.includes("course/%d7%97%d7%98%d7%a2-2/%d7%a9%d7%9b%d7%91%d7%aa-%d7%99%d7%91") ||
-    sanitized.startsWith("grade-") ||
-    sanitized.includes("שכבת-")
+    sanitized === "grade-7" || sanitized === "grade-8" || sanitized === "grade-9" ||
+    sanitized === "grade-10" || sanitized === "grade-11" || sanitized === "grade-12" ||
+    sanitized === "grade-ז" || sanitized === "grade-ח" || sanitized === "grade-ט" ||
+    sanitized === "grade-י" || sanitized === "grade-יא" || sanitized === "grade-יב"
   ) {
     return true;
   }
-  const grade = detectGradeFromKey(url);
-  return grade !== null && ['ז', 'ח', 'ט', 'י', 'יא', 'יב'].includes(grade);
+  return false;
 }
 
 export function detectGradeFromKey(rawKey: string): string | null {
