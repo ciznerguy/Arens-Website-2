@@ -21,6 +21,30 @@ interface JuniorHighCardsProps {
 export const JuniorHighCards: React.FC<JuniorHighCardsProps> = ({ onNavigateToPage }) => {
   const allJuniorItems = [
     {
+      title: "סדנת תקשורת בינאישית ומנהיגות בשכבת ט'",
+      subtitle: "חיזוק האקלים הבית-ספרי בהובלת 'מן אנד מיינד'",
+      desc: "מתודיקה מעשית מעולם התיאטרון והאימפרוביזציה: הקשבה פעילה, שפת גוף ותרבות דיון, יישוב קונפליקטים ומנהיגות חברתית.",
+      icon: HeartHandshake,
+      badge: "פעילות חדשה בשכבה ט׳ 🌟",
+      badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
+      accentBorder: "hover:border-purple-400/60",
+      iconBg: "bg-purple-500/15 text-purple-400",
+      textColor: "group-hover:text-purple-300",
+      url: "course/junior/grade-9-interpersonal-communication-workshop"
+    },
+    {
+      title: "יום הזיכרון ליצחק רבין ז\"ל",
+      subtitle: "מילים, יוזמות ותקווה בפעולה",
+      desc: "טקס בית-ספרי, כרזות סובלנות ב-AI (ז'), ציר זמן היסטורי וענן מילים (ח'), ויוזמות מנהיגות לתמיכה בלוחמים ובמשפחות המילואים (ט').",
+      icon: Heart,
+      badge: "פעילות שיא חדשה 🌟",
+      badgeColor: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+      accentBorder: "hover:border-amber-400/60",
+      iconBg: "bg-amber-500/15 text-amber-400",
+      textColor: "group-hover:text-amber-300",
+      url: "course/junior/rabin-memorial-ceremony"
+    },
+    {
       title: "שכבת ז': הצעד הראשון בדרך החדשה",
       subtitle: "שנת המעבר, ההסתגלות וההשתלבות",
       desc: "קליטה וגיבוש, הסתגלות למסגרת השש-שנתית, תכנית 'גשר לעתיד' ומבוא מעשי ל-STEM.",
@@ -42,7 +66,7 @@ export const JuniorHighCards: React.FC<JuniorHighCardsProps> = ({ onNavigateToPa
       accentBorder: "hover:border-teal-400/60",
       iconBg: "bg-teal-500/15 text-teal-400",
       textColor: "group-hover:text-teal-300",
-      url: "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%97-%d7%a6%d7%9e%d7%99%d7%97%d7%94-%d7%95%d7%94%d7%a2%d7%9e%d7%a7%d7%94-%d7%9e%d7%92%d7%9c%d7%99%d7%9d-%d7%90%d7%aa-%d7%94%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a9/"
+      url: "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%97-%d7%a6%d7%9e%d7%99%d7%97%d7%94-%d7%95%d7%94%d7%a2%d7%9e%d7%a7%d7%94-%d7%9e%d7%92%d7%9c%d7%99%d7%9d-%d7%90%d7%aa-%d7%94%d7%9b%d7%95%d7%97%d7%95%aa-%d7%a9/"
     },
     {
       title: "שכבת ט': בחירות, עצמאות ואחריות",

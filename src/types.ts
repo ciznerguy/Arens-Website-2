@@ -103,6 +103,9 @@ export interface InternalPage {
   }[];
   flipbookUrl?: string;
   flipbookTitle?: string;
+  isJuniorShared?: boolean;
+  isHighSchoolShared?: boolean;
+  grades?: string[];
 }
 
 export interface GalleryPhoto {

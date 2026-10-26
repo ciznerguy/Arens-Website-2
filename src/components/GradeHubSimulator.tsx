@@ -24,13 +24,14 @@ import {
   Wifi,
   Battery,
   Layers,
-  ArrowRight
+  ArrowRight,
+  Heart
 } from 'lucide-react';
 import { gradesData } from '../data';
 import { allTeachersList } from '../data/teachersList';
 import { TeacherAvatar } from './TeacherAvatar';
 import { getStoredMajors } from '../services/majorsStorage';
-import { getGradeMainPage, GRADE_CANONICAL_KEYS } from '../data/internalPages';
+import { getGradeMainPage, GRADE_CANONICAL_KEYS, COUNSELOR_CANONICAL_KEYS } from '../data/internalPages';
 
 interface GradeHubSimulatorProps {
   grade: string;
@@ -125,15 +126,15 @@ export const GradeHubSimulator: React.FC<GradeHubSimulatorProps> = ({
     ],
     'י': [
       { role: "רכז/ת שכבה", name: "הנהלת שכבת י'" },
-      { role: "יועצת השכבה", name: "יועצת שכבת י'" }
+      { role: "יועצת השכבה", name: "ענבל ישראלי לונדין" }
     ],
     'יא': [
       { role: "רכז/ת שכבה", name: "הנהלת שכבת יא'" },
-      { role: "יועצת השכבה", name: "יועצת שכבת יא'" }
+      { role: "יועצת השכבה", name: "ענבל ישראלי לונדין" }
     ],
     'יב': [
       { role: "רכזת שכבה יב' ואנגלית", name: "אורלי רז" },
-      { role: "יועצת השכבה", name: "יועצת שכבת יב'" }
+      { role: "יועצת השכבה", name: "עופרי טל לובינסקי" }
     ]
   };
 
@@ -571,6 +572,31 @@ export const GradeHubSimulator: React.FC<GradeHubSimulatorProps> = ({
                       })}
                     </div>
                   </div>
+
+                  {/* DEDICATED LAYER COUNSELOR CARD */}
+                  {COUNSELOR_CANONICAL_KEYS[cleanGrade] && (
+                    <div className="bg-gradient-to-br from-[#1b153b] via-[#121c33] to-[#0d1424] border border-purple-500/30 rounded-2xl p-4 text-center space-y-3 shadow-md relative overflow-hidden group hover:border-purple-400/50 transition-all">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-[10px] font-extrabold text-purple-300">
+                        <Heart className="w-3 h-3 text-purple-400" />
+                        <span>ייעוץ והכוונה שכבתי</span>
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-xs text-white group-hover:text-purple-300 transition-colors">
+                          דף יועצת שכבה {cleanGrade}'
+                        </h4>
+                        <p className="text-[10px] text-purple-200/80 leading-relaxed">
+                          ליווי רגשי, סדנאות כישורי חיים, שעות קבלת קהל ופנייה דיסקרטית
+                        </p>
+                      </div>
+                      <a
+                        href={`#${COUNSELOR_CANONICAL_KEYS[cleanGrade]}`}
+                        className="w-full inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-[11px] font-bold bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-200 transition-all cursor-pointer shadow-sm"
+                      >
+                        <span>מעבר לדף יועצת שכבה {cleanGrade}'</span>
+                        <ArrowRight className="w-3.5 h-3.5 shrink-0 -scale-x-100" />
+                      </a>
+                    </div>
+                  )}
 
                   {/* PDF FORMS & DOWNLOADS */}
                   <div className="bg-[#101b33] border border-school-line rounded-2xl p-5 space-y-3 shadow-md">

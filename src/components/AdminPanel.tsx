@@ -22,6 +22,7 @@ import {
   Copy, 
   X, 
   Link, 
+  Calendar,
   FileText, 
   AlertTriangle, 
   Paperclip,
@@ -65,7 +66,8 @@ import {
   Laptop,
   Monitor,
   Smartphone,
-  Tablet
+  Tablet,
+  Heart
 } from 'lucide-react';
 import { TeacherEventsAdmin } from './TeacherEventsAdmin';
 import { MajorsAdmin } from './MajorsAdmin';
@@ -85,8 +87,13 @@ import {
   saveGradeClassesOverride,
   getInternalPage,
   GRADE_CANONICAL_KEYS,
+  COUNSELOR_CANONICAL_KEYS,
+  COUNSELOR_INFO_BY_GRADE,
+  isCounselorPage,
+  getCounselorMainPage,
   toCanonicalPageKey
 } from '../data/internalPages';
+import { CounselorHubSimulator } from './CounselorHubSimulator';
 import { schoolNewsArticles, NewsArticle, defaultStaffMembers, gradesData } from '../data';
 import { StaffMember, QuickLink } from '../types';
 import { getHebrewInitials, getAvatarColor } from '../utils/avatarUtils';
@@ -107,6 +114,12 @@ const DEFAULT_EDITORS = [
   { email: 'ciznerguy@taded.org.il', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
   { email: 'me@ciznerguy.com', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
   { email: 'guy.tzizner@arens.school', name: 'גיא ציזנר', role: 'רכז תקשוב וטכנו-פדגוגיה, רכז מגמת מדעי המחשב והנדסת תוכנה' },
+  { email: '1004148827@taded.org.il', name: 'אורית הדר לבהר', role: "יועצת שכבה ז' ומחנכת כתה ז2 חט\"נ" },
+  { email: '1002209480@taded.org.il', name: 'ענבל ממן', role: "יועצת שכבה ז' חט\"נ" },
+  { email: '1002153760@taded.org.il', name: 'רינת שטקל', role: "יועצת שכבה ח' ומחנכת כתה ח8 חט\"נ" },
+  { email: '1002084284@taded.org.il', name: 'סמדר קקון', role: "יועצת שכבה ט' ומחנכת כתה ט 1 חט\"נ" },
+  { email: 'buli1774@gmail.com', name: 'ענבל ישראלי לונדין', role: 'יועצת חט"ע (שכבות י\'-יא\')' },
+  { email: '1002127608@taded.org.il', name: 'עופרי טל לובינסקי', role: "יועצת חט\"ע ומחנכת כיתה יב' 5" },
   { email: 'tomer.naaman@arens.school', name: 'תומר נעמן', role: 'רכז מגמת פיזיקה' },
   { email: 'marindoron@gmail.com', name: 'דורון מרין', role: 'מורה' },
   { email: 'teacher@arens.school', name: 'מורה לדוגמה', role: 'מורה' }
@@ -190,7 +203,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [currentUser, setCurrentUser] = useState<Editor | null>(null);
 
   // CMS Tabs
-  const [activeTab, setActiveTab] = useState<'homepage' | 'pages' | 'my-grade' | 'majors' | 'news' | 'editors' | 'theme' | 'staff' | 'socials' | 'quick-links' | 'teachers-events' | 'my-profile' | 'contact-settings' | 'tikshuv'>('homepage');
+  const [activeTab, setActiveTab] = useState<'homepage' | 'pages' | 'my-grade' | 'majors' | 'news' | 'editors' | 'theme' | 'staff' | 'socials' | 'quick-links' | 'teachers-events' | 'my-profile' | 'contact-settings' | 'tikshuv' | 'counselor-workspace'>('homepage');
 
   // Homepage Settings State
   const [hpSubtitle, setHpSubtitle] = useState<string>('שש שנתי ע"ש משה ארנס');
@@ -201,6 +214,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [hpBall3, setHpBall3] = useState<string>('דיאלוג');
   const [hpPrimaryBtn, setHpPrimaryBtn] = useState<string>('כניסה לשכבות');
   const [hpSecondaryBtn, setHpSecondaryBtn] = useState<string>('מה מתרחש אצלנו?');
+  const [hpExamScheduleUrl, setHpExamScheduleUrl] = useState<string>('https://script.google.com/macros/s/AKfycbxS0rH0Y_vJ8TOkLFhZQiloKeCLrvmwZL0ih-NlDWFOfayTd-HknObU6Jfd_9KNoafe0Q/exec');
 
   useEffect(() => {
     try {
@@ -215,6 +229,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
         setHpBall3(parsed.ball3 || 'דיאלוג');
         setHpPrimaryBtn(parsed.primaryBtnText || 'כניסה לשכבות');
         setHpSecondaryBtn(parsed.secondaryBtnText || 'מה מתרחש אצלנו?');
+        setHpExamScheduleUrl(parsed.examScheduleUrl || 'https://script.google.com/macros/s/AKfycbxS0rH0Y_vJ8TOkLFhZQiloKeCLrvmwZL0ih-NlDWFOfayTd-HknObU6Jfd_9KNoafe0Q/exec');
       }
     } catch (e) {
       console.error(e);
@@ -231,7 +246,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       ball2: hpBall2.trim(),
       ball3: hpBall3.trim(),
       primaryBtnText: hpPrimaryBtn.trim(),
-      secondaryBtnText: hpSecondaryBtn.trim()
+      secondaryBtnText: hpSecondaryBtn.trim(),
+      examScheduleUrl: hpExamScheduleUrl.trim()
     };
     localStorage.setItem('arens_homepage_settings', JSON.stringify(settings));
     localStorage.setItem('arens_hero_balls', JSON.stringify([settings.ball1, settings.ball2, settings.ball3]));
@@ -261,6 +277,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
         setHpBall3('דיאלוג');
         setHpPrimaryBtn('כניסה לשכבות');
         setHpSecondaryBtn('מה מתרחש אצלנו?');
+        setHpExamScheduleUrl('https://script.google.com/macros/s/AKfycbxS0rH0Y_vJ8TOkLFhZQiloKeCLrvmwZL0ih-NlDWFOfayTd-HknObU6Jfd_9KNoafe0Q/exec');
 
         window.dispatchEvent(new Event('homepage_settings_updated'));
         window.dispatchEvent(new Event('hero_balls_updated'));
@@ -372,16 +389,36 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [subPageContent, setSubPageContent] = useState<string>('');
   const [subPagePdfFiles, setSubPagePdfFiles] = useState<any[]>([]);
 
+  // --- Layer Counselor Management & Simulator States ---
+  const [counselorSelectedGrade, setCounselorSelectedGrade] = useState<string>('ז');
+  const [counselorSubWorkspace, setCounselorSubWorkspace] = useState<'home' | 'subpages' | 'simulator'>('home');
+  const [counselorTitle, setCounselorTitle] = useState<string>('');
+  const [counselorSubtitle, setCounselorSubtitle] = useState<string>('');
+  const [counselorContent, setCounselorContent] = useState<string>('');
+  const [counselorSections, setCounselorSections] = useState<any[]>([]);
+  const [counselorPdfFiles, setCounselorPdfFiles] = useState<any[]>([]);
+  const [counselorSaveSuccess, setCounselorSaveSuccess] = useState<boolean>(false);
+
   // Role detection helpers
   const isSuperAdmin = (role: string) => {
-    return role === 'מנהל ראשי' || 
-           role === 'סופר אדמין' || 
-           role === 'סופר אדמין (Super Admin)' || 
-           role === 'מנהלת שש-שנתי' || 
-           role === 'מנהלת שש שנתי' || 
-           role === 'מנהל מערכת' || 
-           role.includes('שקל ששון') || 
-           role.includes('נאוה שקל');
+    const userMail = (currentUser?.email || loginEmail || '').toLowerCase().trim();
+    if (userMail === 'me@ciznerguy.com' || userMail === 'ciznerguy@taded.org.il' || userMail === 'guy.tzizner@arens.school' || userMail === '1003045545@taded.org.il') {
+      if (impersonatedRole && !impersonatedRole.includes('סופר אדמין') && !impersonatedRole.includes('מנהל ראשי') && !impersonatedRole.includes('ציזנר')) {
+        return false;
+      }
+      return true;
+    }
+    const r = (role || '').toLowerCase();
+    return r === 'מנהל ראשי' || 
+           r === 'סופר אדמין' || 
+           r === 'סופר אדמין (super admin)' || 
+           r.includes('סופר אדמין') ||
+           r.includes('ציזנר') ||
+           r === 'מנהלת שש-שנתי' || 
+           r === 'מנהלת שש שנתי' || 
+           r === 'מנהל מערכת' || 
+           r.includes('שקל ששון') || 
+           r.includes('נאוה שקל');
   };
 
   const isJuniorHighDirector = (role: string) => {
@@ -405,16 +442,40 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   const isFullSiteAdmin = (role: string) => {
+    if (isSuperAdmin(role)) return true;
     if (!role) return false;
     // Junior high director has full authority strictly over Junior High (grades 7-9, middle school pages and tracks)
     if (isJuniorHighDirector(role) && !isSuperAdmin(role)) {
       return false;
     }
-    // Grade coordinators, major coordinators and department/subject coordinators have access strictly to their direct content only
-    if ((isGradeCoordinator(role) || isMajorCoordinator(role) || isEnglishCoordinator(role)) && !isSuperAdmin(role)) {
+    // Grade coordinators, major coordinators, english coordinators and layer counselors have access strictly to their direct content only
+    if ((isGradeCoordinator(role) || isMajorCoordinator(role) || isEnglishCoordinator(role) || isCounselor(role)) && !isSuperAdmin(role)) {
       return false;
     }
     return isSuperAdmin(role) || isAdmin(role);
+  };
+
+  const isCounselor = (role: string) => {
+    const r = (role || '').toLowerCase();
+    return r.includes('יועצת') || r.includes('יועץ') || r.includes('ייעוץ');
+  };
+
+  const getGradesFromCounselorRole = (role: string): string[] => {
+    if (!isCounselor(role)) return [];
+    const r = role.toLowerCase();
+    const grades: string[] = [];
+    if (r.includes("ז'") || r.includes("שכבת ז") || r.includes("שכבה ז") || r.includes('ענבל ממן') || r.includes('לבהר') || r.includes('ממן') || (r.includes('ז') && r.includes('יועצ'))) grades.push("ז");
+    if (r.includes("ח'") || r.includes("שכבת ח") || r.includes("שכבה ח") || r.includes('שטקל') || (r.includes('ח') && r.includes('יועצ'))) grades.push("ח");
+    if (r.includes("ט'") || r.includes("שכבת ט") || r.includes("שכבה ט") || r.includes('קקון') || (r.includes('ט') && r.includes('יועצ'))) grades.push("ט");
+    if (r.includes("י'") || r.includes("שכבת י") || r.includes("שכבה י") || r.includes("שכבות י") || r.includes('ישראלי') || r.includes('לובינסקי') || r.includes('עופרי') || r.includes('חט"ע') || r.includes('חטע') || /(יועצת|יועץ)\s*(שכבה|שכבת)?\s*י(?![א-ת])/i.test(r)) grades.push("י");
+    if (r.includes("יא'") || r.includes("שכבת יא") || r.includes("שכבה יא") || r.includes('ישראלי') || (r.includes('יא') && r.includes('יועצ'))) grades.push("יא");
+    if (r.includes("יב'") || r.includes("שכבת יב") || r.includes("שכבה יב") || r.includes('לובינסקי') || r.includes('עופרי') || (r.includes('יב') && r.includes('יועצ'))) grades.push("יב");
+    return Array.from(new Set(grades));
+  };
+
+  const getGradeFromCounselorRole = (role: string): string | null => {
+    const grades = getGradesFromCounselorRole(role);
+    return grades.length > 0 ? grades[0] : null;
   };
 
   const isGradeCoordinator = (role: string) => {
@@ -611,6 +672,17 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       if (assignedMajor === 'major-biology' && pageText.includes('ביולוגיה')) return true;
     }
 
+    // 4. Layer Counselor check
+    const assignedCounselorGrades = getGradesFromCounselorRole(role);
+    if (assignedCounselorGrades.length > 0) {
+      const pageGrade = getGradeForPage(url, page);
+      const isCounselingPage = url.includes('counseling') || url.includes('counselor') || url.includes('יועצת') || (page?.title && page.title.includes('יועצ'));
+      for (const g of assignedCounselorGrades) {
+        if (isCounselingPage && pageGrade === g) return true;
+        if (COUNSELOR_CANONICAL_KEYS[g] && url === COUNSELOR_CANONICAL_KEYS[g]) return true;
+      }
+    }
+
     return false;
   };
 
@@ -698,6 +770,34 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       const gradeLetter = gMatch ? gMatch[1].replace(/['"]/g, '').trim() : '';
       if (gradeLetter) {
         const found = staffMembers.find(s => (s.role || '').includes(gradeLetter) && ((s.role || '').includes('רכז') || (s.role || '').includes('מוביל')));
+      }
+    }
+
+    // 4.5. Layer Counselors matching
+    if (r.includes('יועצת') || r.includes('יועץ') || r.includes('ייעוץ')) {
+      if (r.includes('ז') || r.includes('ענבל ממן') || r.includes('לבהר') || r.includes('הדר לבהר')) {
+        const found = staffMembers.find(s => s.name?.includes('ענבל ממן') || s.name?.includes('לבהר')) ||
+                      staffMembers.find(s => s.role?.includes('יועצת שכבה ז'));
+        if (found) return found;
+      }
+      if (r.includes('ח') || r.includes('שטקל') || r.includes('רינת')) {
+        const found = staffMembers.find(s => s.name?.includes('רינת שטקל') || s.name?.includes('שטקל')) ||
+                      staffMembers.find(s => s.role?.includes('יועצת שכבה ח'));
+        if (found) return found;
+      }
+      if (r.includes('ט') || r.includes('קקון') || r.includes('סמדר')) {
+        const found = staffMembers.find(s => s.name?.includes('סמדר קקון') || s.name?.includes('קקון')) ||
+                      staffMembers.find(s => s.role?.includes('יועצת שכבה ט'));
+        if (found) return found;
+      }
+      if (r.includes('יב') || r.includes('לובינסקי') || r.includes('עופרי')) {
+        const found = staffMembers.find(s => s.name?.includes('עופרי טל') || s.name?.includes('לובינסקי')) ||
+                      staffMembers.find(s => s.role?.includes('יועצת חט"ע ומחנכת כיתה יב'));
+        if (found) return found;
+      }
+      if (r.includes('י') || r.includes('יא') || r.includes('ישראלי לונדין') || r.includes('לונדין')) {
+        const found = staffMembers.find(s => s.name?.includes('ישראלי לונדין') || s.name?.includes('לונדין')) ||
+                      staffMembers.find(s => s.role?.includes('יועצת חט"ע'));
         if (found) return found;
       }
     }
@@ -897,6 +997,10 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
         // Full site admins keep their tab
       } else if (isGradeCoordinator(effectiveRole)) {
         setActiveTab('my-grade');
+      } else if (isCounselor(effectiveRole)) {
+        setActiveTab('counselor-workspace');
+        const g = getGradeFromCounselorRole(effectiveRole);
+        if (g) setCounselorSelectedGrade(g);
       } else if (isTikshuvCoordinator(effectiveRole, currentUser?.email)) {
         setActiveTab('tikshuv');
       } else if (isEnglishCoordinator(effectiveRole)) {
@@ -978,6 +1082,32 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       setGradeClassesList(defaultG?.classes || []);
     }
   }, [adminSelectedGrade, effectiveRole, gradeSubWorkspace]);
+
+  const counselorAssignedGrades = isCounselor(effectiveRole) ? getGradesFromCounselorRole(effectiveRole) : (['ז', 'ח', 'ט', 'י', 'יא', 'יב'] as const);
+  const cleanActiveCounselorGrade = (isCounselor(effectiveRole)
+    ? (counselorAssignedGrades.includes(counselorSelectedGrade as any) ? counselorSelectedGrade : (counselorAssignedGrades[0] || 'ז'))
+    : counselorSelectedGrade).replace(/['"״]/g, '').trim();
+
+  // Load Layer Counselor page details on grade change or update
+  useEffect(() => {
+    const counselorPageKey = COUNSELOR_CANONICAL_KEYS[cleanActiveCounselorGrade];
+    const counselorPage = counselorPageKey ? allPagesMap[counselorPageKey] : null;
+    const defaultData = getCounselorMainPage(cleanActiveCounselorGrade);
+    const resolved = counselorPage || defaultData;
+    if (resolved) {
+      setCounselorTitle(resolved.title || `מרחב יועצת שכבה ${cleanActiveCounselorGrade}'`);
+      setCounselorSubtitle(resolved.subtitle || '');
+      setCounselorContent(Array.isArray(resolved.content) ? resolved.content.join('\n\n') : (resolved.content || ''));
+      setCounselorSections(resolved.sections ? JSON.parse(JSON.stringify(resolved.sections)) : []);
+      setCounselorPdfFiles(resolved.pdfFiles ? JSON.parse(JSON.stringify(resolved.pdfFiles)) : []);
+    } else {
+      setCounselorTitle(`מרחב יועצת שכבה ${cleanActiveCounselorGrade}'`);
+      setCounselorSubtitle('');
+      setCounselorContent('');
+      setCounselorSections([]);
+      setCounselorPdfFiles([]);
+    }
+  }, [counselorSelectedGrade, cleanActiveCounselorGrade, effectiveRole, allPagesMap, counselorSubWorkspace]);
 
   // Listen to external page & quick links updates to refresh local map
   useEffect(() => {
@@ -1522,6 +1652,59 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     window.dispatchEvent(new CustomEvent('grade_classes_updated'));
     setSaveSuccess(`דף הבית והכיתות של שכבת ${cleanActiveGrade} עודכנו בהצלחה!`);
     setTimeout(() => setSaveSuccess(null), 3000);
+  };
+
+  // --- Layer Counselor Management Handlers ---
+  const handleSaveCounselorPage = () => {
+    const counselorPageKey = COUNSELOR_CANONICAL_KEYS[cleanActiveCounselorGrade];
+    if (!counselorPageKey) return;
+
+    const originalPage = allPagesMap[counselorPageKey] || getCounselorMainPage(cleanActiveCounselorGrade) || {
+      title: `דף יועצת שכבה ${cleanActiveCounselorGrade}`,
+      category: 'ייעוץ והכוונה',
+      icon: 'Heart'
+    };
+
+    const cleanSections = (counselorSections || [])
+      .map((sec: any) => {
+        const title = (sec.title || '').trim();
+        const textContent = (sec.content !== undefined ? sec.content : (sec.text || '')).trim();
+        return {
+          title,
+          content: textContent,
+          text: textContent,
+          list: sec.list || undefined
+        };
+      })
+      .filter(sec => sec.title || sec.content || sec.text || (sec.list && sec.list.length));
+
+    const cleanPdfs = (counselorPdfFiles || [])
+      .map(p => ({
+        name: (p.name || '').trim(),
+        url: (p.url || '').trim(),
+        size: p.size || undefined
+      }))
+      .filter(p => p.name || p.url);
+
+    const updatedPage: InternalPage = {
+      ...originalPage,
+      title: counselorTitle.trim() || `דף יועצת שכבה ${cleanActiveCounselorGrade}`,
+      subtitle: counselorSubtitle.trim() || undefined,
+      content: counselorContent.split('\n').map(line => line.trim()).filter(Boolean),
+      sections: cleanSections,
+      pdfFiles: cleanPdfs.length > 0 ? cleanPdfs : undefined
+    };
+
+    saveInternalPageOverride(counselorPageKey, updatedPage);
+    syncPageOverrideToCloud(counselorPageKey, updatedPage);
+    refreshPagesMap();
+    window.dispatchEvent(new CustomEvent('internal_pages_updated'));
+    setCounselorSaveSuccess(true);
+    setSaveSuccess(`דף יועצת שכבה ${cleanActiveCounselorGrade}' נשמר בהצלחה!`);
+    setTimeout(() => {
+      setCounselorSaveSuccess(false);
+      setSaveSuccess(null);
+    }, 3000);
   };
 
   const handleStartCreateGradeSubPage = () => {
@@ -2627,7 +2810,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       if (seenTitles.has(normTitle)) continue;
 
       const g = getGradeForPage(key, page);
-      if (g === cleanActiveGrade) {
+      const isJuniorShared = ['ז', 'ח', 'ט'].includes(cleanActiveGrade) && ((page as any)?.divisionScope === 'junior' && ((page as any)?.isJuniorShared || (page as any)?.grades?.includes(cleanActiveGrade)));
+      if (g === cleanActiveGrade || isJuniorShared) {
         seenKeys.add(canonKey);
         seenTitles.add(normTitle);
         result.push(key);
@@ -2856,6 +3040,10 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                             setActiveTab('homepage');
                           } else if (isGradeCoordinator(targetRole)) {
                             setActiveTab('my-grade');
+                          } else if (isCounselor(targetRole)) {
+                            setActiveTab('counselor-workspace');
+                            const g = getGradeFromCounselorRole(targetRole);
+                            if (g) setCounselorSelectedGrade(g);
                           } else if (isTikshuvCoordinator(targetRole)) {
                             setActiveTab('tikshuv');
                           } else if (isMajorCoordinator(targetRole)) {
@@ -2887,6 +3075,14 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           <option value="רכז שכבה י'">רכז שכבה י' (פרופיל + שכבה י')</option>
                           <option value="רכז שכבה יא'">רכז שכבה יא' (פרופיל + שכבה יא')</option>
                           <option value="רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1">רכז שכבה יב' (אורלי רז - שכבה יב' + מקצוע אנגלית + מחנכת יב'1)</option>
+                        </optgroup>
+                        <optgroup label="יועצות שכבה (פרופיל + דף יועצת שכבה)">
+                          <option value="ענבל ממן - יועצת שכבה ז'">ענבל ממן (יועצת שכבה ז')</option>
+                          <option value="אורית הדר לבהר - יועצת שכבה ז' ומחנכת ז'2">אורית הדר לבהר (יועצת שכבה ז' ומחנכת ז'2)</option>
+                          <option value="רינת שטקל - יועצת שכבה ח' ומחנכת ח'3">רינת שטקל (יועצת שכבה ח' ומחנכת ח'3)</option>
+                          <option value="סמדר קקון - יועצת שכבה ט'">סמדר קקון (יועצת שכבה ט')</option>
+                          <option value="ענבל ישראלי לונדין - יועצת שכבות י' ו-יא'">ענבל ישראלי לונדין (יועצת שכבות י' ו-יא')</option>
+                          <option value="עופרי טל לובינסקי - יועצת שכבה יב' ומחנכת יב'5">עופרי טל לובינסקי (יועצת שכבה יב' ומחנכת יב'5)</option>
                         </optgroup>
                         <optgroup label="רכזי 11 המגמות (פרופיל + מגמה)">
                           <option value="רכז מגמת דאטה אנליסט">רכז מגמת דאטה אנליסט</option>
@@ -2997,6 +3193,24 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         </span>
                         <span className="text-[9px] bg-school-bg px-2 py-0.5 rounded-full border border-school-line text-school-muted font-bold font-mono">
                           6
+                        </span>
+                      </button>
+
+                      {/* Layer Counselors Tab for Admins */}
+                      <button 
+                        onClick={() => { setActiveTab('counselor-workspace'); }}
+                        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                          activeTab === 'counselor-workspace' 
+                            ? 'bg-purple-500/20 text-white border border-purple-500/40 shadow-sm' 
+                            : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <Heart className="w-4 h-4 text-purple-400" />
+                          <span>יועצות שכבה</span>
+                        </span>
+                        <span className="text-[9px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full font-bold">
+                          שש-שנתי
                         </span>
                       </button>
 
@@ -3278,6 +3492,26 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         </button>
                       )}
 
+                      {/* Layer Counselor Tab */}
+                      {isCounselor(effectiveRole) && (
+                        <button 
+                          onClick={() => { setActiveTab('counselor-workspace'); }}
+                          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                            activeTab === 'counselor-workspace' 
+                              ? 'bg-purple-500/20 text-white border border-purple-500/40 shadow-sm' 
+                              : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <Heart className="w-4 h-4 text-purple-400" />
+                            <span>ניהול דף יועצת שכבה {getGradeFromCounselorRole(effectiveRole)}'</span>
+                          </span>
+                          <span className="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold">
+                            יועצת שכבה
+                          </span>
+                        </button>
+                      )}
+
                       {/* English Department / Coordinator Tab */}
                       {isEnglishCoordinator(effectiveRole) && (
                         <button 
@@ -3323,7 +3557,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         </button>
                       )}
 
-                      {!isJuniorHighDirector(effectiveRole) && !isGradeCoordinator(effectiveRole) && !isEnglishCoordinator(effectiveRole) && !isMajorCoordinator(effectiveRole) && !isTikshuvCoordinator(effectiveRole, currentUser?.email) && (
+                      {!isJuniorHighDirector(effectiveRole) && !isGradeCoordinator(effectiveRole) && !isCounselor(effectiveRole) && !isEnglishCoordinator(effectiveRole) && !isMajorCoordinator(effectiveRole) && !isTikshuvCoordinator(effectiveRole, currentUser?.email) && (
                         <div className="p-3 bg-school-cyan/5 border border-school-cyan/20 rounded-xl text-school-muted text-[11px] leading-relaxed">
                           <span className="text-school-cyan font-bold block mb-0.5">הרשאת מורה:</span>
                           חשבונך מוגדר להרשאת עריכת הפרופיל האישי שלך בלבד.
@@ -3577,6 +3811,31 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           />
                         </div>
 
+                      </div>
+                    </div>
+
+                    {/* Header Exam Schedule Button URL */}
+                    <div className="bg-[#101b33] border border-orange-500/30 rounded-2xl p-6 space-y-4">
+                      <h4 className="text-sm font-extrabold text-orange-400 flex items-center gap-2 border-b border-school-line/50 pb-3">
+                        <Calendar className="w-4 h-4 text-orange-400" />
+                        <span>קישור לוח מבחנים (הכפתור הכתום בראש האתר)</span>
+                      </h4>
+
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-white block">
+                          כתובת קישור (URL) של לוח המבחנים:
+                        </label>
+                        <input
+                          type="url"
+                          value={hpExamScheduleUrl}
+                          onChange={(e) => setHpExamScheduleUrl(e.target.value)}
+                          placeholder="https://script.google.com/macros/s/.../exec"
+                          className="w-full bg-[#080d19] border border-school-line/60 rounded-xl py-2.5 px-3.5 text-xs text-white focus:outline-none focus:border-orange-400 font-mono text-left"
+                          dir="ltr"
+                        />
+                        <p className="text-[10px] text-school-muted">
+                          קישור זה נפתח בלשונית חדשה בלחיצה על כפתור "לוח מבחנים" הכתום בראש האתר.
+                        </p>
                       </div>
                     </div>
 
@@ -5851,6 +6110,362 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         }}
                         onEditSection={(section) => {
                           setGradeSubWorkspace(section);
+                        }}
+                      />
+                    </div>
+                  )}
+
+                </div>
+              )}
+
+              {/* LAYER COUNSELOR WORKSPACE */}
+              {activeTab === 'counselor-workspace' && (isFullSiteAdmin(effectiveRole) || isCounselor(effectiveRole)) && (
+                <div className="space-y-6">
+                  
+                  {/* Counselor Header & Switcher */}
+                  <div className="bg-[#101b33] border border-purple-500/30 rounded-2xl p-5 space-y-4">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-school-line/40 pb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                          <Heart className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h2 className="text-lg font-extrabold text-white flex flex-wrap items-center gap-2">
+                            <span>ניהול דף יועצת שכבה</span>
+                            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-300">
+                              שכבה {cleanActiveCounselorGrade}'
+                            </span>
+                            {COUNSELOR_INFO_BY_GRADE[cleanActiveCounselorGrade]?.counselors && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/5 text-purple-200 border border-purple-500/20">
+                                {COUNSELOR_INFO_BY_GRADE[cleanActiveCounselorGrade].counselors.join(', ')}
+                              </span>
+                            )}
+                          </h2>
+                          <p className="text-xs text-school-muted mt-0.5">
+                            {isCounselor(effectiveRole)
+                              ? `מרחב ניהול ייעודי עבור יועצת שכבה ${cleanActiveCounselorGrade}': עריכת חזון ייעוצי, סדנאות כישורי חיים, שעות קבלה וטפסים`
+                              : 'בחר שכבה מהרשימה כדי לערוך את דף היועצת, התכנית השנתית, שעות קבלת הקהל ומסמכי הייעוץ'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+                        {/* Live Counselor Simulator Button */}
+                        <button
+                          type="button"
+                          onClick={() => setCounselorSubWorkspace('simulator')}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm ${
+                            counselorSubWorkspace === 'simulator'
+                              ? 'bg-purple-500 text-white font-black shadow-[0_0_15px_rgba(168,85,247,0.4)]'
+                              : 'bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/40 text-purple-300'
+                          }`}
+                        >
+                          <Monitor className="w-3.5 h-3.5" />
+                          <span>הדמיה במערכת הניהול</span>
+                        </button>
+
+                        {/* Edit Content Button */}
+                        <button
+                          type="button"
+                          onClick={() => setCounselorSubWorkspace('home')}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm ${
+                            counselorSubWorkspace === 'home'
+                              ? 'bg-school-cyan text-slate-950 font-black'
+                              : 'bg-white/5 hover:bg-white/10 border border-school-line text-white'
+                          }`}
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>עריכת תוכן הדף</span>
+                        </button>
+
+                        {/* View Live Page Preview Button */}
+                        {COUNSELOR_CANONICAL_KEYS[cleanActiveCounselorGrade] && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              window.location.hash = COUNSELOR_CANONICAL_KEYS[cleanActiveCounselorGrade];
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/30 hover:border-purple-400 text-xs font-bold text-purple-300 transition-colors cursor-pointer"
+                          >
+                            <Globe className="w-3.5 h-3.5" />
+                            <span>תצוגה מקדימה באתר</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Grade Switcher Tabs (For Admin or multi-grade counselors) */}
+                    {(!isCounselor(effectiveRole) || counselorAssignedGrades.length > 1) && (
+                      <div className="space-y-2 pt-1">
+                        <label className="text-[11px] font-bold text-purple-300/80 block">
+                          בחירת שכבה לעריכה והדמיה:
+                        </label>
+                        <div className={`grid gap-2 ${counselorAssignedGrades.length > 3 ? 'grid-cols-6' : (counselorAssignedGrades.length === 2 ? 'grid-cols-2' : 'grid-cols-3')}`}>
+                          {counselorAssignedGrades.map((g) => (
+                            <button
+                              key={g}
+                              type="button"
+                              onClick={() => setCounselorSelectedGrade(g)}
+                              className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border text-center cursor-pointer ${
+                                cleanActiveCounselorGrade === g
+                                  ? 'bg-purple-600 text-white border-purple-400 shadow-md font-black shadow-[0_0_12px_rgba(168,85,247,0.3)]'
+                                  : 'bg-[#0b1324] text-school-muted hover:text-white hover:bg-white/5 border-school-line/60'
+                              }`}
+                            >
+                              שכבה {g}'
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* SUB-WORKSPACE 1: EDIT COUNSELOR HOME PAGE */}
+                  {counselorSubWorkspace === 'home' && (
+                    <div className="space-y-6">
+                      
+                      {/* Basic Info Card */}
+                      <div className="bg-[#101b33] border border-school-line rounded-2xl p-6 space-y-4">
+                        <h3 className="font-extrabold text-white text-base flex items-center gap-2 border-b border-school-line/40 pb-3">
+                          <Heart className="w-4 h-4 text-purple-400" />
+                          <span>פרטי כותרת וחזון ייעוצי שכבתי (שכבה {cleanActiveCounselorGrade}')</span>
+                        </h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-school-muted block">כותרת דף היועצת:</label>
+                            <input
+                              type="text"
+                              value={counselorTitle}
+                              onChange={(e) => setCounselorTitle(e.target.value)}
+                              placeholder={`דף יועצת שכבה ${cleanActiveCounselorGrade}'`}
+                              className="w-full bg-[#0a101f] border border-school-line rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-400"
+                            />
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-school-muted block">תת-כותרת / סלוגן המרחב:</label>
+                            <input
+                              type="text"
+                              value={counselorSubtitle}
+                              onChange={(e) => setCounselorSubtitle(e.target.value)}
+                              placeholder="מרחב ליווי רגשי, העצמה אישית ומענה אישי"
+                              className="w-full bg-[#0a101f] border border-school-line rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-400"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Counselor Welcome Message */}
+                        <div className="space-y-1.5 pt-2">
+                          <label className="text-xs font-bold text-school-muted block">
+                            דבר היועצת לתלמידים ולהורים (פסקאות ברכה וליווי):
+                          </label>
+                          <textarea
+                            rows={4}
+                            value={counselorContent}
+                            onChange={(e) => setCounselorContent(e.target.value)}
+                            placeholder="כתוב כאן את הודעת הפתיחה, החזון הייעוצי ומסר ההעצמה לתלמידי והורי השכבה..."
+                            className="w-full bg-[#0a101f] border border-school-line rounded-xl p-3.5 text-xs text-white focus:outline-none focus:border-purple-400 leading-relaxed font-sans"
+                          />
+                          <p className="text-[10px] text-school-muted">
+                            טיפ: הפרד פסקאות באמצעות ירידת שורה כפולה (Enter).
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Guidance Program & Workshops Sections */}
+                      <div className="bg-[#101b33] border border-school-line rounded-2xl p-6 space-y-4">
+                        <div className="flex items-center justify-between border-b border-school-line/40 pb-3">
+                          <div>
+                            <h3 className="font-extrabold text-white text-base flex items-center gap-2">
+                              <Sparkles className="w-4 h-4 text-purple-400" />
+                              <span>סדנאות, תכנית שנתית ושעות קבלת קהל</span>
+                            </h3>
+                            <p className="text-xs text-school-muted">
+                              הוסף או ערוך סדנאות כישורי חיים, מיומנויות למידה, שעות קבלה ופרטי התקשרות
+                            </p>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCounselorSections(prev => [
+                                ...prev,
+                                {
+                                  title: 'סדנה / פעילות ייעוצית חדשה',
+                                  text: 'פירוט הסדנה, המטרות והתכנים המועברים בכיתות...'
+                                }
+                              ]);
+                            }}
+                            className="inline-flex items-center gap-1.5 bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 font-bold px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer"
+                          >
+                            <PlusCircle className="w-3.5 h-3.5" />
+                            <span>הוספת כרטיס חדש</span>
+                          </button>
+                        </div>
+
+                        {counselorSections.length === 0 ? (
+                          <div className="text-center py-8 bg-[#0a101f]/50 border border-school-line/40 rounded-xl space-y-2">
+                            <Sparkles className="w-8 h-8 text-school-muted/50 mx-auto" />
+                            <p className="text-xs text-school-muted">אין כרטיסי תכנית נוספים כרגע.</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            {counselorSections.map((sec, idx) => (
+                              <div key={idx} className="bg-[#0a101f] border border-school-line/60 rounded-xl p-4 space-y-3">
+                                <div className="flex items-center justify-between gap-3">
+                                  <input
+                                    type="text"
+                                    value={sec.title || ''}
+                                    onChange={(e) => {
+                                      const next = [...counselorSections];
+                                      next[idx] = { ...next[idx], title: e.target.value };
+                                      setCounselorSections(next);
+                                    }}
+                                    placeholder="כותרת הסדנה / הסעיף"
+                                    className="flex-1 bg-[#101b33] border border-school-line rounded-lg px-3 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-purple-400"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setCounselorSections(prev => prev.filter((_, i) => i !== idx));
+                                    }}
+                                    className="p-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 text-xs transition-colors cursor-pointer"
+                                    title="מחיקת כרטיס"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                                <textarea
+                                  rows={2}
+                                  value={sec.text !== undefined ? sec.text : (sec.content || '')}
+                                  onChange={(e) => {
+                                    const next = [...counselorSections];
+                                    next[idx] = { ...next[idx], text: e.target.value, content: e.target.value };
+                                    setCounselorSections(next);
+                                  }}
+                                  placeholder="תוכן ופרטים..."
+                                  className="w-full bg-[#101b33] border border-school-line rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-purple-400 leading-relaxed font-sans"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* PDF Forms & Guides */}
+                      <div className="bg-[#101b33] border border-school-line rounded-2xl p-6 space-y-4">
+                        <div className="flex items-center justify-between border-b border-school-line/40 pb-3">
+                          <div>
+                            <h3 className="font-extrabold text-white text-base flex items-center gap-2">
+                              <FileDown className="w-4 h-4 text-emerald-400" />
+                              <span>טפסים, שאלונים ומסמכי PDF להורדה ({counselorPdfFiles.length})</span>
+                            </h3>
+                            <p className="text-xs text-school-muted">
+                              העלה או קשר קבצי PDF ייעוציים, טפסי הרשמה וחוזרים לשימוש התלמידים וההורים
+                            </p>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCounselorPdfFiles(prev => [
+                                ...prev,
+                                {
+                                  name: 'טופס ייעוצי חדש.pdf',
+                                  url: '#',
+                                  size: '300 KB'
+                                }
+                              ]);
+                            }}
+                            className="inline-flex items-center gap-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 font-bold px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer"
+                          >
+                            <PlusCircle className="w-3.5 h-3.5" />
+                            <span>הוספת קובץ PDF</span>
+                          </button>
+                        </div>
+
+                        {counselorPdfFiles.length === 0 ? (
+                          <div className="text-center py-6 bg-[#0a101f]/50 border border-school-line/40 rounded-xl">
+                            <p className="text-xs text-school-muted">אין קבצים מצורפים כרגע.</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-2.5">
+                            {counselorPdfFiles.map((pdf, idx) => (
+                              <div key={idx} className="flex flex-col sm:flex-row items-center gap-2 bg-[#0a101f] border border-school-line/60 rounded-xl p-3">
+                                <input
+                                  type="text"
+                                  value={pdf.name || ''}
+                                  onChange={(e) => {
+                                    const next = [...counselorPdfFiles];
+                                    next[idx] = { ...next[idx], name: e.target.value };
+                                    setCounselorPdfFiles(next);
+                                  }}
+                                  placeholder="שם הקובץ (למשל: דף מידע למעבר לחטב.pdf)"
+                                  className="flex-1 bg-[#101b33] border border-school-line rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400"
+                                />
+                                <input
+                                  type="text"
+                                  value={pdf.url || ''}
+                                  onChange={(e) => {
+                                    const next = [...counselorPdfFiles];
+                                    next[idx] = { ...next[idx], url: e.target.value };
+                                    setCounselorPdfFiles(next);
+                                  }}
+                                  placeholder="קישור לקובץ או #"
+                                  className="flex-1 bg-[#101b33] border border-school-line rounded-lg px-3 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-400 dir-ltr text-left"
+                                  dir="ltr"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setCounselorPdfFiles(prev => prev.filter((_, i) => i !== idx));
+                                  }}
+                                  className="p-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 text-xs transition-colors cursor-pointer shrink-0"
+                                  title="מחיקת קובץ"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Save Changes Button */}
+                      <div className="flex items-center justify-end gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={handleSaveCounselorPage}
+                          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black text-xs shadow-lg shadow-purple-500/20 transition-all cursor-pointer"
+                        >
+                          <Save className="w-4 h-4" />
+                          <span>שמור שינויים בדף יועצת שכבה {cleanActiveCounselorGrade}'</span>
+                        </button>
+                      </div>
+
+                    </div>
+                  )}
+
+                  {/* SUB-WORKSPACE 2: LIVE SIMULATOR */}
+                  {counselorSubWorkspace === 'simulator' && (
+                    <div className="space-y-4">
+                      <CounselorHubSimulator
+                        grade={cleanActiveCounselorGrade}
+                        onGradeChange={(newG) => {
+                          if (!isCounselor(effectiveRole)) {
+                            setCounselorSelectedGrade(newG);
+                          }
+                        }}
+                        livePreviewData={{
+                          title: counselorTitle,
+                          subtitle: counselorSubtitle,
+                          content: counselorContent.split('\n').map(l => l.trim()).filter(Boolean),
+                          sections: counselorSections,
+                          pdfFiles: counselorPdfFiles
+                        }}
+                        onEditSection={() => {
+                          setCounselorSubWorkspace('home');
                         }}
                       />
                     </div>

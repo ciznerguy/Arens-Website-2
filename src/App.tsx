@@ -6,7 +6,6 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   BookOpen, 
-  Calendar, 
   HelpCircle, 
   Phone, 
   MapPin, 
@@ -543,6 +542,7 @@ export default function App() {
           heroDescription: 'רוצים ללמוד ולהצליח ולצד זה להתפתח ולהתקדם? הגעתם למקום הנכון! בואו ללמוד במקום שיוביל אתכם לצמוח ולבנות חברה טובה יותר…',
           primaryBtnText: 'כניסה לשכבות',
           secondaryBtnText: 'מה מתרחש אצלנו?',
+          examScheduleUrl: 'https://script.google.com/macros/s/AKfycbxS0rH0Y_vJ8TOkLFhZQiloKeCLrvmwZL0ih-NlDWFOfayTd-HknObU6Jfd_9KNoafe0Q/exec',
           ...JSON.parse(saved)
         };
       }
@@ -554,7 +554,8 @@ export default function App() {
       heroTitle: 'ארנס מצמיח אדם וחברה',
       heroDescription: 'רוצים ללמוד ולהצליח ולצד זה להתפתח ולהתקדם? הגעתם למקום הנכון! בואו ללמוד במקום שיוביל אתכם לצמוח ולבנות חברה טובה יותר…',
       primaryBtnText: 'כניסה לשכבות',
-      secondaryBtnText: 'מה מתרחש אצלנו?'
+      secondaryBtnText: 'מה מתרחש אצלנו?',
+      examScheduleUrl: 'https://script.google.com/macros/s/AKfycbxS0rH0Y_vJ8TOkLFhZQiloKeCLrvmwZL0ih-NlDWFOfayTd-HknObU6Jfd_9KNoafe0Q/exec'
     };
   });
 
@@ -671,7 +672,8 @@ export default function App() {
         { t: "שכבה ז׳ (מחזור ז׳)", url: "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%96-%d7%94%d7%a6%d7%a2%d7%93-%d7%94%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%91%d7%93%d7%a8%d7%9a-%d7%94%d7%97%d7%93%d7%a9%d7%94/" },
         { t: "שכבה ח׳ (מחזור ח׳)", url: "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%97-%d7%a6%d7%9e%d7%99%d7%97%d7%94-%d7%95%d7%94%d7%a2%d7%9e%d7%a7%d7%94-%d7%9e%d7%92%d7%9c%d7%99%d7%9d-%d7%90%d7%aa-%d7%94%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a9/" },
         { t: "שכבה ט׳ (מחזור ט׳)", url: "course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%98-%d7%91%d7%97%d7%99%d7%a8%d7%95%d7%aa-%d7%a2%d7%a6%d7%9e%d7%90%d7%95%d7%aa-%d7%95%d7%90%d7%97%d7%a8%d7%99%d7%95%d7%aa/" },
-        { isHeader: true, t: "תוכניות ייחודיות" },
+        { isHeader: true, t: "תוכניות וטקסים בחט״ב" },
+        { t: "יום הזיכרון ליצחק רבין ז״ל 🕯️", url: "course/junior/rabin-memorial-ceremony" },
         { t: "שישי אישי ומרכז הלמידה", url: "course/%d7%97%d7%98%d7%91/%d7%a9%d7%99%d7%a9%d7%99-%d7%90%d7%99%d7%a9%d7%99/" },
         { t: "המסעאו״ת - פיתוח מיומנויות", url: "course/%d7%97%d7%98%d7%91/%d7%9e%d7%a1%d7%a2%d7%90%d7%95%d7%aa-2/" },
         { t: "דבר מנהל חטיבת הנעורים", url: "course/%d7%93%d7%91%d7%a8-%d7%9e%d7%a0%d7%94%d7%9c-%d7%97%d7%98%d7%91%d7%aa-%d7%94%d7%a0%d7%a2%d7%95%d7%a8%d7%99%d7%9d/" }
@@ -686,6 +688,8 @@ export default function App() {
         { t: "שכבה י׳ (מחזור י׳)", url: "course/%d7%97%d7%98%d7%a2-2/%d7%a4%d7%95%d7%a1%d7%98-%d7%90%d7%91%d7%90-%d7%a9%d7%9b%d7%91%d7%aa-%d7%99/" },
         { t: "שכבה יא׳ (מחזור יא׳)", url: "course/%d7%97%d7%98%d7%a2-2/%d7%90%d7%91%d7%90-%d7%a9%d7%9b%d7%91%d7%aa-%d7%99%d7%90/" },
         { t: "שכבה יב׳ (מחזור יב׳)", url: "course/%d7%97%d7%98%d7%a2-2/%d7%a9%d7%9b%d7%91%d7%aa-%d7%99%d7%91/" },
+        { isHeader: true, t: "תוכניות וטקסים בחט״ע" },
+        { t: "סמינר דמוקרטיה ויום רבין 🕯️", url: "course/high-school/rabin-memorial-ceremony" },
         { isHeader: true, t: "אקדמיה ומגמות" },
         { t: "חוברת מגמות תשפ״ז 📚", tab: "majors" },
         { t: "מרחב צומחים לדעת בתיכון", url: "course/tzomchim-ladaat" }
@@ -695,12 +699,15 @@ export default function App() {
       t: "ייעוץ",
       url: "course/%d7%99%d7%a2%d7%95%d7%a5/",
       sub: [
-        { t: "דף ייעוץ ורווחת התלמיד 💚", url: "course/%d7%99%d7%a2%d7%95%d7%a5/" },
-        { isHeader: true, t: "יועצות לפי שכבה" },
-        { t: "יועצות שכבה ז׳ (ענבל ממן, אורית הדר לבהר)", url: "course/%d7%99%d7%a2%d7%95%d7%a5/" },
-        { t: "יועצת שכבה ח׳ (רינת שטקל אקשטיין)", url: "course/%d7%99%d7%a2%d7%95%d7%a5/" },
-        { t: "יועצת שכבה ט׳ (סמדר קקון)", url: "course/%d7%99%d7%a2%d7%95%d7%a5/" },
-        { t: "יועצות חט״ע י׳-יב׳ (ענבל ישראלי לונדין, עופרי טל לובינסקי)", url: "course/%d7%99%d7%a2%d7%95%d7%a5/" }
+        { t: "מרכז ייעוץ ורווחת התלמיד 💚", url: "course/%d7%99%d7%a2%d7%95%d7%a5/" },
+        { isHeader: true, t: "יועצות חטיבת הנעורים (חט״ב)" },
+        { t: "יועצות שכבה ז׳ (ענבל ממן, אורית הדר לבהר)", url: "course/counseling/grade-7" },
+        { t: "יועצת שכבה ח׳ (רינת שטקל)", url: "course/counseling/grade-8" },
+        { t: "יועצת שכבה ט׳ (סמדר קקון)", url: "course/counseling/grade-9" },
+        { isHeader: true, t: "יועצות החטיבה העליונה (חט״ע)" },
+        { t: "יועצות שכבה י׳ (ענבל ישראלי לונדין, עופרי טל לובינסקי)", url: "course/counseling/grade-10" },
+        { t: "יועצת שכבה יא׳ (ענבל ישראלי לונדין)", url: "course/counseling/grade-11" },
+        { t: "יועצת שכבה יב׳ (עופרי טל לובינסקי)", url: "course/counseling/grade-12" }
       ]
     },
     {
@@ -901,7 +908,6 @@ export default function App() {
               </div>
             )}
           </div>
-
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1.5 mr-auto ml-4">
             {currentNavItems.map((item, idx) => (

@@ -4,7 +4,8 @@ import {
   Compass, 
   TrendingUp, 
   Award, 
-  GraduationCap 
+  GraduationCap,
+  Heart
 } from 'lucide-react';
 
 interface HighSchoolGradeCardsProps {
@@ -13,6 +14,18 @@ interface HighSchoolGradeCardsProps {
 
 export const HighSchoolGradeCards: React.FC<HighSchoolGradeCardsProps> = ({ onNavigateToPage }) => {
   const gradeItems = [
+    {
+      title: "יום הזיכרון ליצחק רבין ז\"ל וסמינר דמוקרטיה",
+      subtitle: "אזרחות אקטיבית, מנהיגות ודמוקרטיה בפעולה בתיכון",
+      desc: "טקס מרגש באודיטוריום, קיר כרזות ושיח מכבד (י'), בחירות דמוקרטיות למועצת התלמידים (יא'), וחקר החברה הישראלית וניסוח הצעות חוק (יב').",
+      icon: Heart,
+      badge: "פעילות שיא חדשה 🌟",
+      badgeColor: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+      accentBorder: "hover:border-amber-400/60",
+      iconBg: "bg-amber-500/15 text-amber-400",
+      textColor: "group-hover:text-amber-300",
+      url: "course/high-school/rabin-memorial-ceremony"
+    },
     {
       title: "שכבת י': ביסוס המגמות והמעבר לתיכון",
       subtitle: "שנת המעבר, ההתנעה והמחויבות האישית",
@@ -70,7 +83,7 @@ export const HighSchoolGradeCards: React.FC<HighSchoolGradeCardsProps> = ({ onNa
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {gradeItems.map((item, idx) => {
           const Icon = item.icon;
           return (

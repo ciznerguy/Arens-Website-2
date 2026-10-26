@@ -17,6 +17,7 @@ import {
   GraduationCap,
   MapPin,
   User,
+  Users,
   Compass,
   Award,
   TrendingUp,
@@ -39,7 +40,10 @@ import {
   Target,
   ExternalLink,
   Maximize2,
-  Eye
+  Eye,
+  PhoneCall,
+  ShieldCheck,
+  Mail
 } from 'lucide-react';
 import { 
   getInternalPage, 
@@ -49,6 +53,10 @@ import {
   getGradeClassesOverrides, 
   detectGradeFromKey, 
   GRADE_CANONICAL_KEYS,
+  COUNSELOR_CANONICAL_KEYS,
+  COUNSELOR_INFO_BY_GRADE,
+  isCounselorPage,
+  getCounselorMainPage,
   isGradeMainPage,
   getGradeMainPage,
   getGradeBaseDefaultPage
@@ -202,11 +210,31 @@ export default function InternalPageViewer({
   const overrides = getInternalPageOverrides();
   const allPages = { ...INTERNAL_PAGES, ...overrides };
 
-  // Filter sub-pages belonging to this grade
+  // Filter sub-pages belonging to this grade (sorted newest to oldest)
   const subPages = currentGrade ? Object.entries(allPages).filter(([url, p]) => {
     if (isGradeMainPage(url)) return false;
     const g = getGradeForPage(url, p);
-    return g === currentGrade;
+    if (g === currentGrade) return true;
+    if (['ז', 'ח', 'ט'].includes(currentGrade)) {
+      if ((p as any)?.divisionScope === 'junior' && ((p as any)?.isJuniorShared || (p as any)?.grades?.includes(currentGrade))) return true;
+    }
+    if (['י', 'יא', 'יב'].includes(currentGrade)) {
+      if (((p as any)?.divisionScope === 'high' || (p as any)?.divisionScope === 'high-school') && ((p as any)?.isHighSchoolShared || (p as any)?.grades?.includes(currentGrade))) return true;
+    }
+    return false;
+  }).sort(([urlA, pA], [urlB, pB]) => {
+    // Newest activity/shared page appears first
+    if (urlA.includes('grade-9-interpersonal-communication-workshop')) return -1;
+    if (urlB.includes('grade-9-interpersonal-communication-workshop')) return 1;
+    if (urlA.includes('high-school/rabin')) return -1;
+    if (urlB.includes('high-school/rabin')) return 1;
+    if (urlA.includes('junior/rabin')) return -1;
+    if (urlB.includes('junior/rabin')) return 1;
+    if ((pA as any)?.isHighSchoolShared && !(pB as any)?.isHighSchoolShared) return -1;
+    if (!(pA as any)?.isHighSchoolShared && (pB as any)?.isHighSchoolShared) return 1;
+    if ((pA as any)?.isJuniorShared && !(pB as any)?.isJuniorShared) return -1;
+    if (!(pA as any)?.isJuniorShared && (pB as any)?.isJuniorShared) return 1;
+    return 0;
   }) : [];
 
   // Find grade level classes (using local storage overrides if available)
@@ -677,6 +705,36 @@ export default function InternalPageViewer({
                 );
               })()}
 
+              {/* Dedicated Layer Counselor Card */}
+              {COUNSELOR_CANONICAL_KEYS[cleanGradeKey] && (
+                <div className="bg-gradient-to-br from-[#1b153b] via-school-panel to-school-panel2 border border-purple-500/30 rounded-3xl p-6 text-center space-y-4 shadow-md relative overflow-hidden group hover:border-purple-400/50 transition-all">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-[radial-gradient(circle_at_100%_0%,rgba(168,85,247,0.15),transparent_70%)] pointer-events-none" />
+                  
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-[10px] font-extrabold text-purple-300">
+                    <Heart className="w-3 h-3 text-purple-400" />
+                    <span>ייעוץ והכוונה שכבתי</span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <h3 className="font-black text-sm text-school-text group-hover:text-purple-300 transition-colors">
+                      {COUNSELOR_INFO_BY_GRADE[cleanGradeKey]?.title || `מרחב יועצת שכבה ${cleanGradeKey}`}
+                    </h3>
+                    <p className="text-[11px] text-school-muted leading-relaxed line-clamp-2">
+                      {COUNSELOR_INFO_BY_GRADE[cleanGradeKey]?.subtitle || 'ליווי רגשי, העצמה אישית, סדנאות כישורי חיים ודלת פתוחה לכל תלמיד והורה'}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => onNavigateToPage(COUNSELOR_CANONICAL_KEYS[cleanGradeKey])}
+                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-200 transition-all cursor-pointer shadow-sm group-hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]"
+                  >
+                    <span>כניסה לדף יועצת שכבה {cleanGradeKey}'</span>
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0 -scale-x-100" />
+                  </button>
+                </div>
+              )}
+
               {/* Sub-sites & Info pages */}
               {subPages.length > 0 && (
                 <div className="bg-school-panel border border-school-line rounded-3xl p-6 space-y-4 shadow-md">
@@ -770,6 +828,391 @@ export default function InternalPageViewer({
 
             </div>
 
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Dedicated Layer Counselor Sub-Site Page Rendering
+  const isCounselingPage = isCounselorPage(pageUrl) || pageUrl.includes('counseling');
+  if (isCounselingPage && currentGrade) {
+    const counselorPageData = getCounselorMainPage(currentGrade) || finalPage;
+    const counselorInfo = COUNSELOR_INFO_BY_GRADE[cleanGradeKey];
+    const counselorNames = counselorInfo?.counselors || [];
+    const resolvedCounselors = counselorNames.map(name => {
+      const match = allTeachersList.find(t => 
+        t.name === name || 
+        t.name.includes(name) || 
+        name.includes(t.name) ||
+        (name.includes('לבהר') && t.name.includes('לבהר')) ||
+        (name.includes('שטקל') && t.name.includes('שטקל')) ||
+        (name.includes('קקון') && t.name.includes('קקון')) ||
+        (name.includes('לונדין') && t.name.includes('לונדין')) ||
+        (name.includes('לובינסקי') && t.name.includes('לובינסקי'))
+      );
+      return {
+        name,
+        staff: match,
+        role: match?.role || `יועצת שכבה ${cleanGradeKey}`
+      };
+    });
+
+    const mainGradeUrl = GRADE_CANONICAL_KEYS[cleanGradeKey];
+
+    return (
+      <div className="min-h-screen text-right" dir="rtl">
+        {/* HERO SECTION */}
+        <div className="relative overflow-hidden bg-gradient-to-b from-[#181133] via-school-panel/80 to-school-bg py-20 px-4 md:px-8 border-b border-purple-500/20">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(168,85,247,0.2),transparent_70%)] pointer-events-none" />
+          <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="max-w-7xl mx-auto space-y-6 relative z-10">
+            {/* Breadcrumbs */}
+            <div className="flex flex-wrap items-center gap-2 text-xs text-school-muted/80 mb-6 select-none justify-start">
+              <button onClick={onGoBackHome} className="hover:text-purple-300 transition-colors">
+                דף הבית
+              </button>
+              <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
+              <span>שכבות הגיל</span>
+              <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
+              {mainGradeUrl ? (
+                <button onClick={() => onNavigateToPage(mainGradeUrl)} className="hover:text-school-cyan transition-colors font-bold">
+                  שכבה {cleanGradeKey}
+                </button>
+              ) : (
+                <span>שכבה {cleanGradeKey}</span>
+              )}
+              <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
+              <span className="text-purple-300 font-bold truncate">דף יועצת השכבה</span>
+            </div>
+
+            {/* Custom Slogan Tag */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-xs text-purple-300 font-bold">
+              <Heart className="w-3.5 h-3.5 text-purple-400" />
+              <span>מרחב ייעוץ והכוונה • שש-שנתי משה ארנס</span>
+            </div>
+
+            {/* Title */}
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-school-text tracking-tight leading-tight">
+              {counselorPageData.title}
+            </h1>
+
+            {/* Glowing line */}
+            <div className="w-24 h-1.5 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full shadow-[0_0_12px_rgba(168,85,247,0.7)]" />
+
+            {/* Subtitle */}
+            {counselorPageData.subtitle && (
+              <p className="text-lg md:text-xl font-bold text-purple-200/90 max-w-3xl leading-relaxed">
+                {counselorPageData.subtitle}
+              </p>
+            )}
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 border border-school-line hover:border-purple-400 text-xs font-bold text-white transition-all cursor-pointer shadow-sm"
+              >
+                {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-purple-400" />}
+                <span>{copiedLink ? 'הקישור הועתק!' : 'שתף דף'}</span>
+              </button>
+
+              <button
+                onClick={handlePrint}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 border border-school-line hover:border-purple-400 text-xs font-bold text-white transition-all cursor-pointer shadow-sm"
+              >
+                <Printer className="w-3.5 h-3.5 text-purple-400" />
+                <span>הדפס דף</span>
+              </button>
+
+              {mainGradeUrl && (
+                <button
+                  onClick={() => onNavigateToPage(mainGradeUrl)}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-school-cyan/15 border border-school-cyan/30 hover:bg-school-cyan/25 text-xs font-bold text-school-cyan transition-all cursor-pointer shadow-sm mr-auto"
+                >
+                  <ArrowRight className="w-3.5 h-3.5 -scale-x-100" />
+                  <span>מעבר לדף שכבה {cleanGradeKey}</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* BENTO GRID */}
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* MAIN CONTENT (col-span-8) */}
+            <div className="lg:col-span-8 space-y-8">
+              
+              {/* About / Counselor Message */}
+              <div className="bg-school-panel border border-school-line rounded-3xl p-6 md:p-8 space-y-6 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-32 h-32 bg-[radial-gradient(circle_at_0%_0%,rgba(168,85,247,0.1),transparent_70%)] pointer-events-none" />
+                
+                <h2 className="text-xl font-extrabold text-school-text flex items-center gap-2.5 pb-3 border-b border-school-line/50">
+                  <Heart className="w-5 h-5 text-purple-400" />
+                  <span>דבר יועצת השכבה</span>
+                </h2>
+
+                <div className="space-y-4 text-school-muted text-sm md:text-base leading-relaxed">
+                  {counselorPageData.content && counselorPageData.content.length > 0 ? (
+                    counselorPageData.content.map((pText, idx) => (
+                      <p key={idx}>{pText}</p>
+                    ))
+                  ) : (
+                    <p>המרחב הייעוצי נמצא כעת בעריכה ועדכון שוטף.</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Sections / Workshops & Life Skills */}
+              {counselorPageData.sections && counselorPageData.sections.length > 0 && (
+                <div className="space-y-6">
+                  {counselorPageData.sections.map((section, idx) => {
+                    const secText = (section as any).content !== undefined ? (section as any).content : section.text;
+                    return (
+                      <div key={idx} className="bg-school-panel border border-school-line rounded-3xl p-6 md:p-8 space-y-4 shadow-xl">
+                        <h3 className="text-lg font-black text-school-text flex items-center gap-2.5 pb-2 border-b border-school-line/50">
+                          <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 shrink-0" />
+                          <span>{section.title}</span>
+                        </h3>
+
+                        {secText && (
+                          <div className="text-school-muted text-sm md:text-base leading-relaxed whitespace-pre-line">
+                            {typeof secText === 'string' ? secText : Array.isArray(secText) ? secText.join('\n') : ''}
+                          </div>
+                        )}
+
+                        {section.list && section.list.length > 0 && (
+                          <ul className="grid grid-cols-1 gap-2 text-sm text-school-muted pr-4 list-disc marker:text-purple-400">
+                            {section.list.map((item, lIdx) => (
+                              <li key={lIdx} className="leading-relaxed">{item}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Interactive Discrete Contact Box */}
+              <div className="bg-gradient-to-br from-[#1b153b]/80 via-school-panel to-school-panel2 border border-purple-500/30 rounded-3xl p-6 md:p-8 space-y-5 shadow-xl relative overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-purple-500/20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300">
+                      <Send className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-extrabold text-white">טופס פנייה דיסקרטית ליועצת השכבה</h3>
+                      <p className="text-xs text-purple-200/70">פנייה אישית ומאובטחת לצוות הייעוץ החינוכי</p>
+                    </div>
+                  </div>
+                  <span className="text-[11px] px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold self-start sm:self-auto">
+                    שמירה מלאה על פרטיות
+                  </span>
+                </div>
+
+                {isSubmitted ? (
+                  <div className="p-6 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-sm text-center font-bold space-y-2">
+                    <Check className="w-8 h-8 mx-auto text-emerald-400" />
+                    <p className="text-base">הפנייה נשלחה בהצלחה ליועצת השכבה!</p>
+                    <p className="text-xs text-emerald-200/80 font-normal">ניצור עמך קשר דיסקרטי בהקדם האפשרי. תודה על פנייתך.</p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleFormSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-bold text-school-muted block mb-1">שם מלא (תלמיד/ה או הורה):</label>
+                        <input
+                          type="text"
+                          required
+                          value={formInputs['counselor_name'] || ''}
+                          onChange={(e) => setFormInputs(prev => ({ ...prev, counselor_name: e.target.value }))}
+                          placeholder="ישראל ישראלי"
+                          className="w-full bg-school-bg border border-school-line rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-school-muted/50 focus:border-purple-400 focus:outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-school-muted block mb-1">כיתה (לדוגמה: {cleanGradeKey}1):</label>
+                        <input
+                          type="text"
+                          value={formInputs['counselor_class'] || ''}
+                          onChange={(e) => setFormInputs(prev => ({ ...prev, counselor_class: e.target.value }))}
+                          placeholder={`כיתה ${cleanGradeKey}2`}
+                          className="w-full bg-school-bg border border-school-line rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-school-muted/50 focus:border-purple-400 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-school-muted block mb-1">טלפון / דוא"ל לחזרה:</label>
+                      <input
+                        type="text"
+                        required
+                        value={formInputs['counselor_contact'] || ''}
+                        onChange={(e) => setFormInputs(prev => ({ ...prev, counselor_contact: e.target.value }))}
+                        placeholder="050-0000000 / yourname@domain.com"
+                        className="w-full bg-school-bg border border-school-line rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-school-muted/50 focus:border-purple-400 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-school-muted block mb-1">תוכן הפנייה / נושא ההתייעצות:</label>
+                      <textarea
+                        rows={3}
+                        required
+                        value={formInputs['counselor_message'] || ''}
+                        onChange={(e) => setFormInputs(prev => ({ ...prev, counselor_message: e.target.value }))}
+                        placeholder="תאר/י בקצרה את הנושא שבו תרצה/י להתייעץ..."
+                        className="w-full bg-school-bg border border-school-line rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-school-muted/50 focus:border-purple-400 focus:outline-none resize-none"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full py-3 px-5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                    >
+                      <Send className="w-4 h-4" />
+                      <span>שליחת פנייה דיסקרטית ליועצת השכבה</span>
+                    </button>
+                  </form>
+                )}
+              </div>
+
+              {/* Emergency Hotline Banner */}
+              <div className="bg-school-panel border border-school-line rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-school-muted">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
+                    <PhoneCall className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="font-extrabold text-white block text-sm">קווי סיוע ותמיכה רגשית 24/7 בשעת חירום:</span>
+                    <span className="text-xs text-school-muted">ער"ן: 1201 | סה"ר (בצ'אט) | מוקד 105 להגנה על ילדים ובני נוער ברשת</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* SIDEBAR (col-span-4) */}
+            <div className="lg:col-span-4 space-y-6">
+              
+              {/* Counselors Profile Card */}
+              <div className="bg-gradient-to-br from-[#1b153b] to-school-panel border border-purple-500/40 rounded-3xl p-6 text-center space-y-4 shadow-xl relative overflow-hidden">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/30 text-[10px] font-extrabold text-purple-300">
+                  <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
+                  <span>צוות יועצות שכבה {cleanGradeKey}'</span>
+                </div>
+
+                <div className="space-y-4">
+                  {resolvedCounselors.map((counselor, cIdx) => (
+                    <div key={cIdx} className="flex flex-col items-center gap-2.5 p-4 rounded-2xl bg-school-bg/60 border border-school-line/60">
+                      <TeacherAvatar
+                        name={counselor.name}
+                        imageUrl={counselor.staff?.imageUrl}
+                        className="w-16 h-16 rounded-full shadow-md"
+                        textClassName="text-xl font-black"
+                        borderClassName="border-2 border-purple-400/50"
+                      />
+                      <div className="space-y-0.5">
+                        <h4 className="font-black text-sm text-school-text">{counselor.name}</h4>
+                        <p className="text-[11px] text-purple-300 font-bold">{counselor.role}</p>
+                        {counselor.staff?.email && (
+                          <a
+                            href={`mailto:${counselor.staff.email}`}
+                            className="inline-flex items-center gap-1 text-[11px] text-school-muted hover:text-white transition-colors mt-1 select-all"
+                          >
+                            <Mail className="w-3 h-3 text-purple-400" />
+                            <span>{counselor.staff.email}</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Office hours */}
+                <div className="bg-school-bg/70 border border-school-line/60 rounded-2xl p-4 text-right space-y-1.5">
+                  <span className="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>שעות קבלת קהל ופניות:</span>
+                  </span>
+                  <p className="text-xs text-school-muted leading-relaxed">
+                    מפגשים ושיחות אישיות מתקיימים בתיאום מראש בחדר הייעוץ או באמצעות שליחת הודעה בטופס הדיסקרטי.
+                  </p>
+                </div>
+              </div>
+
+              {/* PDF Documents */}
+              {counselorPageData.pdfFiles && counselorPageData.pdfFiles.length > 0 && (
+                <div className="bg-school-panel border border-school-line rounded-3xl p-6 space-y-4 shadow-md">
+                  <h3 className="font-extrabold text-xs text-emerald-400 uppercase tracking-wider pb-2 border-b border-school-line/50 flex items-center gap-2">
+                    <FileText className="w-4.5 h-4.5 text-emerald-400 shrink-0" />
+                    <span>טפסים ושאלונים להורדה ({counselorPageData.pdfFiles.length})</span>
+                  </h3>
+                  
+                  <div className="space-y-2">
+                    {counselorPageData.pdfFiles.map((pdf, idx) => (
+                      <div
+                        key={idx}
+                        className="w-full text-right flex items-center justify-between p-3 rounded-xl border border-school-line bg-[#0c1426]/70 hover:bg-emerald-500/5 border-emerald-500/10 hover:border-emerald-500/30 text-xs transition-all group"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => openPdfPreview(pdf)}
+                          className="flex items-center gap-2.5 min-w-0 flex-1 text-right cursor-pointer"
+                          title="לחץ לצפייה מקדימה במסמך"
+                        >
+                          <FileText className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+                          <span className="truncate text-white/90 group-hover:text-emerald-300 transition-colors font-bold text-xs">{pdf.name}</span>
+                        </button>
+
+                        <div className="flex items-center gap-1.5 shrink-0 mr-2">
+                          <button
+                            type="button"
+                            onClick={() => openPdfPreview(pdf)}
+                            className="p-1.5 rounded-lg bg-school-bg/80 border border-school-line text-school-muted hover:text-white hover:border-emerald-500/40 hover:bg-emerald-500/10 transition-all cursor-pointer"
+                            title="צפייה מקדימה בטופס"
+                          >
+                            <Eye className="w-3.5 h-3.5 text-school-cyan" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDirectFileDownload(pdf.url, pdf.name)}
+                            className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 transition-all cursor-pointer"
+                            title="הורדת קובץ"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Back */}
+              <div className="bg-school-panel border border-school-line rounded-3xl p-4 space-y-2 shadow-sm">
+                {mainGradeUrl && (
+                  <button
+                    onClick={() => onNavigateToPage(mainGradeUrl)}
+                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-200 transition-colors cursor-pointer"
+                  >
+                    <ArrowRight className="w-4 h-4 shrink-0 -scale-x-100" />
+                    <span>חזרה לדף שכבה {cleanGradeKey}</span>
+                  </button>
+                )}
+                <button
+                  onClick={onGoBackHome}
+                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold bg-school-panel2 border border-school-line text-school-muted hover:text-white transition-colors cursor-pointer"
+                >
+                  <span>חזרה לדף הבית</span>
+                </button>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
@@ -1027,8 +1470,360 @@ export default function InternalPageViewer({
             </div>
           )}
 
+          {/* Dedicated Cards Grid for Social Education Junior High (חינוך חברתי חט"ב) */}
+          {(pageUrl.includes('חינוך-חברתי-חטב') || pageUrl.includes('%d7%97%d7%99%d7%a0%d7%95%d7%9a-%d7%97%d7%91%d7%a8%d7%aa%d7%99-%d7%97%d7%98%d7%91') || page.title.includes('חינוך חברתי חט')) && (
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center justify-between pb-2 border-b border-school-line/50">
+                <div className="flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-rose-400" />
+                  <h3 className="text-lg font-black text-white">כרטיסיות פעילויות וטקסי החינוך החברתי בחט״ב</h3>
+                </div>
+                <span className="text-xs text-school-cyan font-bold bg-school-cyan/10 px-2.5 py-1 rounded-full border border-school-cyan/20">
+                  מוצג מהחדש לישן
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* 1. Newest: Grade 9 Interpersonal Communication & Leadership Workshop */}
+                <div 
+                  onClick={() => onNavigateToPage('course/junior/grade-9-interpersonal-communication-workshop')}
+                  className="group p-5 rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-purple-500/40 hover:border-purple-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                        <HeartHandshake className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-purple-500/20 text-purple-300 border-purple-500/40 animate-pulse">
+                        פעילות חדשה בשכבה ט׳ 🌟
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-purple-300 transition-colors">
+                        סדנת תקשורת בינאישית ומנהיגות בשכבת ט׳
+                      </h4>
+                      <p className="text-xs text-purple-300/80 font-medium mt-0.5">
+                        חיזוק האקלים הבית-ספרי בהובלת "מן אנד מיינד"
+                      </p>
+                    </div>
+                    <p className="text-xs text-school-muted leading-relaxed">
+                      מתודיקה מעשית מעולם התיאטרון והאימפרוביזציה: הקשבה פעילה, שפת גוף ותרבות דיון, יישוב קונפליקטים ומנהיגות חברתית.
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300">
+                    <span>כניסה לדף הפעילות המלא</span>
+                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* 2. Rabin Memorial Ceremony */}
+                <div 
+                  onClick={() => onNavigateToPage('course/junior/rabin-memorial-ceremony')}
+                  className="group p-5 rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-amber-500/40 hover:border-amber-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                        <Heart className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40 animate-pulse">
+                        פעילות שיא חדשה 🌟
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-amber-300 transition-colors">
+                        יום הזיכרון ליצחק רבין ז״ל בחטיבת הביניים
+                      </h4>
+                      <p className="text-xs text-amber-300/80 font-medium mt-0.5">
+                        מילים, יוזמות ותקווה בפעולה
+                      </p>
+                    </div>
+                    <p className="text-xs text-school-muted leading-relaxed">
+                      טקס בית-ספרי, כרזות סובלנות ב-AI (ז׳), סדנת ציר זמן וענן מילים (ח׳), ויוזמות מנהיגות לתמיכה בלוחמים ובמשפחות המילואים (ט׳).
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-amber-400 group-hover:text-amber-300">
+                    <span>כניסה לדף הטקס והפעילות המלא</span>
+                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* 2. Fallen Memorial Project */}
+                <div 
+                  onClick={() => onNavigateToPage('course/%d7%9e%d7%99%d7%96%d7%9d-%d7%a0%d7%95%d7%a4%d7%9c%d7%99-%d7%94%d7%a2%d7%99%d7%a8-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/')}
+                  className="group p-5 rounded-2xl bg-[#0b1324] hover:bg-[#101b33] border border-school-line/60 hover:border-rose-400/60 shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                        <Heart className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-rose-500/15 text-rose-300 border-rose-500/30">
+                        הנצחה וחיבור קהילתי
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-rose-300 transition-colors">
+                        מיזם נופלי העיר פתח תקווה
+                      </h4>
+                      <p className="text-xs text-school-muted font-medium mt-0.5">
+                        גשר של חיבור, זיכרון ותמיכה במשפחות השכולות
+                      </p>
+                    </div>
+                    <p className="text-xs text-school-muted/80 leading-relaxed">
+                      תיבות מכתבים אישיות, הרצאת השראה מרגשת עם משפחת סגן שחר בן-נון ז״ל, ומסורת של מארזי פורים למשפחות.
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-white/5 flex items-center justify-between text-xs font-bold text-school-cyan group-hover:text-cyan-300">
+                    <span>צפייה במיזם המלא</span>
+                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* 3. Community Engagement */}
+                <div 
+                  onClick={() => onNavigateToPage('course/%D7%97%D7%98%D7%91/%D7%9E%D7%A2%D7%95%D7%A8%D7%91%D7%95%AA-%D7%97%D7%91%D7%A8%D7%AA%D7%99-%D7%97%D7%91%D7%a8%D7%aa%D7%99%D7%aa-2/')}
+                  className="group p-5 rounded-2xl bg-[#0b1324] hover:bg-[#101b33] border border-school-line/60 hover:border-pink-400/60 shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-pink-500/15 text-pink-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                        <HeartHandshake className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-pink-500/15 text-pink-300 border-pink-500/30">
+                        ערכים ונתינה
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-pink-300 transition-colors">
+                        מעורבות חברתית והתנדבות בחט״ב
+                      </h4>
+                      <p className="text-xs text-school-muted font-medium mt-0.5">
+                        נתינה, התנדבות ומחויבות אישית לקהילה
+                      </p>
+                    </div>
+                    <p className="text-xs text-school-muted/80 leading-relaxed">
+                      חונכות לימודית, התנדבות בקהילת פתח תקווה, אקולוגיה וקיימות עירונית בגינת אקו-ארנס.
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-white/5 flex items-center justify-between text-xs font-bold text-school-cyan group-hover:text-cyan-300">
+                    <span>צפייה בתוכנית המעורבות</span>
+                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* 4. Student Council */}
+                <div 
+                  className="p-5 rounded-2xl bg-[#0b1324] border border-school-line/60 shadow-lg flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center font-black">
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-cyan-500/15 text-cyan-300 border-cyan-500/30">
+                        מנהיגות נוער
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-base text-white">
+                        מועצת התלמידים והובלת יוזמות
+                      </h4>
+                      <p className="text-xs text-school-muted font-medium mt-0.5">
+                        קול התלמידים, אירועי שיא והפסקות פעילות
+                      </p>
+                    </div>
+                    <p className="text-xs text-school-muted/80 leading-relaxed">
+                      נציגות כיתתית דמוקרטית, ארגון הפסקות פעילות מוזיקליות, מכירות צדקה ושיפור האקלים החברתי בחטיבה.
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-white/5 text-[11px] font-bold text-school-muted">
+                    <span>פעילות קבועה לאורך שנת הלימודים</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Dedicated Cards Grid for All-School Social Education Page (חינוך חברתי וערכי - שש שנתי) */}
+          {pageUrl !== 'course/junior/rabin-memorial-ceremony' && pageUrl !== 'course/high-school/rabin-memorial-ceremony' && !pageUrl.includes('חינוך-חברתי-חטב') && !pageUrl.includes('%d7%97%d7%99%d7%a0%d7%95%d7%9a-%d7%97%d7%91%d7%a8%d7%aa%d7%99-%d7%97%d7%98%d7%91') && (pageUrl.includes('חינוך-חברתי') || pageUrl.includes('%d7%97%d7%99%d7%a0%d7%95%d7%9a-%d7%97%d7%91%d7%a8%d7%aa%d7%99') || page.title.includes('חינוך חברתי')) && (
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center justify-between pb-2 border-b border-school-line/50">
+                <div className="flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-rose-400" />
+                  <h3 className="text-lg font-black text-white">כרטיסיות פעילויות וטקסי שיא בחינוך החברתי</h3>
+                </div>
+                <span className="text-xs text-school-cyan font-bold bg-school-cyan/10 px-2.5 py-1 rounded-full border border-school-cyan/20">
+                  מוצג מהחדש לישן
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* 1. Newest: Grade 9 Interpersonal Communication & Leadership Workshop */}
+                <div 
+                  onClick={() => onNavigateToPage('course/junior/grade-9-interpersonal-communication-workshop')}
+                  className="group p-5 rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-purple-500/40 hover:border-purple-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="space-y-3 text-right">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                        <HeartHandshake className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-purple-500/20 text-purple-300 border-purple-500/40 animate-pulse">
+                        פעילות חדשה בשכבה ט׳ 🌟
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-purple-300 transition-colors">
+                        סדנת תקשורת בינאישית ומנהיגות בשכבת ט׳
+                      </h4>
+                      <p className="text-xs text-purple-300/80 font-medium mt-0.5">
+                        חיזוק האקלים הבית-ספרי בהובלת "מן אנד מיינד"
+                      </p>
+                    </div>
+                    <p className="text-xs text-school-muted leading-relaxed">
+                      מתודיקה מעשית מעולם התיאטרון והאימפרוביזציה: הקשבה פעילה, שפת גוף ותרבות דיון, יישוב קונפליקטים ומנהיגות חברתית.
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300">
+                    <span>כניסה לדף הפעילות המלא</span>
+                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* 2. High School Rabin Memorial & Democracy Seminar */}
+                <div 
+                  onClick={() => onNavigateToPage('course/high-school/rabin-memorial-ceremony')}
+                  className="group p-5 rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-amber-500/40 hover:border-amber-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="space-y-3 text-right">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                        <Award className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/40 animate-pulse">
+                        פעילות שיא חדשה 🌟
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-amber-300 transition-colors">
+                        סמינר דמוקרטיה ויום רבין בתיכון
+                      </h4>
+                      <p className="text-xs text-amber-300/80 font-medium mt-0.5">
+                        אזרחות אקטיבית, מנהיגות ודמוקרטיה בפעולה (שכבות י׳-יב׳)
+                      </p>
+                    </div>
+                    <p className="text-xs text-school-muted leading-relaxed">
+                      טקס מרגש, קיר כרזות (י׳), בחירות דמוקרטיות למועצת התלמידים (יא׳), ופרויקט חקר החברה הישראלית וניסוח הצעות חוק (יב׳).
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-amber-400 group-hover:text-amber-300">
+                    <span>כניסה לדף הסמינר והטקס המלא</span>
+                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* 2. Junior High Rabin Memorial Ceremony */}
+                <div 
+                  onClick={() => onNavigateToPage('course/junior/rabin-memorial-ceremony')}
+                  className="group p-5 rounded-2xl bg-[#0b1324] hover:bg-[#101b33] border border-school-line/60 hover:border-blue-400/60 shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="space-y-3 text-right">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                        <Heart className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-blue-500/15 text-blue-300 border-blue-500/30">
+                        חטיבת הביניים
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-blue-300 transition-colors">
+                        יום הזיכרון ליצחק רבין בחטיבת הביניים
+                      </h4>
+                      <p className="text-xs text-school-muted font-medium mt-0.5">
+                        מילים, יוזמות ותקווה בפעולה (שכבות ז׳-ט׳)
+                      </p>
+                    </div>
+                    <p className="text-xs text-school-muted/80 leading-relaxed">
+                      טקס בית-ספרי, כרזות סובלנות ב-AI (ז׳), סדנת ציר זמן וענן מילים (ח׳), ויוזמות מנהיגות לתמיכה בלוחמים ובמשפחות המילואים (ט׳).
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-white/5 flex items-center justify-between text-xs font-bold text-school-cyan group-hover:text-cyan-300">
+                    <span>צפייה בטקס חט״ב המלא</span>
+                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* 3. Fallen Memorial Project */}
+                <div 
+                  onClick={() => onNavigateToPage('course/%d7%9e%d7%99%d7%96%d7%9d-%d7%a0%d7%95%d7%a4%d7%9c%d7%99-%d7%94%d7%a2%d7%99%d7%a8-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/')}
+                  className="group p-5 rounded-2xl bg-[#0b1324] hover:bg-[#101b33] border border-school-line/60 hover:border-rose-400/60 shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="space-y-3 text-right">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                        <Heart className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-rose-500/15 text-rose-300 border-rose-500/30">
+                        הנצחה וחיבור קהילתי
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-rose-300 transition-colors">
+                        מיזם נופלי העיר פתח תקווה
+                      </h4>
+                      <p className="text-xs text-school-muted font-medium mt-0.5">
+                        גשר של חיבור, זיכרון ותמיכה במשפחות השכולות
+                      </p>
+                    </div>
+                    <p className="text-xs text-school-muted/80 leading-relaxed">
+                      תיבות מכתבים אישיות, הרצאת השראה מרגשת עם משפחת סגן שחר בן-נון ז״ל, ומסורת של מארזי פורים למשפחות.
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-white/5 flex items-center justify-between text-xs font-bold text-school-cyan group-hover:text-cyan-300">
+                    <span>צפייה במיזם המלא</span>
+                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* 4. Community Engagement */}
+                <div 
+                  onClick={() => onNavigateToPage('course/%D7%97%D7%98%D7%91/%D7%9E%D7%A2%D7%95%D7%A8%D7%91%D7%95%AA-%D7%97%D7%91%D7%A8%D7%AA%D7%99-%D7%97%D7%91%D7%a8%D7%aa%D7%99%D7%aa-2/')}
+                  className="group p-5 rounded-2xl bg-[#0b1324] hover:bg-[#101b33] border border-school-line/60 hover:border-pink-400/60 shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="space-y-3 text-right">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-pink-500/15 text-pink-400 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                        <HeartHandshake className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-pink-500/15 text-pink-300 border-pink-500/30">
+                        ערכים ונתינה
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-pink-300 transition-colors">
+                        מעורבות חברתית והתנדבות בקהילה
+                      </h4>
+                      <p className="text-xs text-school-muted font-medium mt-0.5">
+                        נתינה, התנדבות ומחויבות אישית לקהילה
+                      </p>
+                    </div>
+                    <p className="text-xs text-school-muted/80 leading-relaxed">
+                      חונכות לימודית, התנדבות בקהילת פתח תקווה, אקולוגיה וקיימות עירונית בגינת אקו-ארנס.
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-3 border-t border-white/5 flex items-center justify-between text-xs font-bold text-school-cyan group-hover:text-cyan-300">
+                    <span>צפייה בתוכנית המעורבות</span>
+                    <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Dedicated Hub Blocks for High School Students Portal */}
-          {(pageUrl === 'students-high' || pageUrl === 'course/חטע' || page.title.includes('לתלמידי חטיבה עליונה')) && (
+          {(pageUrl === 'students-high' || pageUrl === 'course/חטע' || pageUrl.includes('%d7%97%d7%98%d7%a2-2') || page.title.includes('לתלמידי חטיבה עליונה') || page.title.includes('חטיבה עליונה')) && (
             <HighSchoolGradeCards onNavigateToPage={onNavigateToPage} />
           )}
 
