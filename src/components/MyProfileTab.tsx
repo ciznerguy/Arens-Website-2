@@ -457,7 +457,7 @@ export const MyProfileTab: React.FC<MyProfileTabProps> = ({
               {email && (
                 <div className="pt-2 border-t border-school-line/30 flex items-center gap-1.5 text-[11px] text-school-cyan font-semibold">
                   <Mail className="w-3.5 h-3.5 shrink-0" />
-                  <span className="dir-ltr truncate">{email}</span>
+                  <span className="dir-ltr truncate font-mono" dir="ltr">{email}</span>
                 </div>
               )}
 

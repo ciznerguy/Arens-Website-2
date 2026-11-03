@@ -232,7 +232,7 @@ export const TikshuvPortal: React.FC<TikshuvPortalProps> = ({
                     className="font-mono text-school-cyan hover:underline flex items-center gap-1 font-semibold"
                     title="לחצו להעתקה"
                   >
-                    <span>{coordinatorEmail}</span>
+                    <span dir="ltr">{coordinatorEmail}</span>
                     {copiedText === coordinatorEmail ? (
                       <Check className="w-3.5 h-3.5 text-emerald-400" />
                     ) : (

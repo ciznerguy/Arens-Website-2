@@ -695,7 +695,7 @@ export default function InternalPageViewer({
                             <h3 className="font-black text-sm text-school-text">{coord.name}</h3>
                             <p className="text-[11px] text-school-cyan font-bold">{coord.role || `רכז/ת שכבה ${currentGrade}`}</p>
                             {coord.staff?.email && (
-                              <p className="text-[10px] text-school-muted mt-1 select-all hover:text-white transition-colors">{coord.staff.email}</p>
+                              <p className="text-[10px] text-school-muted mt-1 select-all hover:text-white transition-colors font-mono inline-block" dir="ltr">{coord.staff.email}</p>
                             )}
                           </div>
                         </div>
@@ -1122,10 +1122,11 @@ export default function InternalPageViewer({
                         {counselor.staff?.email && (
                           <a
                             href={`mailto:${counselor.staff.email}`}
-                            className="inline-flex items-center gap-1 text-[11px] text-school-muted hover:text-white transition-colors mt-1 select-all"
+                            dir="ltr"
+                            className="inline-flex items-center gap-1 text-[11px] text-school-muted hover:text-white transition-colors mt-1 select-all font-mono"
                           >
                             <Mail className="w-3 h-3 text-purple-400" />
-                            <span>{counselor.staff.email}</span>
+                            <span dir="ltr">{counselor.staff.email}</span>
                           </a>
                         )}
                       </div>

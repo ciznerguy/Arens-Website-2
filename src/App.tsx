@@ -1919,6 +1919,7 @@ export default function App() {
                           <p className="font-bold text-white">מזכירות חטיבת הנעורים (חט״נ)</p>
                           <a 
                             href={`mailto:${contactEmails.juniorHigh || 'arens2244@gmail.com'}`}
+                            dir="ltr"
                             className="font-mono text-cyan-300 hover:underline inline-block mt-0.5"
                           >
                             {contactEmails.juniorHigh || 'arens2244@gmail.com'}
@@ -1932,6 +1933,7 @@ export default function App() {
                           <p className="font-bold text-white">מזכירות חטיבה עליונה (חט״ע)</p>
                           <a 
                             href={`mailto:${contactEmails.highSchool || 'arens2244@gmail.com'}`}
+                            dir="ltr"
                             className="font-mono text-emerald-300 hover:underline inline-block mt-0.5"
                           >
                             {contactEmails.highSchool || 'arens2244@gmail.com'}
@@ -2425,11 +2427,12 @@ export default function App() {
                       <div className="pt-2">
                         <a 
                           href={`mailto:${selectedStaffForModal.email}`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-school-cyan/10 hover:bg-school-cyan/20 border border-school-cyan/30 text-school-cyan text-xs font-semibold transition-colors"
+                          dir="ltr"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-school-cyan/10 hover:bg-school-cyan/20 border border-school-cyan/30 text-school-cyan text-xs font-semibold transition-colors font-mono"
                           title="שלח אימייל ישיר למורה"
                         >
                           <Mail className="w-3.5 h-3.5" />
-                          <span className="dir-ltr">{selectedStaffForModal.email}</span>
+                          <span dir="ltr">{selectedStaffForModal.email}</span>
                         </a>
                       </div>
                     )}

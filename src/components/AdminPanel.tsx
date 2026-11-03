@@ -3021,7 +3021,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                       <p className="text-[9px] text-school-cyan font-semibold truncate" title={effectiveRole}>{effectiveRole}</p>
                     </div>
                   </div>
-                  <div className="text-[9px] text-school-muted truncate" title={effectiveUser?.email}>{effectiveUser?.email}</div>
+                  <div className="text-[9px] text-school-muted truncate font-mono text-left" dir="ltr" title={effectiveUser?.email}>{effectiveUser?.email}</div>
 
                   {/* Super Admin Impersonation Dropdown */}
                   {currentUser && isSuperAdmin(currentUser.role) && (
@@ -7023,7 +7023,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                                     <div className="flex items-center gap-2">
                                       <span className="text-xs font-bold text-white group-hover:text-school-cyan transition-colors">{member.name}</span>
                                       {member.email && (
-                                        <span className="text-[9px] bg-school-cyan/10 text-school-cyan border border-school-cyan/20 px-1.5 py-0.2 rounded font-mono dir-ltr">{member.email}</span>
+                                        <span className="text-[9px] bg-school-cyan/10 text-school-cyan border border-school-cyan/20 px-1.5 py-0.2 rounded font-mono dir-ltr inline-block" dir="ltr">{member.email}</span>
                                       )}
                                       {member.isManagement && (
                                         <span className="text-[9px] bg-amber-400/10 text-amber-300 border border-amber-400/20 px-2 py-0.5 rounded-full font-bold">תפקיד ניהול / דף הבית</span>

@@ -562,7 +562,7 @@ export const GradeHubSimulator: React.FC<GradeHubSimulatorProps> = ({
                               <h4 className="font-extrabold text-sm text-white">{leader.name}</h4>
                               <p className="text-[11px] text-school-cyan font-bold">{leader.role}</p>
                               {matchedStaff?.email && (
-                                <p className="text-[10px] text-school-muted mt-1 select-all hover:text-white transition-colors">
+                                <p className="text-[10px] text-school-muted mt-1 select-all hover:text-white transition-colors font-mono inline-block" dir="ltr">
                                   {matchedStaff.email}
                                 </p>
                               )}

@@ -78,3 +78,10 @@ body::before {
   animation-play-state: paused;
 }
 
+/* LTR support for email addresses, phones, and codes in RTL layout */
+.dir-ltr,
+[dir="ltr"] {
+  direction: ltr !important;
+  unicode-bidi: isolate;
+}
+

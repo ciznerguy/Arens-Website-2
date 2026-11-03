@@ -277,7 +277,7 @@ export const NewsletterPageRenderer: React.FC<NewsletterPageRendererProps> = ({
                           <tr key={rIdx} className={rIdx % 2 === 1 ? 'bg-slate-50' : ''}>
                             <td className="p-2 font-bold text-slate-900 border-l border-dashed border-slate-300">{r.role}</td>
                             <td className="p-2 text-slate-800 border-l border-dashed border-slate-300">{r.name}</td>
-                            <td className="p-2 font-mono text-[11px] text-slate-900 dir-ltr text-right">
+                            <td className="p-2 font-mono text-[11px] text-slate-900 dir-ltr text-right" dir="ltr">
                               {r.email}
                             </td>
                           </tr>

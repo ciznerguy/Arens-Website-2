@@ -310,7 +310,7 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
             <h3 className="text-sm font-extrabold text-school-text">{coordinatorDisplayName}</h3>
             <p className="text-xs text-school-cyan mt-0.5 font-bold">{coordinatorDisplayRole}</p>
             {coordinatorDisplayEmail && (
-              <p className="text-[11px] text-school-muted mt-0.5 select-all hover:text-white transition-colors">{coordinatorDisplayEmail}</p>
+              <p className="text-[11px] text-school-muted mt-0.5 select-all hover:text-white transition-colors font-mono inline-block" dir="ltr">{coordinatorDisplayEmail}</p>
             )}
           </div>
         </div>

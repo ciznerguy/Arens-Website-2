@@ -591,10 +591,11 @@ export const CounselorHubSimulator: React.FC<CounselorHubSimulatorProps> = ({
                             {counselor.staff?.email && (
                               <a
                                 href={`mailto:${counselor.staff.email}`}
-                                className="inline-flex items-center gap-1 text-[10px] text-school-muted hover:text-white transition-colors mt-1 select-all"
+                                dir="ltr"
+                                className="inline-flex items-center gap-1 text-[10px] text-school-muted hover:text-white transition-colors mt-1 select-all font-mono"
                               >
                                 <Mail className="w-3 h-3 text-purple-400" />
-                                <span>{counselor.staff.email}</span>
+                                <span dir="ltr">{counselor.staff.email}</span>
                               </a>
                             )}
                           </div>

@@ -109,13 +109,17 @@ export const consolidateStaff = (rawStaff: StaffMember[]): StaffMember[] => {
       }
     }
 
-    // Synchronize email with official school list if member email is not yet updated
+    // Synchronize email and official photos with official school list
     const defaultMatch = defaultStaffMembers.find(d => d.id === member.id);
+    let updated = member;
     if (defaultMatch && defaultMatch.email?.endsWith('@taded.org.il') && member.email !== defaultMatch.email) {
-      return { ...member, email: defaultMatch.email };
+      updated = { ...updated, email: defaultMatch.email };
+    }
+    if (defaultMatch && defaultMatch.imageUrl && (!updated.imageUrl || !updated.imageUrl.startsWith('data:image'))) {
+      updated = { ...updated, imageUrl: defaultMatch.imageUrl };
     }
 
-    return member;
+    return updated;
   });
 
   const guyEntries = normalizedStaff.filter(isGuyTsizner);
