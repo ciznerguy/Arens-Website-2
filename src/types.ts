@@ -228,6 +228,8 @@ export interface SchoolMajor {
     name: string;
     url: string;
     size?: string;
+    category?: string;
+    description?: string;
   }[];
   subPages?: SchoolMajorSubPage[];
   isActive?: boolean;

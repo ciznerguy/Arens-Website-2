@@ -146,10 +146,16 @@ export const MajorsExplorer: React.FC<MajorsExplorerProps> = ({ onBack, onOpenAd
                   <div className="p-3.5 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 group-hover:scale-110 transition-transform shadow-inner">
                     {getIcon(major.icon || (major as any).iconName)}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5 justify-end">
                     {!major.isActive && (
                       <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/50">
                         בקרוב
+                      </span>
+                    )}
+                    {major.pdfFiles && major.pdfFiles.length > 0 && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 flex items-center gap-1">
+                        <FlaskConical className="w-3 h-3 text-cyan-400" />
+                        <span>{major.pdfFiles.length} מעבדות חקר</span>
                       </span>
                     )}
                     <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">

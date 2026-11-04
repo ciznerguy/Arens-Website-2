@@ -485,7 +485,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
   const isMajorCoordinator = (role: string) => {
     const r = (role || '').toLowerCase();
-    return r.includes('רכז מגמת') || r.includes('רכז/ת מגמת') || r.includes('רכז מגמה') || r.includes('רכז מדעי המחשב') || r.includes('רכז הנדסת תוכנה') || r.startsWith('רכז מגמת');
+    return r.includes('רכז מגמת') || r.includes('רכז/ת מגמת') || r.includes('רכז מגמה') || r.includes('רכז מדעי המחשב') || r.includes('רכז הנדסת תוכנה') || r.startsWith('רכז מגמת') || r.includes('מידע ונתונים') || r.includes('דאטה');
   };
 
   const isEnglishCoordinator = (role: string) => {
@@ -526,7 +526,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const getMajorIdFromCoordinatorRole = (role: string): string | null => {
     if (!isMajorCoordinator(role)) return null;
     const r = role.toLowerCase();
-    if (r.includes('דאטה') || r.includes('data')) return 'major-data-analyst';
+    if (r.includes('דאטה') || r.includes('data') || r.includes('מידע ונתונים') || r.includes('נתונים') || r.includes('מידע')) return 'major-data-analyst';
     if (r.includes('תיאטרון') || r.includes('מחזות')) return 'major-theater-musicals';
     if (r.includes('פיזיקה')) return 'major-physics';
     if (r.includes('גיאוגרפיה') || r.includes('סייבר גיאוגרפיה')) return 'major-cyber-geography';
@@ -3085,7 +3085,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           <option value="עופרי טל לובינסקי - יועצת שכבה יב' ומחנכת יב'5">עופרי טל לובינסקי (יועצת שכבה יב' ומחנכת יב'5)</option>
                         </optgroup>
                         <optgroup label="רכזי 11 המגמות (פרופיל + מגמה)">
-                          <option value="רכז מגמת דאטה אנליסט">רכז מגמת דאטה אנליסט</option>
+                          <option value="רכז מגמת מידע ונתונים">רכז מגמת מידע ונתונים (דאטה אנליסט)</option>
                           <option value="רכז מגמת תיאטרון ומחזות זמר">רכז מגמת תיאטרון ומחזות זמר</option>
                           <option value="רכז מגמת פיזיקה">רכז מגמת פיזיקה</option>
                           <option value="רכז מגמת סייבר גיאוגרפיה">רכז מגמת סייבר גיאוגרפיה</option>
@@ -7182,7 +7182,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                             <option value="רכז שכבה יא'">רכז שכבה יא' (ניהול דפי שכבה יא' בלבד)</option>
                             <option value="רכז שכבה יב'">רכז שכבה יב' (ניהול דפי שכבה יב' בלבד)</option>
                             <option disabled className="text-school-muted font-bold pt-2">- רכזי 11 המגמות (תשפ"ז) -</option>
-                            <option value="רכז מגמת דאטה אנליסט">רכז מגמת דאטה אנליסט (ניהול תוכן וסילבוס)</option>
+                            <option value="רכז מגמת מידע ונתונים">רכז מגמת מידע ונתונים (ניהול תוכן וסילבוס)</option>
                             <option value="רכז מגמת תיאטרון ומחזות זמר">רכז מגמת תיאטרון ומחזות זמר (ניהול תוכן וסילבוס)</option>
                             <option value="רכז מגמת פיזיקה">רכז מגמת פיזיקה (ניהול תוכן וסילבוס)</option>
                             <option value="רכז מגמת סייבר גיאוגרפיה">רכז מגמת סייבר גיאוגרפיה (ניהול תוכן וסילבוס)</option>

@@ -109,14 +109,65 @@ export const DEFAULT_MAJORS: SchoolMajor[] = [
     coordinatorContact: 't.berghaus@gmail.com',
     hoursPerWeek: '5 יח"ל לבגרות',
     isFeatured: true,
-    isActive: false
+    isActive: true,
+    pdfFiles: [
+      {
+        name: "מחוון והנחיות לכתיבת דו״ח ניסוי בפיזיקה",
+        url: "/assets/aistudio/________________________8ecb146a.pdf",
+        category: "מחוון והנחיות",
+        description: "מבנה תקני לדו״ח מעבדה בפיזיקה: מטרות, תיאוריה, ביצוע, ריכוז תוצאות, עיבוד גרפי, דיון והערכת שגיאות",
+        size: "120 KB"
+      },
+      {
+        name: "פעילות היכרות עם רשם זמן ותרשים עקבות",
+        url: "/assets/aistudio/____________________________304dce3f.pdf",
+        category: "מכניקה וקינמטיקה",
+        description: "הכרת אופן הפעולה של רשם זמן (Ticker Timer), תרשים עקבות, חישוב מהירות רגעית, שרטוט גרפים ורפלקציה",
+        size: "340 KB"
+      },
+      {
+        name: "פעילות ניסויית: אופי התנועה של גוף נופל ומדידת תאוצת g",
+        url: "/assets/aistudio/_______________________03.2026__2__17486bbd.pdf",
+        category: "מכניקה וקינמטיקה",
+        description: "חקירת נפילת משקולות ברשם זמן, דיאגרמות פיזור מקום-זמן ומהירות-זמן, חישוב תאוצת הנפילה והשוואה לנפילה חופשית",
+        size: "380 KB"
+      },
+      {
+        name: "ניסוי: עצם ודמותו הנוצרת על ידי מראה מישורית",
+        url: "/assets/aistudio/_________________________b3d6dba9.pdf",
+        category: "אופטיקה גיאומטרית",
+        description: "חוק ההחזרה, איתור דמות באמצעות לוח זכוכית ונרות, איתור דמות באמצעות כוונות וסיכות, וחקירת שדה הראייה",
+        size: "590 KB"
+      },
+      {
+        name: "ניסוי: התפשטות אור באוויר ופרספקס (חוק סנל והחזרה גמורה)",
+        url: "/assets/aistudio/_________-_______-______dbc66f9e.pdf",
+        category: "אופטיקה גיאומטרית",
+        description: "שבירת אור, הוכחת חוק סנל n1 sinα1 = n2 sinα2, מקדם שבירה, זווית קריטית, החזרה גמורה וסיבים אופטיים",
+        size: "720 KB"
+      },
+      {
+        name: "ניסוי 9: עצם ודמותו בעדשה מרכזת (דו״ח הכנה, ניסוי ושאלות בגרות)",
+        url: "/assets/aistudio/_________________0e8b5318.pdf",
+        category: "אופטיקה גיאומטרית",
+        description: "אימות הקשר 1/u + 1/v = 1/f, מרחק מוקד, דמות ממשית מול מדומה, מהלך 3 הקרניים המיוחדות ושאלות העמקה לבגרות",
+        size: "680 KB"
+      },
+      {
+        name: "ניסוי: גלוונומטר טנגנטי ומדידת השדה המגנטי של כדור הארץ",
+        url: "/assets/aistudio/______________________________abb0bc4f.pdf",
+        category: "חשמל ומגנטיות",
+        description: "חקירת שדה מגנטי במרכז סליל דק B = μ0 N I / 2R, מציאת הרכיב האופקי של השדה המגנטי של כדור הארץ (Be) וסופרפוזיציה",
+        size: "450 KB"
+      }
+    ]
   },
   {
     id: 'major-data-analyst',
-    title: 'דאטה אנליסט',
+    title: 'מידע ונתונים',
     division: 'high_school',
-    shortDescription: 'מגמת דאטה אנליסט, ניתוח נתונים מתקדם, סטטיסטיקה יישומית ובינה מלאכותית.',
-    fullDescription: 'מגמת דאטה אנליסט (מידע ונתונים) מקנה כלים מעשיים ומתקדמים לעבודה עם מאגרי נתונים, עיבוד וניתוח מידע, מודלים סטטיסטיים, הדמיות נתונים ואלגוריתמים לקבלת החלטות.',
+    shortDescription: 'מגמת מידע ונתונים (דאטה אנליסט), ניתוח נתונים מתקדם, סטטיסטיקה יישומית ובינה מלאכותית.',
+    fullDescription: 'מגמת מידע ונתונים (דאטה אנליסט) מקנה כלים מעשיים ומתקדמים לעבודה עם מאגרי נתונים, עיבוד וניתוח מידע, מודלים סטטיסטיים, הדמיות נתונים ואלגוריתמים לקבלת החלטות.',
     icon: 'Database',
     highlights: [
       'איסוף, עיבוד וניתוח מאגרי נתונים (Big Data)',
@@ -365,6 +416,28 @@ export const saveStoredMajors = (majors: SchoolMajor[]) => {
   }
 };
 
+// Sanitize object so that undefined values are replaced with null or omitted to prevent Firestore rejection
+const cleanForFirestore = <T extends Record<string, any>>(obj: T): any => {
+  if (obj === null || obj === undefined) return null;
+  if (Array.isArray(obj)) {
+    return obj.map(item => cleanForFirestore(item));
+  }
+  if (typeof obj === 'object') {
+    const clean: Record<string, any> = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (v === undefined) {
+        clean[k] = null;
+      } else if (v && typeof v === 'object') {
+        clean[k] = cleanForFirestore(v);
+      } else {
+        clean[k] = v;
+      }
+    }
+    return clean;
+  }
+  return obj;
+};
+
 export const addMajor = async (major: Omit<SchoolMajor, 'id'>): Promise<SchoolMajor> => {
   const all = getStoredMajors();
   const newMajor: SchoolMajor = {
@@ -376,7 +449,8 @@ export const addMajor = async (major: Omit<SchoolMajor, 'id'>): Promise<SchoolMa
   saveStoredMajors(updated);
 
   try {
-    await setDoc(doc(db, 'majors', newMajor.id), newMajor);
+    const cleaned = cleanForFirestore(newMajor);
+    await setDoc(doc(db, 'majors', newMajor.id), cleaned);
   } catch (err) {
     console.warn('Failed saving major to Firestore:', err);
   }
@@ -396,7 +470,8 @@ export const updateMajor = async (major: SchoolMajor): Promise<boolean> => {
   saveStoredMajors(all);
 
   try {
-    await setDoc(doc(db, 'majors', major.id), major, { merge: true });
+    const cleaned = cleanForFirestore(major);
+    await setDoc(doc(db, 'majors', major.id), cleaned, { merge: true });
   } catch (err) {
     console.warn('Failed updating major in Firestore:', err);
   }

@@ -21,6 +21,19 @@ interface JuniorHighCardsProps {
 export const JuniorHighCards: React.FC<JuniorHighCardsProps> = ({ onNavigateToPage }) => {
   const allJuniorItems = [
     {
+      title: "חודש הסובלנות בשכבת ח': 'דיאלוג בחשכה' ו'הזמנה לשקט'",
+      subtitle: "ביקור חווייתי וערכי במוזיאון הילדים בחולון",
+      desc: "התנסות מעצימה בעולמם של אנשים עם מוגבלות ראייה ושמיעה לפיתוח אמפתיה, כבוד הדדי והבנת האחר.",
+      icon: HeartHandshake,
+      badge: "פעילות חדשה בשכבה ח׳ 🌟",
+      badgeColor: "bg-teal-500/15 text-teal-300 border-teal-500/30",
+      accentBorder: "hover:border-teal-400/60",
+      iconBg: "bg-teal-500/15 text-teal-400",
+      textColor: "group-hover:text-teal-300",
+      image: "/assets/aistudio/______2_e99611a7.jpeg",
+      url: "course/junior/grade-8-tolerance-month-children-museum"
+    },
+    {
       title: "סדנת תקשורת בינאישית ומנהיגות בשכבת ט'",
       subtitle: "חיזוק האקלים הבית-ספרי בהובלת 'מן אנד מיינד'",
       desc: "מתודיקה מעשית מעולם התיאטרון והאימפרוביזציה: הקשבה פעילה, שפת גוף ותרבות דיון, יישוב קונפליקטים ומנהיגות חברתית.",

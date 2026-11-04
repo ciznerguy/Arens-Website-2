@@ -4,7 +4,7 @@ import {
   BookOpen, Sparkles, Cpu, Trophy, Laptop, Eye, HelpCircle,
   FileText, Download, UploadCloud, Paperclip, ChevronDown, ChevronUp,
   Database, Atom, Globe, TrendingUp, Languages, Users, FlaskConical, Code, Dna,
-  CheckCircle2, Clock
+  CheckCircle2, Clock, Loader2
 } from 'lucide-react';
 import { SchoolMajor, SchoolMajorSubPage } from '../types';
 import { 
@@ -34,6 +34,8 @@ export const MajorsAdmin: React.FC<MajorsAdminProps> = ({
   const [isCreating, setIsCreating] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'high_school'>('all');
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Subpage editor inside major
   const [editingSubPage, setEditingSubPage] = useState<SchoolMajorSubPage | null>(null);
@@ -177,65 +179,77 @@ export const MajorsAdmin: React.FC<MajorsAdminProps> = ({
     showToast('הקובץ נוסף בהצלחה לרשימת הקבצים של המגמה.');
   };
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = async (e?: React.FormEvent | React.MouseEvent) => {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
     if (!formData.title?.trim() || !formData.shortDescription?.trim()) {
       showToast('נא למלא לפחות שם מגמה ותיאור קצר', 'error');
       return;
     }
 
     const cleanHighlights = (formData.highlights || []).filter(h => h.trim().length > 0);
+    setIsSaving(true);
 
-    if (isCreating) {
-      const created = await addMajor({
-        title: formData.title.trim(),
-        division: 'high_school',
-        shortDescription: formData.shortDescription.trim(),
-        fullDescription: formData.fullDescription?.trim() || formData.shortDescription.trim(),
-        icon: formData.icon || 'BookOpen',
-        highlights: cleanHighlights,
-        targetGrades: formData.targetGrades?.trim() || "שכבות י'-יב'",
-        contactPerson: formData.contactPerson?.trim() || '',
-        hoursPerWeek: formData.hoursPerWeek?.trim() || '5 יח"ל לבגרות',
-        isFeatured: !!formData.isFeatured,
-        isActive: formData.isActive === true,
-        prerequisites: formData.prerequisites?.trim(),
-        syllabusLink: formData.syllabusLink?.trim(),
-        pdfFiles: formData.pdfFiles || [],
-        sections: formData.sections || [],
-        subPages: formData.subPages || []
-      });
-      setMajors(getStoredMajors());
-      showToast('השינויים נשמרו בהצלחה');
-    } else if (editingMajor) {
-      const updatedObj: SchoolMajor = {
-        ...editingMajor,
-        title: formData.title.trim(),
-        division: 'high_school',
-        shortDescription: formData.shortDescription.trim(),
-        fullDescription: formData.fullDescription?.trim() || formData.shortDescription.trim(),
-        icon: formData.icon || 'BookOpen',
-        highlights: cleanHighlights,
-        targetGrades: formData.targetGrades?.trim() || "שכבות י'-יב'",
-        contactPerson: formData.contactPerson?.trim() || '',
-        hoursPerWeek: formData.hoursPerWeek?.trim() || '5 יח"ל לבגרות',
-        isFeatured: !!formData.isFeatured,
-        isActive: formData.isActive === true,
-        prerequisites: formData.prerequisites?.trim(),
-        syllabusLink: formData.syllabusLink?.trim(),
-        pdfFiles: formData.pdfFiles || [],
-        sections: formData.sections || [],
-        subPages: formData.subPages || []
-      };
-      await updateMajor(updatedObj);
-      setEditingMajor(updatedObj);
-      setMajors(getStoredMajors());
-      showToast('השינויים נשמרו בהצלחה');
-    }
+    try {
+      if (isCreating) {
+        await addMajor({
+          title: formData.title.trim(),
+          division: 'high_school',
+          shortDescription: formData.shortDescription.trim(),
+          fullDescription: formData.fullDescription?.trim() || formData.shortDescription.trim(),
+          icon: formData.icon || 'BookOpen',
+          highlights: cleanHighlights,
+          targetGrades: formData.targetGrades?.trim() || "שכבות י'-יב'",
+          contactPerson: formData.contactPerson?.trim() || '',
+          hoursPerWeek: formData.hoursPerWeek?.trim() || '5 יח"ל לבגרות',
+          isFeatured: !!formData.isFeatured,
+          isActive: formData.isActive === true,
+          prerequisites: formData.prerequisites?.trim() || '',
+          syllabusLink: formData.syllabusLink?.trim() || '',
+          pdfFiles: formData.pdfFiles || [],
+          sections: formData.sections || [],
+          subPages: formData.subPages || []
+        });
+        setMajors(getStoredMajors());
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 4000);
+        showToast('המגמה נוצרה והשינויים נשמרו בהצלחה!');
+      } else if (editingMajor) {
+        const updatedObj: SchoolMajor = {
+          ...editingMajor,
+          title: formData.title.trim(),
+          division: 'high_school',
+          shortDescription: formData.shortDescription.trim(),
+          fullDescription: formData.fullDescription?.trim() || formData.shortDescription.trim(),
+          icon: formData.icon || 'BookOpen',
+          highlights: cleanHighlights,
+          targetGrades: formData.targetGrades?.trim() || "שכבות י'-יב'",
+          contactPerson: formData.contactPerson?.trim() || '',
+          hoursPerWeek: formData.hoursPerWeek?.trim() || '5 יח"ל לבגרות',
+          isFeatured: !!formData.isFeatured,
+          isActive: formData.isActive === true,
+          prerequisites: formData.prerequisites?.trim() || '',
+          syllabusLink: formData.syllabusLink?.trim() || '',
+          pdfFiles: formData.pdfFiles || [],
+          sections: formData.sections || [],
+          subPages: formData.subPages || []
+        };
+        await updateMajor(updatedObj);
+        setEditingMajor(updatedObj);
+        setMajors(getStoredMajors());
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 4000);
+        showToast('השינויים נשמרו בהצלחה בבסיס הנתונים!');
+      }
 
-    if (!restrictedMajorId) {
-      setEditingMajor(null);
-      setIsCreating(false);
+      if (!restrictedMajorId) {
+        setEditingMajor(null);
+        setIsCreating(false);
+      }
+    } catch (err) {
+      console.error('Failed saving major:', err);
+      showToast('אירעה שגיאה בשמירת המגמה', 'error');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -445,7 +459,7 @@ export const MajorsAdmin: React.FC<MajorsAdminProps> = ({
                     onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
                     className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500"
                   >
-                    <option value="Database">📊 דאטה אנליסט (Database)</option>
+                    <option value="Database">📊 מידע ונתונים (Database)</option>
                     <option value="Sparkles">🎭 תיאטרון ומחזות זמר (Sparkles)</option>
                     <option value="Atom">⚛️ פיזיקה (Atom)</option>
                     <option value="Globe">🌍 סייבר גיאוגרפיה (Globe)</option>
@@ -600,9 +614,14 @@ export const MajorsAdmin: React.FC<MajorsAdminProps> = ({
                   <div className="space-y-2 pt-2">
                     {formData.pdfFiles!.map((pdf, idx) => (
                       <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-slate-800/70 border border-slate-700">
-                        <div className="flex items-center gap-2 text-xs text-slate-200">
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-200">
                           <FileText className="w-4 h-4 text-cyan-400 shrink-0" />
                           <span className="font-semibold">{pdf.name}</span>
+                          {pdf.category && (
+                            <span className="text-[10px] px-2 py-0.5 rounded-md bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 font-bold">
+                              {pdf.category}
+                            </span>
+                          )}
                           {pdf.size && <span className="text-[10px] text-slate-400">({pdf.size})</span>}
                         </div>
                         <button
@@ -762,23 +781,57 @@ export const MajorsAdmin: React.FC<MajorsAdminProps> = ({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-700">
-                {!restrictedMajorId && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-700">
+                <div>
+                  {saveSuccess && (
+                    <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-2 rounded-xl">
+                      <Check className="w-4 h-4 text-emerald-400" />
+                      <span>השינויים נשמרו בהצלחה בענן ובאתר!</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                  {!restrictedMajorId && (
+                    <button
+                      type="button"
+                      disabled={isSaving}
+                      onClick={() => { setIsCreating(false); setEditingMajor(null); }}
+                      className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold cursor-pointer disabled:opacity-50"
+                    >
+                      ביטול
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={() => { setIsCreating(false); setEditingMajor(null); }}
-                    className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold cursor-pointer"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className={`px-6 py-2.5 rounded-xl text-white text-xs md:text-sm font-bold shadow-lg flex items-center gap-2 cursor-pointer transition-all ${
+                      isSaving 
+                        ? 'bg-cyan-800/80 cursor-wait opacity-80' 
+                        : saveSuccess 
+                          ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-950/40' 
+                          : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-cyan-950/40'
+                    }`}
                   >
-                    ביטול
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>שומר שינויים...</span>
+                      </>
+                    ) : saveSuccess ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-200" />
+                        <span>נשמר בהצלחה!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" />
+                        <span>שמור שינויים</span>
+                      </>
+                    )}
                   </button>
-                )}
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs md:text-sm font-bold shadow-lg shadow-cyan-950/40 flex items-center gap-2 cursor-pointer"
-                >
-                  <Save className="w-4 h-4" />
-                  שמור שינויים
-                </button>
+                </div>
               </div>
             </form>
           </div>

@@ -224,6 +224,8 @@ export default function InternalPageViewer({
     return false;
   }).sort(([urlA, pA], [urlB, pB]) => {
     // Newest activity/shared page appears first
+    if (urlA.includes('tolerance-month')) return -1;
+    if (urlB.includes('tolerance-month')) return 1;
     if (urlA.includes('grade-9-interpersonal-communication-workshop')) return -1;
     if (urlB.includes('grade-9-interpersonal-communication-workshop')) return 1;
     if (urlA.includes('high-school/rabin')) return -1;
@@ -1485,7 +1487,47 @@ export default function InternalPageViewer({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 1. Newest: Grade 9 Interpersonal Communication & Leadership Workshop */}
+                {/* 1. Newest: Grade 8 Tolerance Month & Children Museum Visit */}
+                <div 
+                  onClick={() => onNavigateToPage('course/junior/grade-8-tolerance-month-children-museum')}
+                  className="group rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-teal-500/40 hover:border-teal-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between overflow-hidden"
+                >
+                  <div className="relative h-44 w-full overflow-hidden bg-school-panel2">
+                    <img 
+                      src="/assets/aistudio/______2_e99611a7.jpeg" 
+                      alt="חודש הסובלנות בשכבת ח׳ - ביקור במוזיאון הילדים" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#101b33] via-transparent to-black/30" />
+                    <div className="absolute top-3 inset-x-3 flex items-center justify-between">
+                      <div className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-md text-teal-400 flex items-center justify-center font-black">
+                        <HeartHandshake className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-teal-500/80 backdrop-blur-md text-white border-teal-400 shadow">
+                        פעילות חדשה בשכבה ח׳ 🌟
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-teal-300 transition-colors">
+                        חודש הסובלנות בשכבת ח׳: "דיאלוג בחשכה" ו"הזמנה לשקט"
+                      </h4>
+                      <p className="text-xs text-teal-300/80 font-medium mt-0.5">
+                        ביקור חווייתי וערכי במוזיאון הילדים בחולון
+                      </p>
+                      <p className="text-xs text-school-muted leading-relaxed mt-2 line-clamp-2">
+                        התנסות מעצימה בעולמם של אנשים עם מוגבלות ראייה ושמיעה לפיתוח אמפתיה, כבוד הדדי והבנת האחר.
+                      </p>
+                    </div>
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-teal-400 group-hover:text-teal-300">
+                      <span>כניסה לדף הפעילות המלא (גלריית תמונות)</span>
+                      <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Grade 9 Interpersonal Communication & Leadership Workshop */}
                 <div 
                   onClick={() => onNavigateToPage('course/junior/grade-9-interpersonal-communication-workshop')}
                   className="group rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-purple-500/40 hover:border-purple-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between overflow-hidden"
@@ -1668,7 +1710,47 @@ export default function InternalPageViewer({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 1. Newest: Grade 9 Interpersonal Communication & Leadership Workshop */}
+                {/* 1. Newest: Grade 8 Tolerance Month & Children Museum Visit */}
+                <div 
+                  onClick={() => onNavigateToPage('course/junior/grade-8-tolerance-month-children-museum')}
+                  className="group rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-teal-500/40 hover:border-teal-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between overflow-hidden"
+                >
+                  <div className="relative h-44 w-full overflow-hidden bg-school-panel2">
+                    <img 
+                      src="/assets/aistudio/______2_e99611a7.jpeg" 
+                      alt="חודש הסובלנות בשכבת ח׳ - ביקור במוזיאון הילדים" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#101b33] via-transparent to-black/30" />
+                    <div className="absolute top-3 inset-x-3 flex items-center justify-between">
+                      <div className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-md text-teal-400 flex items-center justify-center font-black">
+                        <HeartHandshake className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-teal-500/80 backdrop-blur-md text-white border-teal-400 shadow">
+                        פעילות חדשה בשכבה ח׳ 🌟
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-5 space-y-3 flex-1 flex flex-col justify-between text-right">
+                    <div>
+                      <h4 className="font-black text-base text-white group-hover:text-teal-300 transition-colors">
+                        חודש הסובלנות בשכבת ח׳: "דיאלוג בחשכה" ו"הזמנה לשקט"
+                      </h4>
+                      <p className="text-xs text-teal-300/80 font-medium mt-0.5">
+                        ביקור חווייתי וערכי במוזיאון הילדים בחולון
+                      </p>
+                      <p className="text-xs text-school-muted leading-relaxed mt-2 line-clamp-2">
+                        התנסות מעצימה בעולמם של אנשים עם מוגבלות ראייה ושמיעה לפיתוח אמפתיה, כבוד הדדי והבנת האחר.
+                      </p>
+                    </div>
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-teal-400 group-hover:text-teal-300">
+                      <span>כניסה לדף הפעילות המלא (גלריית תמונות)</span>
+                      <ArrowRight className="w-4 h-4 -scale-x-100 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Grade 9 Interpersonal Communication & Leadership Workshop */}
                 <div 
                   onClick={() => onNavigateToPage('course/junior/grade-9-interpersonal-communication-workshop')}
                   className="group rounded-2xl bg-gradient-to-br from-[#101b33] to-[#0d1424] hover:bg-[#142342] border-2 border-purple-500/40 hover:border-purple-400 shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between overflow-hidden"
