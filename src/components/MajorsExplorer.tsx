@@ -79,8 +79,8 @@ export const MajorsExplorer: React.FC<MajorsExplorerProps> = ({ onBack, onOpenAd
               </button>
             )}
             <div>
-              <h1 className="text-2xl font-bold text-white">מגמות ומסלולי לימוד תשפ"ז</h1>
-              <p className="text-slate-400 text-xs mt-0.5">שש שנתי משה ארנס - 11 מגמות מובילות למצוינות ואקדמיה</p>
+              <h1 className="text-2xl font-bold text-school-text">מגמות ומסלולי לימוד תשפ"ז</h1>
+              <p className="text-school-muted text-xs mt-0.5">שש שנתי משה ארנס - 11 מגמות מובילות למצוינות ואקדמיה</p>
             </div>
           </div>
 
@@ -139,11 +139,11 @@ export const MajorsExplorer: React.FC<MajorsExplorerProps> = ({ onBack, onOpenAd
                   onSelectMajor(major.id);
                 }
               }}
-              className="bg-[#101b33]/90 hover:bg-[#152342] rounded-3xl p-6 border border-slate-700/60 hover:border-cyan-500/60 transition-all cursor-pointer flex flex-col justify-between group shadow-lg hover:-translate-y-1"
+              className="bg-school-panel hover:bg-school-panel2 rounded-3xl p-6 border border-school-line hover:border-school-cyan/60 transition-all cursor-pointer flex flex-col justify-between group shadow-lg hover:-translate-y-1"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="p-3.5 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 group-hover:scale-110 transition-transform shadow-inner">
+                  <div className="p-3.5 rounded-2xl bg-school-cyan/10 text-school-cyan border border-school-cyan/20 group-hover:scale-110 transition-transform shadow-inner">
                     {getIcon(major.icon || (major as any).iconName)}
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 justify-end">
@@ -153,12 +153,12 @@ export const MajorsExplorer: React.FC<MajorsExplorerProps> = ({ onBack, onOpenAd
                       </span>
                     )}
                     {major.pdfFiles && major.pdfFiles.length > 0 && (
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 flex items-center gap-1">
-                        <FlaskConical className="w-3 h-3 text-cyan-400" />
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-school-cyan/15 text-school-cyan border border-school-cyan/30 flex items-center gap-1">
+                        <FlaskConical className="w-3 h-3 text-school-cyan" />
                         <span>{major.pdfFiles.length} מעבדות חקר</span>
                       </span>
                     )}
-                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-school-violet/15 text-school-violet border border-school-violet/30">
                       {major.hoursPerWeek || (major as any).units || '5 יח"ל'}
                     </span>
                   </div>
@@ -166,7 +166,7 @@ export const MajorsExplorer: React.FC<MajorsExplorerProps> = ({ onBack, onOpenAd
 
                 <div>
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
+                    <h3 className="text-lg font-bold text-school-text group-hover:text-school-cyan transition-colors">
                       {major.title}
                     </h3>
                     {!major.isActive && (
@@ -175,7 +175,7 @@ export const MajorsExplorer: React.FC<MajorsExplorerProps> = ({ onBack, onOpenAd
                       </span>
                     )}
                   </div>
-                  <p className="text-slate-300 text-xs mt-2 leading-relaxed line-clamp-3">
+                  <p className="text-school-muted text-xs mt-2 leading-relaxed line-clamp-3">
                     {major.shortDescription || major.fullDescription}
                   </p>
                 </div>
@@ -183,8 +183,8 @@ export const MajorsExplorer: React.FC<MajorsExplorerProps> = ({ onBack, onOpenAd
                 {major.keyTopics && major.keyTopics.length > 0 && (
                   <div className="space-y-1.5 pt-2">
                     {major.keyTopics.slice(0, 2).map((h, i) => (
-                      <div key={i} className="text-[11px] text-slate-400 flex items-center gap-1.5 truncate">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                      <div key={i} className="text-[11px] text-school-muted flex items-center gap-1.5 truncate">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-school-cyan shrink-0" />
                         <span className="truncate">{h}</span>
                       </div>
                     ))}
@@ -192,7 +192,7 @@ export const MajorsExplorer: React.FC<MajorsExplorerProps> = ({ onBack, onOpenAd
                 )}
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-700/50 flex items-center justify-between text-xs text-cyan-400 font-bold group-hover:underline">
+              <div className="pt-4 mt-4 border-t border-school-line/50 flex items-center justify-between text-xs text-school-cyan font-bold group-hover:underline">
                 <span>מעבר לעמוד המגמה המלא</span>
                 <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
               </div>

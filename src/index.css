@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;600;700;800;900&family=Heebo:wght@300;400;500;700;900&family=David+Libre:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&family=Frank+Ruhl+Libre:wght@300;400;500;600;700;800;900&family=Heebo:wght@300;400;500;700;900&family=David+Libre:wght@400;500;700&display=swap');
 
 :root {
   --color-school-bg: #434e62;
@@ -11,10 +11,11 @@
   --color-school-text: #f8fafc;
   --color-school-muted: #cbd5e1;
   --color-school-line: rgba(255, 255, 255, 0.22);
+  --theme-font: "Narkisim", "Narkiss", "Frank Ruhl Libre", "David Libre", "Heebo", system-ui, sans-serif;
 }
 
 @theme {
-  --font-sans: "Narkisim", "Narkiss", "Frank Ruhl Libre", "David Libre", "Heebo", system-ui, sans-serif;
+  --font-sans: var(--theme-font);
   
   --color-school-bg: var(--color-school-bg);
   --color-school-panel: var(--color-school-panel);
@@ -29,10 +30,10 @@
 body {
   background: var(--color-school-bg);
   color: var(--color-school-text);
-  font-family: "Narkisim", "Narkiss", "Frank Ruhl Libre", "David Libre", "Heebo", system-ui, sans-serif;
+  font-family: var(--theme-font);
   overflow-x: hidden;
   position: relative;
-  transition: background 0.4s ease, color 0.4s ease;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 body::before {

@@ -20,9 +20,9 @@ export interface SiteTheme {
 export const SITE_THEMES: SiteTheme[] = [
   {
     id: "cosmic-dark",
-    name: "קוסמי אפל",
+    name: "קוסמי אפל (המקורי)",
     icon: "🌌",
-    desc: "מראה אפור-גרפיט בהיר, נעים וקריא במיוחד",
+    desc: "העיצוב המקורי של האתר - מראה גרפיט כהה ומודרני",
     colors: {
       "school-bg": "#434e62",
       "school-panel": "#505d74",
@@ -35,66 +35,18 @@ export const SITE_THEMES: SiteTheme[] = [
     }
   },
   {
-    id: "royal-gold",
-    name: "זהב מלכותי",
-    icon: "👑",
-    desc: "רקע כהה מהודר עם נגיעות זהב ואמבר יוקרתי",
+    id: "edu-playful-light",
+    name: "EduVibrant - מוזיאון חינוכי (רוביק)",
+    icon: "🎨",
+    desc: "בהשראת סטיץ' ו-LICM: גופן Rubik, כחול רויאל #1D4ED8, ענבר #F59E0B, כרטיסיות צפות ומבנה מודולרי",
     colors: {
-      "school-bg": "#0b0f19",
-      "school-panel": "#111827",
-      "school-panel2": "#1f2937",
-      "school-cyan": "#fbbf24",
-      "school-violet": "#f59e0b",
-      "school-text": "#f9fafb",
-      "school-muted": "#9ca3af",
-      "school-line": "rgba(251, 191, 36, 0.12)"
-    }
-  },
-  {
-    id: "emerald-eco",
-    name: "אזמרגד ירוק",
-    icon: "🌱",
-    desc: "מוטיב אקולוגי וטבע רענן עם צבעי אזמרגד ומנטה",
-    colors: {
-      "school-bg": "#060f0e",
-      "school-panel": "#0d1f1c",
-      "school-panel2": "#132f2b",
-      "school-cyan": "#10b981",
-      "school-violet": "#34d399",
-      "school-text": "#f0fdf4",
-      "school-muted": "#86efac",
-      "school-line": "rgba(16, 185, 129, 0.12)"
-    }
-  },
-  {
-    id: "cyberpunk-neon",
-    name: "אולטרה סייבר",
-    icon: "⚡",
-    desc: "שילוב נועז ותוסס של ורוד פוקסיה וורוד ניאון",
-    colors: {
-      "school-bg": "#0f051d",
-      "school-panel": "#1a0b36",
-      "school-panel2": "#281452",
-      "school-cyan": "#f43f5e",
-      "school-violet": "#d946ef",
-      "school-text": "#fdf2f8",
-      "school-muted": "#f472b6",
-      "school-line": "rgba(217, 70, 239, 0.15)"
-    }
-  },
-  {
-    id: "classic-light",
-    name: "בהיר קלאסי",
-    icon: "☀️",
-    desc: "רקע בהיר ונקי למראה אקדמי מסורתי ומכובד",
-    colors: {
-      "school-bg": "#f8fafc",
+      "school-bg": "#faf8ff",
       "school-panel": "#ffffff",
-      "school-panel2": "#f1f5f9",
-      "school-cyan": "#0284c7",
-      "school-violet": "#4f46e5",
+      "school-panel2": "#eaedff",
+      "school-cyan": "#1d4ed8",
+      "school-violet": "#f59e0b",
       "school-text": "#0f172a",
-      "school-muted": "#475569",
+      "school-muted": "#434655",
       "school-line": "rgba(15, 23, 42, 0.08)"
     }
   }

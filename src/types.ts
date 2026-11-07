@@ -208,6 +208,7 @@ export interface SchoolMajor {
   shortDescription: string;
   fullDescription: string;
   icon?: string;
+  imageUrl?: string;
   highlights: string[];
   targetGrades: string; // e.g. "שכבות ז'-ט'" או "שכבות י'-יב'"
   contactPerson?: string;

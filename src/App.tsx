@@ -74,6 +74,8 @@ import { MajorsExplorer } from './components/MajorsExplorer';
 import { HomepageMajorsSection } from './components/HomepageMajorsSection';
 import { MajorDedicatedPage } from './components/MajorDedicatedPage';
 import { NewsletterViewer } from './components/NewsletterViewer';
+import EduVibrantHomePage from './components/EduVibrantHomePage';
+import { getStoredMajors } from './services/majorsStorage';
 import { getUpcomingTeacherEvents } from './services/eventsStorage';
 import { SITE_THEMES } from './data/themes';
 import SEOMeta from './components/SEOMeta';
@@ -124,12 +126,12 @@ export default function App() {
     return localStorage.getItem('arens_school_theme') || 'cosmic-dark';
   });
 
-  // Dark/Light mode state helper
-  const isDark = !['classic-light', 'trend-nordic', 'trend-emerald', 'trend-sakura', 'trend-sepia'].includes(activeTheme);
+  // Dark/Light mode state helper (toggles between the 2 available themes)
+  const isDark = activeTheme !== 'edu-playful-light';
 
   const toggleDarkMode = () => {
     if (isDark) {
-      setActiveTheme('classic-light');
+      setActiveTheme('edu-playful-light');
     } else {
       setActiveTheme('cosmic-dark');
     }
@@ -335,15 +337,26 @@ export default function App() {
       root.style.setProperty(`--color-${key}`, val as string);
     });
 
-    // Do not force ?theme= in the URL for default/clean look
+    if (activeTheme === 'edu-playful-light') {
+      root.style.setProperty('--theme-font', "'Rubik', system-ui, sans-serif");
+    } else {
+      root.style.setProperty('--theme-font', '"Narkisim", "Narkiss", "Frank Ruhl Libre", "David Libre", "Heebo", system-ui, sans-serif');
+    }
+
+    // Clean ?theme= for default cosmic-dark, or set it when another theme is selected
     try {
       const url = new URL(window.location.href);
-      if (url.searchParams.has('theme') && (url.searchParams.get('theme') === 'cosmic-dark' || !url.searchParams.get('theme'))) {
-        url.searchParams.delete('theme');
+      if (activeTheme === 'cosmic-dark') {
+        if (url.searchParams.has('theme')) {
+          url.searchParams.delete('theme');
+          window.history.replaceState({}, '', url.toString());
+        }
+      } else {
+        url.searchParams.set('theme', activeTheme);
         window.history.replaceState({}, '', url.toString());
       }
     } catch (e) {
-      console.error('Error cleaning theme URL param:', e);
+      console.error('Error syncing theme URL param:', e);
     }
   }, [activeTheme]);
 
@@ -860,7 +873,7 @@ export default function App() {
                 />
               </div>
               <div>
-                <h1 className="font-black text-xs md:text-sm text-white leading-tight">
+                <h1 className="font-black text-xs md:text-sm text-school-text leading-tight">
                   שש שנתי
                 </h1>
                 <p className="text-[10px] md:text-[11px] text-school-cyan font-bold tracking-wide">
@@ -929,10 +942,12 @@ export default function App() {
                       handleNavClick(item);
                     }
                   }}
-                  className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 cursor-pointer ${
                     activeTab === item.tab 
-                      ? 'text-white bg-school-cyan/15 border border-school-cyan/30 shadow-sm' 
-                      : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
+                      ? 'text-school-cyan bg-school-cyan/15 border border-school-cyan/30 shadow-sm' 
+                      : hoveredNavIndex === idx
+                      ? 'text-school-cyan bg-school-cyan/10 border border-school-cyan/25 shadow-sm'
+                      : 'text-school-text/90 hover:text-school-cyan hover:bg-school-cyan/10 border border-transparent'
                   }`}
                 >
                   <span>{item.t}</span>
@@ -948,7 +963,7 @@ export default function App() {
                     onMouseEnter={() => handleNavMouseEnter(idx)}
                     onMouseLeave={handleNavMouseLeave}
                   >
-                    <div className="p-2 rounded-2xl bg-[#131d2e]/98 border border-school-line/90 shadow-2xl backdrop-blur-2xl space-y-0.5 max-h-[75vh] overflow-y-auto pr-1">
+                    <div className="p-2 rounded-2xl bg-school-panel border border-school-line shadow-2xl backdrop-blur-2xl space-y-0.5 max-h-[75vh] overflow-y-auto pr-1">
                       {item.sub.map((subItem: any, subIdx) => {
                         if (subItem.isHeader) {
                           return (
@@ -964,10 +979,10 @@ export default function App() {
                           <button
                             key={subIdx}
                             onClick={() => handleNavClick(subItem)}
-                            className="w-full text-right px-3 py-2 rounded-xl text-xs font-semibold text-school-muted hover:text-white hover:bg-gradient-to-r hover:from-school-cyan/20 hover:to-school-violet/20 transition-all duration-150 cursor-pointer flex items-center justify-between group"
+                            className="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold text-school-text hover:text-school-cyan hover:bg-school-cyan/15 transition-all duration-150 cursor-pointer flex items-center justify-between group"
                           >
-                            <span className="group-hover:text-white transition-colors">{subItem.t}</span>
-                            {subItem.externalUrl && <ExternalLink className="w-3 h-3 text-school-cyan/70 shrink-0" />}
+                            <span className="group-hover:text-school-cyan transition-colors">{subItem.t}</span>
+                            {subItem.externalUrl && <ExternalLink className="w-3.5 h-3.5 text-school-cyan shrink-0" />}
                           </button>
                         );
                       })}
@@ -980,6 +995,103 @@ export default function App() {
 
           {/* Action Buttons Header */}
           <div className="flex items-center gap-2">
+            {/* Theme Selector Dropdown */}
+            <div className="relative">
+              <button 
+                type="button"
+                onClick={() => setIsThemePickerOpen(!isThemePickerOpen)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-school-line bg-school-panel/40 text-school-text hover:text-white hover:border-school-cyan/40 hover:bg-school-cyan/10 transition-all cursor-pointer shadow-sm group"
+                title="בחירת ערכת נושא ועיצוב לאתר"
+                aria-label="בחירת ערכת נושא"
+              >
+                <Palette className="w-4 h-4 text-school-cyan group-hover:scale-110 transition-transform" />
+                <span className="hidden md:inline text-xs font-semibold">עיצוב</span>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isThemePickerOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {isThemePickerOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setIsThemePickerOpen(false)} 
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute left-0 mt-2 w-72 rounded-2xl bg-school-panel border border-school-line shadow-2xl p-2 z-50 space-y-1 text-right select-none backdrop-blur-md"
+                      dir="rtl"
+                    >
+                      <div className="px-3 py-2 border-b border-school-line/60 flex items-center justify-between">
+                        <span className="text-xs font-extrabold text-school-text">ערכת נושא לעיצוב</span>
+                        <span className="text-[10px] text-school-cyan font-bold bg-school-cyan/10 px-2 py-0.5 rounded-full">
+                          {SITE_THEMES.length} עיצובים
+                        </span>
+                      </div>
+
+                      <div className="max-h-80 overflow-y-auto space-y-1 py-1 custom-scrollbar">
+                        {SITE_THEMES.map((theme) => {
+                          const isSelected = activeTheme === theme.id;
+                          return (
+                            <button
+                              key={theme.id}
+                              type="button"
+                              onClick={() => {
+                                setActiveTheme(theme.id);
+                                setIsThemePickerOpen(false);
+                              }}
+                              className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all text-right cursor-pointer group ${
+                                isSelected 
+                                  ? 'bg-school-cyan/15 text-school-cyan border border-school-cyan/40 shadow-sm' 
+                                  : 'hover:bg-school-panel2 text-school-text/90 hover:text-white'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <span className="text-lg group-hover:scale-110 transition-transform shrink-0">
+                                  {theme.icon}
+                                </span>
+                                <div className="min-w-0">
+                                  <div className="text-xs font-bold truncate flex items-center gap-1.5">
+                                    <span>{theme.name}</span>
+                                    {theme.id === 'cosmic-dark' && (
+                                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-700/60 text-slate-300 font-normal">
+                                        ברירת מחדל
+                                      </span>
+                                    )}
+                                    {theme.id === 'edu-playful-light' && (
+                                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+                                        חדש LICM
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-[10px] text-school-muted truncate mt-0.5">
+                                    {theme.desc}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-1 shrink-0 pl-1">
+                                <div 
+                                  className="w-3.5 h-3.5 rounded-full border border-black/20 shadow-xs" 
+                                  style={{ backgroundColor: theme.colors['school-bg'] }} 
+                                />
+                                <div 
+                                  className="w-3.5 h-3.5 rounded-full border border-black/20 shadow-xs" 
+                                  style={{ backgroundColor: theme.colors['school-cyan'] }} 
+                                />
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+
             {/* Dark / Light Mode Toggle Button */}
             <button 
               onClick={toggleDarkMode}
@@ -1026,7 +1138,7 @@ export default function App() {
             {/* Mobile Menu Toggle Button */}
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2.5 rounded-xl border border-school-line bg-school-panel/50 text-white hover:bg-school-panel transition-all"
+              className="lg:hidden p-2.5 rounded-xl border border-school-line bg-school-panel/50 text-school-text hover:bg-school-panel transition-all"
               aria-label="תפריט"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -1049,7 +1161,7 @@ export default function App() {
                   <div key={idx} className="space-y-1.5 border-b border-school-line/30 pb-3 last:border-0 last:pb-0">
                     <button
                       onClick={() => handleNavClick(item)}
-                      className="w-full text-right font-bold text-sm text-white"
+                      className="w-full text-right font-bold text-sm text-school-text hover:text-school-cyan transition-colors"
                     >
                       {item.t}
                     </button>
@@ -1070,7 +1182,7 @@ export default function App() {
                             <button
                               key={subIdx}
                               onClick={() => handleNavClick(subItem)}
-                              className="text-right py-1.5 text-xs text-school-muted hover:text-white transition-all flex items-center justify-between group"
+                              className="text-right py-1.5 text-xs text-school-muted hover:text-school-cyan transition-all flex items-center justify-between group"
                             >
                               <span className="group-hover:text-school-cyan transition-colors">{subItem.t}</span>
                               {subItem.externalUrl && <ExternalLink className="w-2.5 h-2.5 text-school-cyan/60 shrink-0" />}
@@ -1090,7 +1202,7 @@ export default function App() {
                       <button
                         key={lIdx}
                         onClick={() => handleNavClick(link)}
-                        className="flex items-center gap-1 text-school-muted hover:text-white text-right"
+                        className="flex items-center gap-1 text-school-muted hover:text-school-cyan text-right"
                       >
                         <span className="truncate">{link.t}</span>
                         <ChevronLeft className="w-2.5 h-2.5 shrink-0 opacity-60" />
@@ -1129,8 +1241,35 @@ export default function App() {
       <div className="flex-grow">
         <AnimatePresence mode="wait">
           
-          {/* TAB 1: ORIGINAL HOMEPAGE */}
+          {/* TAB 1: HOMEPAGE (EduVibrant or Cosmic Dark) */}
           {(activeTab === 'home' || activeTab === 'home-page-1' || selectedInternalPageUrl === 'home-page-1') && (
+            activeTheme === 'edu-playful-light' ? (
+              <EduVibrantHomePage
+                onNavigateToPage={(url) => {
+                  setSelectedInternalPageUrl(url);
+                  setActiveTab('internal-page');
+                }}
+                onNavigateToGrade={(gradeUrl) => {
+                  setSelectedInternalPageUrl(gradeUrl);
+                  setActiveTab('internal-page');
+                }}
+                onSelectMajor={(majorId) => {
+                  setSelectedMajorId(majorId);
+                  setActiveTab('major-page');
+                  window.location.hash = `major-${majorId}`;
+                }}
+                onOpenEventsNews={() => {
+                  setActiveTab('events-news');
+                  window.location.hash = 'events-news';
+                }}
+                onOpenContact={() => {
+                  setActiveTab('contact');
+                  window.location.hash = 'contact';
+                }}
+                allNews={newsArticles}
+                majors={getStoredMajors()}
+              />
+            ) : (
             <motion.div
               key="home-original"
               initial={{ opacity: 0 }}
@@ -1397,6 +1536,7 @@ export default function App() {
               </section>
 
             </motion.div>
+            )
           )}
 
           {/* TAB 2: ABOUT SECTION */}

@@ -460,11 +460,21 @@ export default function InternalPageViewer({
                   </div>
                 ) : (
                   <div className="space-y-4 text-sm md:text-base text-school-muted/95 leading-relaxed text-justify">
-                    {finalPage.content.filter(p => p && p.trim()).map((paragraph, pIdx) => (
-                      <p key={pIdx}>
-                        {paragraph}
-                      </p>
-                    ))}
+                    {finalPage.content.filter(p => p && p.trim()).map((paragraph, pIdx) => {
+                      const isTitle = paragraph.startsWith('דבר הרכז') || paragraph.startsWith('דבר מנהל') || paragraph.startsWith('דבר המנהלת') || paragraph.startsWith('דבר יועצת') || paragraph.startsWith('דבר מוביל');
+                      if (isTitle) {
+                        return (
+                          <h3 key={pIdx} className="text-lg md:text-xl font-black text-school-cyan pt-2 pb-1 border-r-4 border-school-cyan pr-3 mb-2">
+                            {paragraph}
+                          </h3>
+                        );
+                      }
+                      return (
+                        <p key={pIdx}>
+                          {paragraph}
+                        </p>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -568,22 +578,40 @@ export default function InternalPageViewer({
                     {relevantMajors.map((major) => (
                       <div
                         key={major.id}
-                        className="bg-school-panel hover:bg-school-panel2 border border-school-line hover:border-school-cyan/50 rounded-2xl p-5 space-y-3 transition-all duration-300 shadow-md group relative overflow-hidden"
+                        onClick={() => {
+                          if (major.isActive) {
+                            window.location.hash = `major-${major.id}`;
+                          }
+                        }}
+                        className={`bg-school-panel hover:bg-school-panel2 border border-school-line hover:border-school-cyan/50 rounded-2xl p-5 space-y-3 transition-all duration-300 shadow-md group relative overflow-hidden ${
+                          major.isActive ? 'cursor-pointer' : ''
+                        }`}
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2.5">
                             <div className="w-9 h-9 rounded-xl bg-school-cyan/10 flex items-center justify-center border border-school-cyan/20 group-hover:scale-105 transition-transform">
                               {getMajorIcon(major.icon || '')}
                             </div>
-                            <h3 className="font-extrabold text-base text-white group-hover:text-school-cyan transition-colors">
+                            <h3 className="font-extrabold text-base text-school-text group-hover:text-school-cyan transition-colors">
                               {major.title}
                             </h3>
                           </div>
-                          {major.hoursPerWeek && (
-                            <span className="text-[10px] font-bold text-school-cyan bg-school-cyan/10 px-2 py-0.5 rounded-md border border-school-cyan/20 shrink-0">
-                              {major.hoursPerWeek}
-                            </span>
-                          )}
+                          <div className="flex items-center gap-1.5">
+                            {major.isActive ? (
+                              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/30 shrink-0">
+                                פעילה
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-bold text-school-muted bg-school-panel px-2 py-0.5 rounded-md border border-school-line shrink-0">
+                                בקרוב
+                              </span>
+                            )}
+                            {major.hoursPerWeek && (
+                              <span className="text-[10px] font-bold text-school-cyan bg-school-cyan/10 px-2 py-0.5 rounded-md border border-school-cyan/20 shrink-0">
+                                {major.hoursPerWeek}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         <p className="text-xs text-school-muted leading-relaxed">
@@ -598,6 +626,13 @@ export default function InternalPageViewer({
                                 <span className="line-clamp-1">{hl}</span>
                               </div>
                             ))}
+                          </div>
+                        )}
+
+                        {major.isActive && (
+                          <div className="pt-2 text-[11px] text-school-cyan font-bold flex items-center justify-between border-t border-school-line/40 group-hover:text-cyan-300">
+                            <span>לדף המגמה המלא</span>
+                            <ChevronLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
                           </div>
                         )}
                       </div>
@@ -637,6 +672,19 @@ export default function InternalPageViewer({
                     { role: "אחראית פדגוגית", name: "ענבל מדויל" },
                     { role: "אחראית פדגוגית", name: "שילת בדש" },
                     { role: "יועצת השכבה", name: "סמדר קקון" }
+                  ],
+                  'י': [
+                    { role: "רכזת שכבה", name: "נירית גרובר" },
+                    { role: "יועצת השכבה", name: "ענבל ישראלי לונדין" },
+                    { role: "יועצת השכבה", name: "עופרי טל לובינסקי" }
+                  ],
+                  'יא': [
+                    { role: "רכז שכבה ומחנך יא'6", name: "ניר מלכה" },
+                    { role: "יועצת השכבה", name: "ענבל ישראלי לונדין" }
+                  ],
+                  'יב': [
+                    { role: "רכזת שכבה", name: "אורלי רז" },
+                    { role: "יועצת השכבה", name: "עופרי טל לובינסקי" }
                   ]
                 };
 
@@ -1393,7 +1441,7 @@ export default function InternalPageViewer({
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <BookOpen className="w-5 h-5 text-school-cyan" />
-                    <h3 className="text-base sm:text-lg font-black text-white">
+                    <h3 className="text-base sm:text-lg font-black text-school-text">
                       {(page as any).flipbookTitle || 'חוברת אורחות החיים הדיגיטלית של ארנס'}
                     </h3>
                   </div>
@@ -1433,7 +1481,7 @@ export default function InternalPageViewer({
           {(page.title.includes('מידעון') || pageUrl.includes('מידעון') || pageUrl.includes('%d7%9e%d7%99%d7%93%d7%a2%d7%95%d7%9f')) && (
             <div className="p-6 rounded-2xl bg-gradient-to-r from-school-cyan/15 via-school-panel2 to-school-panel border border-school-cyan/30 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="space-y-1 text-right">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <h3 className="text-base font-bold text-school-text flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-school-cyan" />
                   <span>צפייה במידעון בנגן PDF אינטראקטיבי מלא</span>
                 </h3>
@@ -1455,7 +1503,7 @@ export default function InternalPageViewer({
           {(page.title.includes('חוברת מגמות') || pageUrl.includes('מגמות') || pageUrl.includes('%d7%9e%d7%92%d7%9e%d7%95%d7%aa')) && (
             <div className="p-6 rounded-2xl bg-gradient-to-r from-school-violet/15 via-school-panel2 to-school-panel border border-school-violet/30 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="space-y-1 text-right">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <h3 className="text-base font-bold text-school-text flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-school-violet" />
                   <span>קטלוג 11 המגמות האינטראקטיבי של שש-שנתי ארנס</span>
                 </h3>
@@ -2267,7 +2315,7 @@ export default function InternalPageViewer({
                     onClick={() => onNavigateToPage(url)}
                     className="w-full text-right flex items-center justify-between p-3 rounded-xl border border-school-line bg-school-panel2/40 hover:bg-school-cyan/5 hover:border-school-cyan/40 hover:text-school-cyan text-xs text-school-muted font-medium transition-all group"
                   >
-                    <span className="truncate pl-2 group-hover:text-white transition-colors">{p.title}</span>
+                    <span className="truncate pl-2 group-hover:text-school-cyan transition-colors">{p.title}</span>
                     <ArrowRight className="w-3.5 h-3.5 shrink-0 -scale-x-100 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                   </button>
                 ))}
@@ -2286,7 +2334,7 @@ export default function InternalPageViewer({
             </div>
             <button 
               onClick={() => onNavigateToPage('contact')} 
-              className="w-full btn py-2 rounded-xl text-[11px] font-bold bg-school-panel border border-school-line hover:border-school-cyan text-white hover:text-school-cyan transition-colors"
+              className="w-full btn py-2 rounded-xl text-[11px] font-bold bg-school-panel border border-school-line hover:border-school-cyan text-school-text hover:text-school-cyan transition-colors"
             >
               פנייה ישירה למזכירות
             </button>

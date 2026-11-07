@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;font-family:'Rubik',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-variant": "#dae2fd", "secondary": "#855300", "outline-variant": "#c4c5d7", "surface-container-lowest": "#ffffff", "surface": "#faf8ff", "primary-container": "#1d4ed8", "on-error": "#ffffff", "primary": "#0037b0", "on-tertiary-container": "#60eeb1", "secondary-fixed": "#ffddb8", "surface-tint": "#2151da", "outline": "#747686", "error-container": "#ffdad6", "on-surface-variant": "#434655", "inverse-surface": "#283044", "background": "#faf8ff", "on-tertiary-fixed": "#002113", "inverse-on-surface": "#eef0ff", "on-secondary": "#ffffff", "on-background": "#131b2e", "tertiary-fixed-dim": "#4edea3", "tertiary": "#004f35", "tertiary-container": "#006a48", "on-tertiary": "#ffffff", "on-secondary-fixed-variant": "#653e00", "surface-dim": "#d2d9f4", "on-tertiary-fixed-variant": "#005236", "on-primary-container": "#cad3ff", "surface-bright": "#faf8ff", "surface-container-highest": "#dae2fd", "on-primary-fixed-variant": "#0039b5", "surface-container": "#eaedff", "on-error-container": "#93000a", "secondary-container": "#fea619", "error": "#ba1a1a", "on-primary": "#ffffff", "surface-container-high": "#e2e7ff", "tertiary-fixed": "#6ffbbe", "surface-container-low": "#f2f3ff", "secondary-fixed-dim": "#ffb95f", "on-primary-fixed": "#001551", "primary-fixed": "#dce1ff", "primary-fixed-dim": "#b7c4ff", "on-secondary-container": "#684000", "on-secondary-fixed": "#2a1700", "on-surface": "#131b2e", "inverse-primary": "#b7c4ff" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "gutter-sm": "1rem", "space-md": "1rem", "margin-lg": "4rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin": "2rem", "margin-sm": "1rem", "gutter": "1.5rem", "space-sm": "0.5rem", "space-xl": "2.5rem" }, "fontFamily": { "body-md": ["Rubik"], "body-sm": ["Rubik"], "label-sm": ["Rubik"], "headline-xl-mobile": ["Rubik"], "headline-md": ["Rubik"], "headline-sm": ["Rubik"], "headline-lg": ["Rubik"], "display-hero": ["Rubik"], "display-hero-mobile": ["Rubik"], "label-lg": ["Rubik"], "body-lg": ["Rubik"], "headline-xl": ["Rubik"], "label-md": ["Rubik"] }, "fontSize": { "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "16px", "fontWeight": "700" }], "headline-xl-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }], "headline-md": ["22px", { "lineHeight": "30px", "fontWeight": "600" }], "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }], "display-hero": ["48px", { "lineHeight": "58px", "fontWeight": "800" }], "display-hero-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "800" }], "label-lg": ["15px", { "lineHeight": "20px", "fontWeight": "600" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }], "headline-xl": ["36px", { "lineHeight": "44px", "fontWeight": "700" }], "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "600" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter-sm flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><div class="flex-shrink-0 flex items-center justify-center p-space-xs bg-surface-container rounded-full"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/ALJJyrDDtb6nIdfsM_QHwspbit57knZyDRuR9gbZNxnXQIh4qMMwS3uG2xLdq4ZIIdYpbLmQM48izUB5p9VOdlwUMQIa_RPKVL0yqLa40xzT59wCZ8xNsQ3ImSZK-bsLunM1IS0hF3qiAZAvn1cyinkEXQY9lnGXnq1WCcm8BsT56u54zuTmRUoAJbdKIVHfmX5Rk8CQHvvGKDxpWMqUlo_XSn6T8Ubm-y06PKq2XJfCxpns"/></div><div class="flex flex-col min-w-0"><span class="font-headline-sm text-headline-sm text-primary leading-tight truncate">משה ארנס</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate">מצמיח אדם וחברה</span></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><button aria-label="הודעות חירום ועדכונים" class="h-11 px-space-sm flex items-center gap-space-xs rounded-full bg-secondary-container text-on-secondary-container active:scale-95 transition-transform"><span class="material-symbols-outlined text-[20px]">campaign</span><span class="font-label-sm text-label-sm hidden xs:inline">עדכונים</span></button><button aria-label="חיפוש ותפריט" class="w-11 h-11 flex items-center justify-center rounded-full bg-surface-container-high text-on-surface active:scale-95 transition-transform"><span class="material-symbols-outlined">search</span></button></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface flex-1 min-h-screen"><div class="flex flex-col w-full px-space-md gap-space-lg select-none">
+<!-- ============================================== -->
+<!-- HERO BANNER COLLAGE (Long Island Children's Museum Inspired) -->
+<!-- ============================================== -->
+<section class="flex flex-col gap-space-sm w-full mt-2">
+<!-- Blue Statement Container -->
+<div class="bg-primary text-on-primary rounded-lg p-space-lg shadow-md flex flex-col gap-space-md relative overflow-hidden">
+<div class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center gap-space-xs text-secondary-container">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">שש-שנתי משה ארנס • פתח תקווה</span>
+</div>
+<div class="flex flex-col gap-space-xs z-10">
+<h1 class="font-display-hero-mobile text-display-hero-mobile font-bold tracking-tight text-white leading-tight">
+          ללמוד.<br/>ליזום. להוביל.
+        </h1>
+<p class="font-headline-sm text-headline-sm text-on-primary-container font-medium">
+          מצמיח אדם וחברה
+        </p>
+<p class="font-body-sm text-body-sm text-white/80 line-clamp-2 mt-1">
+          מרחב חדשני של מדע, יצירה וקהילה. מקום שבו מגלים את הכוחות שבכם ומעצבים עתיד בטוח וערכי.
+        </p>
+</div>
+<!-- Action Buttons like LICM Buy Tickets / Become Member -->
+<div class="flex flex-col sm:flex-row gap-space-xs pt-space-xs z-10">
+<a class="flex items-center justify-between px-space-md py-3 rounded-full bg-secondary-container text-on-secondary-container font-label-lg text-label-lg shadow-sm active:scale-95 transition-transform" href="https://web.mashov.info/students/">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px]">login</span>
+<span>שער תלמידים והורים (משו״ב)</span>
+</div>
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+</a>
+<a class="flex items-center justify-between px-space-md py-3 rounded-full bg-white/15 backdrop-blur-md text-white font-label-lg text-label-lg active:scale-95 transition-transform" href="#events">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px]">how_to_reg</span>
+<span>הרשמה וימי חשיפה תשפ״ז</span>
+</div>
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+</a>
+</div>
+</div>
+<!-- Playful Photo Mosaic Strip -->
+<div class="grid grid-cols-3 gap-space-xs h-32 w-full">
+<div class="relative rounded-2xl overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="High school students conducting an excited physics and robotics experiment in a bright modern science laboratory with turquoise and blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBZr1-Ovywavrq3YgrifOCqg-GDng14pexk3-Bzy18pXil2lj8xw2InXta_QumvIncVtGJcQN8ePpROoakL2aEk1hEkQEBxYpEXEN5f0F5YJ0fBpUYA7WQzZbgpMvkPs3R8EuMnMxQv_B9OAvNL209i2CE276folYmQFrICZOsQLgabMLVH2mXEV-NLhcvtkKsMzkX3m9jpw5Ig9Fn-WnVcoaVxfBTLk0GhNno0K1R"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-space-xs">
+<span class="text-white font-label-sm text-label-sm">מדע וחקר</span>
+</div>
+</div>
+<div class="relative rounded-2xl overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Teen high school basketball team celebrating a tournament victory on an indoor court in uniform with energetic sports joy and amber sunlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnAhP2qnkY3_ZL02z4AJRzOuqylOWlsIx0UGXmNLqx7mJTOnIXfpBKiKLPQXnT43hDv9NQJX3gmsSkzJ6ZwQrGrhyvyh9c-TVPKfwxS4h_w2Yg_NLowkO5l_NWmNGaO41x8_il_i01K1z6VUAhN1DggprskfDiufFYMAJEs2GPzFWiiMeKrZzTt5C4yhOHsHofpPB_cbmp9BXa0qGlJpDcqyf2yDBaF47w-BzDj3fU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-space-xs">
+<span class="text-white font-label-sm text-label-sm">נבחרת כדורסל</span>
+</div>
+</div>
+<div class="relative rounded-2xl overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Israeli high school students engaged in an enthusiastic theater stage rehearsal with stage lighting and vibrant creative performance props." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBv4akTh6j7yOtMHVANQcjV4x0yYLqI7lf4R6bMBUGEjf-v7zeHIEfYEIgPPnsv6ZDq1yUKYzWHHy6lxNYF2KYUaqpIEQ5oSolJ81f8qUGeMVzjF1JqcPQIODfLnhSIr4UsPvSXx-Jyn7HKIyXC73WqR2OOu267hr8Ewb928U8xoxpghd_tUhPXNDDaxxG3CNc8u4DkJUY7_ZtTv_Twexhbh7w9BSdJSC_7RV7GvgNO"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-space-xs">
+<span class="text-white font-label-sm text-label-sm">אומנויות הבמה</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ============================================== -->
+<!-- QUICK ACCESS TO GRADES (שכבות בית הספר) -->
+<!-- ============================================== -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-6 bg-secondary rounded-full"></span>
+<h2 class="font-headline-md text-headline-md text-on-surface">כניסה מהירה לשכבות</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">חט״ב וחט״ע</span>
+</div>
+<div class="grid grid-cols-3 gap-space-xs">
+<!-- Grade ז -->
+<a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container shadow-sm hover:shadow-md active:scale-95 transition-all text-center" href="#">
+<span class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-display-hero-mobile text-[22px] font-bold">ז׳</span>
+<span class="font-label-md text-label-md text-on-surface mt-1 font-bold">שכבת ז׳</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">צעד ראשון</span>
+<span class="material-symbols-outlined text-[16px] text-primary mt-1">arrow_forward</span>
+</a>
+<!-- Grade ח -->
+<a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container shadow-sm hover:shadow-md active:scale-95 transition-all text-center" href="#">
+<span class="w-10 h-10 rounded-full bg-secondary-container/20 text-secondary flex items-center justify-center font-display-hero-mobile text-[22px] font-bold">ח׳</span>
+<span class="font-label-md text-label-md text-on-surface mt-1 font-bold">שכבת ח׳</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">צמיחה והעמקה</span>
+<span class="material-symbols-outlined text-[16px] text-secondary mt-1">arrow_forward</span>
+</a>
+<!-- Grade ט -->
+<a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container shadow-sm hover:shadow-md active:scale-95 transition-all text-center" href="#">
+<span class="w-10 h-10 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center font-display-hero-mobile text-[22px] font-bold">ט׳</span>
+<span class="font-label-md text-label-md text-on-surface mt-1 font-bold">שכבת ט׳</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">בחירה ואחריות</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary mt-1">arrow_forward</span>
+</a>
+<!-- Grade י -->
+<a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container-high shadow-sm hover:shadow-md active:scale-95 transition-all text-center" href="#">
+<span class="w-10 h-10 rounded-full bg-primary-container text-white flex items-center justify-center font-display-hero-mobile text-[22px] font-bold">י׳</span>
+<span class="font-label-md text-label-md text-on-surface mt-1 font-bold">שכבת י׳</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">מעבר לתיכון</span>
+<span class="material-symbols-outlined text-[16px] text-primary mt-1">arrow_forward</span>
+</a>
+<!-- Grade יא -->
+<a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container-high shadow-sm hover:shadow-md active:scale-95 transition-all text-center" href="#">
+<span class="w-10 h-10 rounded-full bg-surface-variant text-primary flex items-center justify-center font-display-hero-mobile text-[22px] font-bold">י״א</span>
+<span class="font-label-md text-label-md text-on-surface mt-1 font-bold">שכבת י״א</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">בגרויות ומנהיגות</span>
+<span class="material-symbols-outlined text-[16px] text-primary mt-1">arrow_forward</span>
+</a>
+<!-- Grade יב -->
+<a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container-high shadow-sm hover:shadow-md active:scale-95 transition-all text-center" href="#">
+<span class="w-10 h-10 rounded-full bg-secondary-fixed text-secondary flex items-center justify-center font-display-hero-mobile text-[22px] font-bold">י״ב</span>
+<span class="font-label-md text-label-md text-on-surface mt-1 font-bold">שכבת י״ב</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">סיום ומכינה</span>
+<span class="material-symbols-outlined text-[16px] text-secondary mt-1">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- ============================================== -->
+<!-- WHAT'S HAPPENING / AGENDA (מה מתרחש אצלנו) -->
+<!-- Long Island Children's Museum Agenda Style Layout -->
+<!-- ============================================== -->
+<section class="flex flex-col gap-space-sm bg-surface-container-low p-space-md rounded-lg shadow-sm" id="events">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-secondary font-bold uppercase tracking-wider">לוח אירועים ופעילויות</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">מה מתרחש אצלנו?</h2>
+</div>
+<span class="material-symbols-outlined text-primary text-[28px]">event_note</span>
+</div>
+<!-- Event 1: Scientific Day -->
+<div class="flex items-center justify-between p-3 rounded-2xl bg-surface-container-lowest shadow-sm gap-space-sm active:scale-98 transition-transform">
+<div class="flex flex-col flex-shrink-0 w-20 text-center bg-surface-container py-2 px-1 rounded-xl">
+<span class="font-label-sm text-label-sm text-primary font-bold">08:30 - 13:00</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">חט״ב ארנס</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">עמ״ט ומדעים</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold truncate mt-0.5">יום שיא לכיתת עמ״ט</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant line-clamp-1">חקר, רובוטיקה וניסויים מתקדמים בשיתוף מנטורים</p>
+</div>
+<div class="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Teen students in Israeli school laboratory exploring electronics circuits and microcontrollers with focus and curiosity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbu4gj8X75k4HDQ5Tz0RKTGYbKXGbcRthQHiouJeYuKoIZb0e5yDgWUzweXBcxFtIxz3-dyMFBsZ7NsRZgqHl83FmwgRaK0X8MZfXkO2XYucxFmm2Glw9HSzzmT26cEVLkmi45PnZytBkzbFD0qJudb3mFDjPY5Fo0qm1b9SvkqiJDHRNO89ZRC_y-9kjA9ZUbuvC1z2EsqrNMPqU4WsIyY-dwn6q3qihe3xeIxcEw"/>
+</div>
+</div>
+<!-- Event 2: Sports Victory -->
+<div class="flex items-center justify-between p-3 rounded-2xl bg-surface-container-lowest shadow-sm gap-space-sm active:scale-98 transition-transform">
+<div class="flex flex-col flex-shrink-0 w-20 text-center bg-secondary-fixed/40 py-2 px-1 rounded-xl">
+<span class="font-label-sm text-label-sm text-secondary font-bold">16:00 - 18:30</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">אולם ספורט</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">ספורט והישגים</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold truncate mt-0.5">נבחרת הכדורסל רושמת נצחונות</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant line-clamp-1">מקום ראשון באליפות מחוזית בפתח תקווה</p>
+</div>
+<div class="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="High school basketball tournament match with player jumping to score a basket in a packed gym." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1hWha2ETyMSXaf9DLtysDlZZ6XVOKGTP4N817Cd641JUjpmuuqop_wXZCG2qXykwGJCbsDilk0RqciFT7TVBcLABDrp0pDbAhoyA7HgTQm0IvUUu3ctGsJn6stwbQ1BdIWQs8RJmLStTebAZkHtcSgFEAOXwpbqtPgO05DmdTYaNkqhQhNMeWBHvAGGEzcRZ9Wi2tkrW0rqQ0R7GqXpjOM3rozzY2xx6HOVOBIWmS"/>
+</div>
+</div>
+<!-- Event 3: Eco Sustainability Fair -->
+<div class="flex items-center justify-between p-3 rounded-2xl bg-surface-container-lowest shadow-sm gap-space-sm active:scale-98 transition-transform">
+<div class="flex flex-col flex-shrink-0 w-20 text-center bg-tertiary-fixed/30 py-2 px-1 rounded-xl">
+<span class="font-label-sm text-label-sm text-tertiary font-bold">תשפ״ו</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">רחבת ביה״ס</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">קהילה וסביבה</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold truncate mt-0.5">יריד קיימות קהילתי אקו-ארנס</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant line-clamp-1">שוק קח-תן, סדנאות אקולוגיות ותוצרים קהילתיים</p>
+</div>
+<div class="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Community sustainability market in a school courtyard with plants, eco workshops, and smiling students in sunlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCAsEVQKcGx6LH0OQIOLTcdhx-BVM8kM6mmLkr7SUxfQk4xlaMYjG0YX7_S8QM7S3iAl7hQP4DkcnbwUp-_BNzTu_tJtAQmzUM1v5KSeMg8-EDY5fuDVWrE6LflpegUF_J6F-QSoFVWmgQKaKxn9JwaAMAzalJ6hb3HV0gOy8pL4_j-VeiCdaVnioaVJf1vB3yNBkuB-unvytwFKPrjWnqAMp3RdurxNXYU77znozC"/>
+</div>
+</div>
+<!-- Event 4: Sofer Stam Workshop -->
+<div class="flex items-center justify-between p-3 rounded-2xl bg-surface-container-lowest shadow-sm gap-space-sm active:scale-98 transition-transform">
+<div class="flex flex-col flex-shrink-0 w-20 text-center bg-surface-container py-2 px-1 rounded-xl">
+<span class="font-label-sm text-label-sm text-primary font-bold">10:00 - 12:00</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">שכבה ז׳</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">מורשת ותרבות</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold truncate mt-0.5">סדנת סופר סת״ם בשכבה ז׳</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant line-clamp-1">חוויית כתיבה על קלף והיכרות עם מורשת עמיות</p>
+</div>
+<div class="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Traditional quill and Hebrew parchment calligraphy workshop for middle school students learning ancient scribe arts." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCD9pZYiUItd4Y36ZbW2azK9778EuS3v7P4EUQ5ryaBXMGHn27kKwt0nYLAUS1mLnza_42lCzmQQv3Rl6m4Py8qTsLoEXLNvnnvdGxVaFzaryuSVQh2zX7PMkPK0N2SZ-6GT4gHL3iFm5hVTYwg1mS1qqV40Yqh5bkh0KhWEIFfMK3Op1IKSuZi8R9oY6PU6TIENGe75ktj7I5eF99HcveEBy-gsyq4KoIoD2pCdQlc"/>
+</div>
+</div>
+<!-- Save the Date Mini Card (Like LICM Jamboree Box) -->
+<div class="p-space-md rounded-2xl bg-secondary text-white flex items-center justify-between shadow-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-secondary-fixed">שריינו ביומנים!</span>
+<h4 class="font-headline-sm text-headline-sm font-bold">ערב חשיפה לכיתה האולימפית</h4>
+<span class="font-body-sm text-[12px] text-white/90">מפגש הורים ותלמידים מצטיינים</span>
+</div>
+<button class="px-space-md py-2 bg-secondary-container text-on-secondary-container rounded-full font-label-md text-label-md active:scale-95 transition-transform flex items-center gap-1 flex-shrink-0">
+<span>פרטים</span>
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+</div>
+</section>
+<!-- ============================================== -->
+<!-- FEATURED MAJORS & TRACKS (הייחודיות והמגמות) -->
+<!-- ============================================== -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider">למידה מתוך תשוקה</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">הייחודיות והמגמות של ארנס</h2>
+</div>
+<a class="font-label-sm text-label-sm text-primary flex items-center gap-0.5" href="#">
+<span>לכל המגמות</span>
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+</a>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Major 1: Cyber Matrix -->
+<div class="p-3.5 rounded-2xl bg-surface-container flex flex-col justify-between h-40 shadow-sm relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<span class="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">security</span>
+</span>
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-bold">הייטק</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-bold">סייבר מטריקס</h3>
+<p class="font-body-sm text-[11px] text-on-surface-variant line-clamp-2 mt-0.5">הגנת סייבר ורשתות מתקדמות לעולם הטכנולוגי</p>
+</div>
+</div>
+<!-- Major 2: Data Analyst -->
+<div class="p-3.5 rounded-2xl bg-surface-container flex flex-col justify-between h-40 shadow-sm relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<span class="w-9 h-9 rounded-xl bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+</span>
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold">ביג דאטה</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-bold">דאטה אנליסט</h3>
+<p class="font-body-sm text-[11px] text-on-surface-variant line-clamp-2 mt-0.5">ניתוח נתונים, בינה מלאכותית וקבלת החלטות</p>
+</div>
+</div>
+<!-- Major 3: Software Engineering -->
+<div class="p-3.5 rounded-2xl bg-surface-container flex flex-col justify-between h-40 shadow-sm relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<span class="w-9 h-9 rounded-xl bg-primary-container text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">code</span>
+</span>
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold">10 יח״ל</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-bold">הנדסת תוכנה</h3>
+<p class="font-body-sm text-[11px] text-on-surface-variant line-clamp-2 mt-0.5">פיתוח מערכות, אלגוריתמיקה ואפליקציות</p>
+</div>
+</div>
+<!-- Major 4: Theater & Performing Arts -->
+<div class="p-3.5 rounded-2xl bg-surface-container flex flex-col justify-between h-40 shadow-sm relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<span class="w-9 h-9 rounded-xl bg-tertiary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">theater_comedy</span>
+</span>
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-bold">יצירה</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-bold">אומנויות הבמה</h3>
+<p class="font-body-sm text-[11px] text-on-surface-variant line-clamp-2 mt-0.5">תיאטרון, מחזות זמר, משחק ובימוי מקצועי</p>
+</div>
+</div>
+<!-- Major 5: Olympic Class -->
+<div class="p-3.5 rounded-2xl bg-surface-container flex flex-col justify-between h-40 shadow-sm relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<span class="w-9 h-9 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">military_tech</span>
+</span>
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">מצוינות</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-bold">הכיתה האולימפית</h3>
+<p class="font-body-sm text-[11px] text-on-surface-variant line-clamp-2 mt-0.5">אתגר מדעי ואקדמי לנוער פורץ דרך</p>
+</div>
+</div>
+<!-- Major 6: Basketball Academy -->
+<div class="p-3.5 rounded-2xl bg-surface-container flex flex-col justify-between h-40 shadow-sm relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<span class="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">sports_basketball</span>
+</span>
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-primary-fixed text-primary font-bold">ספורט</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-bold">אקדמיית הכדורסל</h3>
+<p class="font-body-sm text-[11px] text-on-surface-variant line-clamp-2 mt-0.5">אימונים מקצועיים ושילוב לימודים אקדמיים</p>
+</div>
+</div>
+</div>
+<!-- More Unique Tracks Horizontal Pills -->
+<div class="flex gap-space-xs overflow-x-auto pb-1 no-scrollbar">
+<span class="flex-shrink-0 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">record_voice_over</span>
+<span>מועדון דיבייט</span>
+</span>
+<span class="flex-shrink-0 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">flare</span>
+<span>שביט מצוינות מדעית</span>
+</span>
+<span class="flex-shrink-0 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary">smart_toy</span>
+<span>מסלול רובוטיקה</span>
+</span>
+<span class="flex-shrink-0 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">public</span>
+<span>שגרירים צעירים</span>
+</span>
+</div>
+</section>
+<!-- ============================================== -->
+<!-- COMMUNITY IMPACT & VISION (ארנס במספרים וערכים) -->
+<!-- ============================================== -->
+<section class="bg-surface-variant/40 rounded-lg p-space-md flex flex-col gap-space-md">
+<div class="flex flex-col text-center items-center">
+<span class="font-label-sm text-label-sm text-primary font-bold">בית ספר שוחר עמיות</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">צומחים יחד – קהילה ומספרים</h2>
+<p class="font-body-sm text-[13px] text-on-surface-variant max-w-xs mt-1">
+        הצטרפנו ליוזמת "בתי ספר שוחרי עמיות" של ארגון ENTER ומשרד החינוך לטיפוח זהות יהודית, סובלנות וערבות הדדית.
+      </p>
+</div>
+<!-- Data Counters -->
+<div class="grid grid-cols-3 gap-space-xs text-center">
+<div class="bg-surface-container-lowest p-3 rounded-2xl shadow-sm flex flex-col items-center">
+<span class="font-display-hero-mobile text-display-hero-mobile text-primary font-bold">1,200+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">תלמידים וחוקרים</span>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-2xl shadow-sm flex flex-col items-center">
+<span class="font-display-hero-mobile text-display-hero-mobile text-secondary font-bold">18</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">מגמות ומסלולים</span>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-2xl shadow-sm flex flex-col items-center">
+<span class="font-display-hero-mobile text-display-hero-mobile text-tertiary font-bold">100%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">מעורבות חברתית</span>
+</div>
+</div>
+</section>
+<!-- ============================================== -->
+<!-- LEADERSHIP SPOTLIGHT (הנהלת בית הספר) -->
+<!-- ============================================== -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-6 bg-primary rounded-full"></span>
+<h2 class="font-headline-md text-headline-md text-on-surface">הצוות המוביל שלנו</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">דלת פתוחה תמיד</span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Principal 1 -->
+<div class="bg-surface-container p-3 rounded-2xl flex flex-col items-center text-center shadow-sm">
+<div class="w-16 h-16 rounded-full overflow-hidden mb-2 bg-surface-dim">
+<img class="w-full h-full object-cover" data-alt="Portrait photo of middle-aged professional female educator Nava Shekel-Sasson with a warm confident smile in modern school setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJM-pEpOucn_OH0XSf6AOBWPIlF21rC2N50FGibY5VGBU1tUWH3BS_EY-QtAyoiXUinF5iS6pGjg2V85ag-WzT8Xf9XLUX3Vd-Zl5PRmuZD9O8uxMZ0K9gZL0GWVfXfTx1SzFjsDTyL6S0tKZWr3RhPkdXpLDgKaFzN3RQ_2udnb-my_genG0VVJZ3V8baAI9y-n2xXGFueukcx1_YglTaTqxAzOPNXCzsld6PuEUM"/>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold">נאוה שקל-ששון</h3>
+<span class="font-label-sm text-[11px] text-primary">מנהלת השש-שנתי</span>
+<a class="mt-2 w-full py-1.5 px-2 bg-surface-container-highest rounded-full text-primary font-label-sm text-label-sm flex items-center justify-center gap-1 active:scale-95 transition-transform" href="tel:0525568113">
+<span class="material-symbols-outlined text-[15px]">call</span>
+<span>יצירת קשר</span>
+</a>
+</div>
+<!-- Principal 2 -->
+<div class="bg-surface-container p-3 rounded-2xl flex flex-col items-center text-center shadow-sm">
+<div class="w-16 h-16 rounded-full overflow-hidden mb-2 bg-surface-dim">
+<img class="w-full h-full object-cover" data-alt="Portrait photo of professional male middle school principal Eli Levin with approachable friendly expression in front of educational library." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFM3Drcu4-xXe7h_IZ9cZfRZ4ciphNltIckKwZt-jweFu0dbhEBtGjIrgj68GwNN-o56XisOGF9OuN22gMx9OcvA6FwHvVHU0uoS85N11UlWLVHgn9TF0oO7LfuIa6YAvXok709-zjtHeYT0cN4ZpGD2Dr0Y6hQQzVF1Nky_o1G3X4MNB2RjWmOUlEo1WY0RNHc7Tw4nqfdDUiSRQyD5W6Dxe0OBuDLE0-46TkjK-8"/>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold">אלי לוין</h3>
+<span class="font-label-sm text-[11px] text-primary">מנהל חטיבת הנעורים</span>
+<a class="mt-2 w-full py-1.5 px-2 bg-surface-container-highest rounded-full text-primary font-label-sm text-label-sm flex items-center justify-center gap-1 active:scale-95 transition-transform" href="tel:0544804942">
+<span class="material-symbols-outlined text-[15px]">call</span>
+<span>יצירת קשר</span>
+</a>
+</div>
+</div>
+</section>
+<!-- ============================================== -->
+<!-- ESSENTIAL EDUCATIONAL LINKS (קישורים חיוניים) -->
+<!-- ============================================== -->
+<section class="flex flex-col gap-space-sm bg-surface-container-high p-space-md rounded-lg">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[24px]">link</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">קישורים חיוניים לתלמידים והורים</h2>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<!-- Mashov -->
+<a class="flex items-center gap-space-xs p-3 rounded-2xl bg-surface-container-lowest shadow-sm active:scale-95 transition-transform" href="https://web.mashov.info/students/">
+<span class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-bold truncate">משו״ב תלמידים</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">ציונים ונוכחות</span>
+</div>
+</a>
+<!-- CET / מטח -->
+<a class="flex items-center gap-space-xs p-3 rounded-2xl bg-surface-container-lowest shadow-sm active:scale-95 transition-transform" href="https://home.cet.ac.il/">
+<span class="w-8 h-8 rounded-full bg-secondary/10 text-secondary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">menu_book</span>
+</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-bold truncate">מט״ח - אופק</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">ספרי לימוד ומשימות</span>
+</div>
+</a>
+<!-- SafeSchool -->
+<a class="flex items-center gap-space-xs p-3 rounded-2xl bg-surface-container-lowest shadow-sm active:scale-95 transition-transform" href="https://www.safeschool.co.il/">
+<span class="w-8 h-8 rounded-full bg-tertiary/10 text-tertiary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">shield</span>
+</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-bold truncate">SafeSchool</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">אקלים ורשת מוגנת</span>
+</div>
+</a>
+<!-- Misrad Hachinuch -->
+<a class="flex items-center gap-space-xs p-3 rounded-2xl bg-surface-container-lowest shadow-sm active:scale-95 transition-transform" href="https://my.edu.gov.il/home">
+<span class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-bold truncate">פורטל התלמידים</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">משרד החינוך</span>
+</div>
+</a>
+</div>
+</section>
+<!-- ============================================== -->
+<!-- CONTACT & LOCATION INFO BAR -->
+<!-- ============================================== -->
+<section class="flex flex-col gap-space-xs bg-surface-container-highest/60 p-space-md rounded-lg mb-4 text-on-surface">
+<div class="flex items-center justify-between pb-2 border-b border-outline-variant/30">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[22px]">location_on</span>
+<span class="font-label-md text-label-md font-bold">ויצמן 46, פתח תקווה</span>
+</div>
+<a class="px-3 py-1 rounded-full bg-primary text-on-primary font-label-sm text-label-sm active:scale-95 transition-transform" href="https://waze.com/ul?ll=32.07901015,34.8730509&amp;navigate=yes">Waze</a>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[22px]">call</span>
+<span class="font-label-md text-label-md font-bold dir-ltr">03-7349373</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="font-body-sm text-[12px]">פקס: 03-7349680</span>
+</div>
+</div>
+<!-- Social & Podcast Quick Links -->
+<div class="flex items-center justify-center gap-space-md pt-3 mt-2 border-t border-outline-variant/20">
+<a aria-label="פודקאסט בית הספר ביוטיוב" class="flex items-center gap-1 text-primary font-label-sm text-label-sm" href="https://www.youtube.com/@6%D7%A9%D7%A0%D7%AA%D7%99%D7%9E%D7%A9%D7%94%D7%90%D7%A8%D7%A0%D7%A1">
+<span class="material-symbols-outlined text-[18px]">podcasts</span>
+<span>חדר הפודקאסט של ארנס</span>
+</a>
+<span class="text-outline-variant">•</span>
+<a aria-label="אינסטגרם ארנס" class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm" href="https://www.instagram.com/arens_school">
+<span class="material-symbols-outlined text-[18px]">photo_camera</span>
+<span>אינסטגרם</span>
+</a>
+</div>
+</section>
+</div>
+<script>
+  // Micro-interaction for grade pill cards and agenda cards
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('touchstart', () => {}, {passive: true});
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-label-md"><div class="flex items-center justify-around h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[54px] min-h-[44px] gap-space-xs active:scale-95 transition-transform text-primary font-label-md" data-path="home" href="#"><span class="material-symbols-outlined text-[22px]">home</span><span class="font-label-sm text-label-sm">בית</span></a><a class="flex flex-col items-center justify-center min-w-[54px] min-h-[44px] gap-space-xs text-on-surface-variant hover:text-on-surface active:scale-95 transition-transform" data-path="grades" href="#"><span class="material-symbols-outlined text-[22px]">school</span><span class="font-label-sm text-label-sm">שכבות</span></a><a class="flex flex-col items-center justify-center min-w-[54px] min-h-[44px] gap-space-xs text-on-surface-variant hover:text-on-surface active:scale-95 transition-transform" data-path="majors" href="#"><span class="material-symbols-outlined text-[22px]">menu_book</span><span class="font-label-sm text-label-sm">מגמות</span></a><a class="flex flex-col items-center justify-center min-w-[54px] min-h-[44px] gap-space-xs text-on-surface-variant hover:text-on-surface active:scale-95 transition-transform" data-path="events-news" href="#"><span class="material-symbols-outlined text-[22px]">calendar_month</span><span class="font-label-sm text-label-sm">אירועים</span></a><a class="flex flex-col items-center justify-center min-w-[54px] min-h-[44px] gap-space-xs text-on-surface-variant hover:text-on-surface active:scale-95 transition-transform" data-path="contact" href="#"><span class="material-symbols-outlined text-[22px]">call</span><span class="font-label-sm text-label-sm">קשר</span></a></div></nav></body></html>

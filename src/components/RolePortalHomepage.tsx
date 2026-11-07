@@ -221,7 +221,7 @@ export const RolePortalHomepage: React.FC<RolePortalHomepageProps> = ({
             </button>
             <button
               onClick={() => onNavigateToTab('home')}
-              className="px-4 py-2.5 rounded-xl bg-school-panel/80 hover:bg-white/10 border border-school-line text-white font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl bg-school-panel/80 hover:bg-white/10 border border-school-line text-school-text font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5"
             >
               <ChevronRight className="w-4 h-4 text-school-cyan" />
               <span>חזרה לדף הבית הראשי</span>
@@ -271,7 +271,7 @@ export const RolePortalHomepage: React.FC<RolePortalHomepageProps> = ({
 
               <button
                 onClick={() => onNavigateToTab('teachers-events-admin')}
-                className="btn px-4 py-3.5 rounded-2xl bg-school-panel border border-school-line text-white hover:text-school-cyan hover:border-school-cyan font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5"
+                className="btn px-4 py-3.5 rounded-2xl bg-school-panel border border-school-line text-school-text hover:text-school-cyan hover:border-school-cyan font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5"
                 title="פאנל ניהול לאחראי האירוע"
               >
                 <span>ממשק ניהול (Admin)</span>
@@ -638,16 +638,10 @@ export const RolePortalHomepage: React.FC<RolePortalHomepageProps> = ({
                       <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-school-cyan/15 text-school-cyan border border-school-cyan/30">
                         {page.category || 'כללי'}
                       </span>
-                      {page.date && (
-                        <span className="text-[10px] text-school-muted flex items-center gap-1 font-mono">
-                          <Clock className="w-3 h-3 text-school-muted" />
-                          <span>{page.date}</span>
-                        </span>
-                      )}
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-black text-lg text-white group-hover:text-school-cyan transition-colors leading-snug line-clamp-2">
+                    <h3 className="font-black text-lg text-school-text group-hover:text-school-cyan transition-colors leading-snug line-clamp-2">
                       {page.title}
                     </h3>
 
@@ -660,7 +654,7 @@ export const RolePortalHomepage: React.FC<RolePortalHomepageProps> = ({
 
                     {/* Paragraph snippet */}
                     {page.content && page.content.length > 0 && (
-                      <p className="text-xs text-slate-300 leading-relaxed line-clamp-3 bg-black/20 p-3 rounded-2xl border border-white/5">
+                      <p className="text-xs text-school-text/80 leading-relaxed line-clamp-3 bg-school-panel2/60 p-3 rounded-2xl border border-school-line/30">
                         {page.content[0]}
                       </p>
                     )}

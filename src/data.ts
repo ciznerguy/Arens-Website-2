@@ -153,12 +153,21 @@ export const gradesData: GradeLevel[] = [
   {
     grade: 'יא',
     coordinator: "ניר מלכה",
-    description: "שנת שיא במבחני הבגרות, סיורים לימודיים ממוקדים, גיבוש שכבתי והעמקה מקצועית במגמות הטכנולוגיות וההומניסטיות.",
+    leadership: [
+      { role: "רכז שכבה ומחנך יא'6", name: "ניר מלכה" },
+      { role: "יועצת השכבה", name: "ענבל ישראלי לונדין" }
+    ],
+    description: "מחזור ב' - שנת 'אתגרים בחיים' ומסע של צמיחה אישית, ערכית, לימודית וחברתית. שנת שיא במבחני הבגרות, המסע הישראלי, מנהיגות והעמקה מקצועית במגמות.",
     classes: [
-      { id: 'ya1', name: "יא' 1 - הנדסת תוכנה", homeroomTeacher: 'מחנכ/ת שכבה יא', room: 'קומה 4, חדר 405', specialty: 'סייבר ופיתוח אפליקציות' },
-      { id: 'ya2', name: "יא' 2 - פיזיקה יישומית", homeroomTeacher: 'מחנכ/ת שכבה יא', room: 'קומה 4, חדר 406', specialty: 'מערכות רובוטיות וחקר' },
-      { id: 'ya3', name: "יא' 3 - תיאטרון מורחב", homeroomTeacher: 'מחנכ/ת שכבה יא', room: 'קומה 4, חדר 407', specialty: 'תיאטרון ואומנויות הבמה' },
-      { id: 'ya4', name: "יא' 4 - חינוך גופני", homeroomTeacher: 'מחנכ/ת שכבה יא', room: 'קומה 4, חדר 408', specialty: 'פיזיולוגיה וכושר גופני' }
+      { id: 'ya1', name: "יא' 1", homeroomTeacher: 'שרון שרביט פיינס', room: 'קומה 4, חדר 405', specialty: 'הנדסת תוכנה וסייבר' },
+      { id: 'ya2', name: "יא' 2", homeroomTeacher: 'רז קצב', room: 'קומה 4, חדר 406', specialty: 'פיזיקה יישומית ומדעים' },
+      { id: 'ya3', name: "יא' 3", homeroomTeacher: 'אסתר בורוב', room: 'קומה 4, חדר 407', specialty: 'תיאטרון ואמנויות הבמה' },
+      { id: 'ya4', name: "יא' 4", homeroomTeacher: 'ליאת בן נון', room: 'קומה 4, חדר 408', specialty: 'מדעי החברה ודיפלומטיה' },
+      { id: 'ya5', name: "יא' 5", homeroomTeacher: 'רוני אביגיל דוד', room: 'קומה 4, חדר 409', specialty: 'ביולוגיה וכימיה' },
+      { id: 'ya6', name: "יא' 6", homeroomTeacher: 'ניר מלכה', room: 'קומה 4, חדר 410', specialty: 'מנהיגות ויזמות עסקית' },
+      { id: 'ya7', name: "יא' 7", homeroomTeacher: 'תומר נעמן', room: 'קומה 4, חדר 411', specialty: 'חינוך גופני ומצוינות אישית' },
+      { id: 'ya8', name: "יא' 8", homeroomTeacher: 'נופיה נהרי', room: 'קומה 4, חדר 412', specialty: 'עיצוב תקשורת חזותית' },
+      { id: 'ya9', name: "יא' 9", homeroomTeacher: 'לימור אדלמן', room: 'קומה 4, חדר 413', specialty: 'כיתת אתגר וצמיחה' }
     ]
   },
   {

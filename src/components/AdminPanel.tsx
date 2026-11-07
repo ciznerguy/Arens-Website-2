@@ -7775,7 +7775,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           <p className="text-xs text-school-muted">בחר מתוך רשימת תבניות העיצוב המקוריות והקלאסיות של המערכת</p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {SITE_THEMES.map((theme) => (
                             <button
                               key={theme.id}
