@@ -189,6 +189,16 @@ export default function EduVibrantHomePage({
       <section className="flex flex-col gap-4 w-full">
         {/* Blue Statement Container */}
         <div className="bg-[#1D4ED8] text-white rounded-3xl p-6 sm:p-10 shadow-lg flex flex-col gap-6 relative overflow-hidden">
+          {/* School building photo behind a blue overlay that keeps the text readable */}
+          <img
+            src="/assets/school/arens-building.jpg"
+            srcSet="/assets/school/arens-building-800.jpg 800w, /assets/school/arens-building.jpg 1600w"
+            sizes="(min-width: 1280px) 1280px, 100vw"
+            alt="בניין שש-שנתי משה ארנס, פתח תקווה"
+            fetchPriority="high"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          />
+          <div className="absolute inset-0 bg-gradient-to-l from-[#1D4ED8]/95 via-[#1D4ED8]/80 to-[#1D4ED8]/35 pointer-events-none" />
           <div className="absolute -top-12 -left-12 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 right-0 w-64 h-64 bg-cyan-400/10 rounded-full blur-2xl pointer-events-none" />
           

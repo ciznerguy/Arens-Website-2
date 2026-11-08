@@ -123,7 +123,7 @@ export default function App() {
         console.error('Error parsing theme from URL:', e);
       }
     }
-    return localStorage.getItem('arens_school_theme') || 'cosmic-dark';
+    return localStorage.getItem('arens_school_theme') || 'edu-playful-light';
   });
 
   // Dark/Light mode state helper (toggles between the 2 available themes)
