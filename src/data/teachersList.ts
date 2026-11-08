@@ -28,7 +28,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה למתמטיקה חט\"ע",
     "email": "1002156123@taded.org.il",
     "bio": "מורה למתמטיקה בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-3.jpeg",
     "isManagement": false
   },
   {
@@ -68,7 +68,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לחינוך מיוחד חט\"נ",
     "email": "livnatooosh@gmail.com",
     "bio": "מורה לחינוך מיוחד בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-7.jpeg",
     "isManagement": false
   },
   {
@@ -78,7 +78,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנכת כתה ט2 ומורה לערבית חט\"נ",
     "email": "1002115798@taded.org.il",
     "bio": "מחנכת כיתה ט2 ומורה לערבית בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-8.jpeg",
     "isManagement": false
   },
   {
@@ -88,7 +88,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנכת כתה ז3 ומורה לערבית חט\"נ",
     "email": "1002039881@taded.org.il",
     "bio": "מחנכת כיתה ז3 ומורה לערבית בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-9.jpeg",
     "isManagement": false
   },
   {
@@ -158,7 +158,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנכת ראשית כיתה תקשורתית ט5 חט\"נ",
     "email": "1002204255@taded.org.il",
     "bio": "מחנכת ראשית כיתה תקשורתית ט5 בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-16.jpeg",
     "isManagement": false
   },
   {
@@ -208,7 +208,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לאנגלית חט\"נ",
     "email": "1002534259@taded.org.il",
     "bio": "מורה לאנגלית בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-21.jpeg",
     "isManagement": false
   },
   {
@@ -218,7 +218,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לכימיה חט\"נ",
     "email": "1003907285@taded.org.il",
     "bio": "מורה לכימיה בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-22.jpeg",
     "isManagement": false
   },
   {
@@ -308,7 +308,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "סגן מנהל חט\"נ, מוביל שכבה ט' ומחנך כתה ט4 חט\"נ",
     "email": "1002185618@taded.org.il",
     "bio": "סגן מנהל חטיבת הנעורים, מוביל שכבה ט' ומחנך כיתה ט4.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-31.jpeg",
     "isManagement": true
   },
   {
@@ -328,7 +328,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לגיאוגרפיה חט\"ע",
     "email": "orna.gindy@gmail.com",
     "bio": "מורה לגיאוגרפיה בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-33.jpeg",
     "isManagement": false
   },
   {
@@ -338,7 +338,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנכת י'2 מורה לכימיה חט\"ע רכזת שכבה י' ורכזת מגמה כימיה",
     "email": "1002112929@taded.org.il",
     "bio": "מחנכת י'2, מורה לכימיה חט\"ע, רכזת שכבה י' ורכזת מגמת כימיה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-34.jpeg",
     "isManagement": false
   },
   {
@@ -358,7 +358,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנך כתה ז 6 ומורה להיסטוריה חט\"נ",
     "email": "1005881486@taded.org.il",
     "bio": "מחנך כיתה ז6 ומורה להיסטוריה בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-36.jpeg",
     "isManagement": false
   },
   {
@@ -408,7 +408,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לתנ\"כ ומסע\"אות חט\"נ",
     "email": "1002101821@taded.org.il",
     "bio": "מורה לתנ\"ך ומסעאות בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-41.jpeg",
     "isManagement": false
   },
   {
@@ -438,7 +438,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנכת כתה ז 7 ומורה לספרות ואומנות חט\"נ",
     "email": "1002096329@taded.org.il",
     "bio": "מחנכת כיתה ז7 ומורה לספרות ואומנות בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-44.jpeg",
     "isManagement": false
   },
   {
@@ -458,7 +458,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה למתמטיקה חט\"ב וחט\"ע",
     "email": "zhvaintrub@gmail.com",
     "bio": "מורה למתמטיקה בחטיבת הנעורים ובחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-46.jpeg",
     "isManagement": false
   },
   {
@@ -468,7 +468,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לכימיה חט\"ע",
     "email": "kobywolfman@gmail.com",
     "bio": "מורה לכימיה בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-47.jpeg",
     "isManagement": false
   },
   {
@@ -478,7 +478,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לספרות חט\"ע",
     "email": "1002303119@taded.org.il",
     "bio": "מורה לספרות בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-48.jpeg",
     "isManagement": false
   },
   {
@@ -528,7 +528,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנכת י'4 ומורה לאנגלית חט\"ע",
     "email": "mishelle@gmail.com",
     "bio": "מחנכת כיתה י'4 ומורה לאנגלית בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-53.jpeg",
     "isManagement": false
   },
   {
@@ -548,7 +548,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנך כתה ח4 ומורה למדעים ופיזיקה חט\"נ",
     "email": "1002169156@taded.org.il",
     "bio": "מחנך כיתה ח4 ומורה למדעים ופיזיקה בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-55.jpeg",
     "isManagement": false
   },
   {
@@ -558,7 +558,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לאנגלית חט\"נ",
     "email": "1005219218@taded.org.il",
     "bio": "מורה לאנגלית בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-56.jpeg",
     "isManagement": false
   },
   {
@@ -578,7 +578,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה למדעים חט\"נ",
     "email": "1005993526@taded.org.il",
     "bio": "מורה למדעים בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-58.jpeg",
     "isManagement": false
   },
   {
@@ -648,7 +648,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לחינוך מיוחד חט\"נ",
     "email": "meirav2286@gmail.com",
     "bio": "מורה לחינוך מיוחד בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-65.jpeg",
     "isManagement": false
   },
   {
@@ -668,7 +668,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "יועצת שכבה ז' ומחנכת כתה ז2 חט\"נ",
     "email": "1004148827@taded.org.il",
     "bio": "יועצת שכבת ז' ומחנכת כיתה ז2 בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-67.jpeg",
     "isManagement": false
   },
   {
@@ -678,7 +678,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה למתמטיקה וספרות חט\"ע",
     "email": "1003954207@taded.org.il",
     "bio": "מורה למתמטיקה וספרות בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-68.jpeg",
     "isManagement": false
   },
   {
@@ -698,7 +698,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורת שילוב חט\"נ",
     "email": "1002084168@taded.org.il",
     "bio": "מורת שילוב בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-70.jpeg",
     "isManagement": false
   },
   {
@@ -888,7 +888,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנך י'5 ומורה לאזרחות חט\"ע",
     "email": "navetrip@gmail.com",
     "bio": "מחנך כיתה י'5 ומורה לאזרחות בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-89.jpeg",
     "isManagement": false
   },
   {
@@ -938,7 +938,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לספרות והיסטוריה חט\"ע",
     "email": "eitans067@gmail.com",
     "bio": "מורה לספרות והיסטוריה בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-94.jpeg",
     "isManagement": false
   },
   {
@@ -1018,7 +1018,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לעברית ומסע\"אות חט\"נ",
     "email": "1005659617@taded.org.il",
     "bio": "מורה לעברית ומסעאות בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-102.jpeg",
     "isManagement": false
   },
   {
@@ -1058,7 +1058,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנך כתה ז 5 ומורה למתמטיקה חט\"נ",
     "email": "1005646072@taded.org.il",
     "bio": "מחנך כיתה ז5 ומורה למתמטיקה בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-106.jpeg",
     "isManagement": false
   },
   {
@@ -1128,7 +1128,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה למחשבים חט\"נ",
     "email": "1003428499@taded.org.il",
     "bio": "מורה למחשבים בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-113.jpeg",
     "isManagement": false
   },
   {
@@ -1158,7 +1158,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לעברית +רבי מלל חט\"נ",
     "email": "michalp80@gmail.com",
     "bio": "מורה לעברית ומקצועות רבי מלל בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-116.jpeg",
     "isManagement": false
   },
   {
@@ -1218,7 +1218,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "רכזת ומורה לאנגלית מחנכת כתה ח1 חט\"נ",
     "email": "1002032102@taded.org.il",
     "bio": "רכזת ומורה לאנגלית ומחנכת כיתה ח1 בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-122.jpeg",
     "isManagement": false
   },
   {
@@ -1228,7 +1228,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנכת י'7 ורכזת תקשורתיות חט\"ע",
     "email": "veredsagiv9@gmail.com",
     "bio": "מחנכת כיתה י'7 ורכזת כיתות תקשורת בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-123.jpeg",
     "isManagement": false
   },
   {
@@ -1268,7 +1268,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מחנכת עמיתה כתה תקשורתית ח9 חט\"נ",
     "email": "1002166338@taded.org.il",
     "bio": "מחנכת עמיתה בכיתה תקשורתית ח9 בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-127.jpeg",
     "isManagement": false
   },
   {
@@ -1298,7 +1298,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה ללשון חט\"נ",
     "email": "Nofar811@gmail.com",
     "bio": "מורה ללשון בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-130.jpeg",
     "isManagement": false
   },
   {
@@ -1308,7 +1308,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה למתמטיקה חט\"ע",
     "email": "1002835513@taded.org.il",
     "bio": "מורה למתמטיקה בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-131.jpeg",
     "isManagement": false
   },
   {
@@ -1348,7 +1348,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לחינוך מיוחד - מורה מקצועית רבי מלל חט\"נ",
     "email": "1005883144@taded.org.il",
     "bio": "מורה לחינוך מיוחד ומקצועות רבי מלל בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-135.jpeg",
     "isManagement": false
   },
   {
