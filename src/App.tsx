@@ -392,33 +392,10 @@ export default function App() {
       if (params.get('invite') === 'true') {
         const email = params.get('email');
         const name = params.get('name');
-        const role = params.get('role') || 'עורך תוכן';
-
         if (email && name) {
-          // Add invited user to authorized list in local storage
-          let editors = [];
-          const stored = localStorage.getItem('arens_cms_editors');
-          if (stored) {
-            editors = JSON.parse(stored);
-          } else {
-            editors = [
-              { email: 'nava.ss@arens.school', name: 'נאווה שקל ששון', role: 'מנהלת שש-שנתי' },
-              { email: 'dan.p@arens.school', name: 'דן פנחס', role: 'מנהל חטיבת נעורים' },
-              { email: 'admin@arens.school', name: 'מנהל מערכת', role: 'מנהל ראשי' }
-            ];
-          }
-
-          const exists = editors.some((ed: any) => ed.email.toLowerCase() === email.toLowerCase());
-          if (!exists) {
-            editors.push({ email, name, role });
-            localStorage.setItem('arens_cms_editors', JSON.stringify(editors));
-          }
-
-          // Force login as the invited editor directly
-          localStorage.setItem('arens_cms_token', 'simulated_jwt_token_12345');
-          localStorage.setItem('arens_cms_user', JSON.stringify({ email, name, role }));
-
-          setInviteGreeting(`שלום ${name}! הזמנתך כ-${role} אושרה בהצלחה. נכנסת ישירות למערכת הניהול.`);
+          // The invitation only opens the login screen. Access is granted after a real Google sign-in
+          // with the invited address, which an admin already added to the editors list.
+          setInviteGreeting(`שלום ${name}! להשלמת ההזמנה יש להתחבר עם חשבון Google של הכתובת ${email}.`);
           setIsAdminOpen(true);
 
           // Clear search parameters from URL elegantly to prevent loops

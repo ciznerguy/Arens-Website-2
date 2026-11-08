@@ -2,7 +2,8 @@ import { saveStaffMember, deleteStaffMember, resetStaffToDefaults, getStoredStaf
 import { saveNewsArticle, deleteNewsArticle, resetNewsToDefaults, getStoredNews, saveSetting } from '../services/cmsStorage';
 import { syncPageOverrideToCloud, syncGradeClassesToCloud } from '../services/pagesStorage';
 import { syncAdminConfigToCloud, subscribeToAdminSettings, fetchAdminConfigFromCloud, getStoredEditors, getStoredContactEmails, SecretaryContactEmails, DEFAULT_CONTACT_EMAILS } from '../services/adminStorage';
-import { requestGoogleSignInProfile, processGoogleLoginResult, matchStaffMemberByGoogleProfile, isOrganizationalEmail } from '../services/googleAuth';
+import { processGoogleLoginResult, matchStaffMemberByGoogleProfile, isOrganizationalEmail } from '../services/googleAuth';
+import { signInWithGoogle, signOutFirebase, waitForAuthUser } from '../services/firebaseAuth';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -905,13 +906,18 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
   // Load configuration on mount
   useEffect(() => {
-    // Check local storage for persistent login token
+    // Restore a saved session only when Firebase confirms the same Google account is still signed in
     const token = localStorage.getItem('arens_cms_token');
     const savedUser = localStorage.getItem('arens_cms_user');
     if (token && savedUser) {
+      waitForAuthUser().then((firebaseUser) => {
       try {
         const parsed = JSON.parse(savedUser);
         const cleanEmail = (parsed.email || '').trim().toLowerCase();
+        const firebaseEmail = (firebaseUser && firebaseUser.email ? firebaseUser.email : '').trim().toLowerCase();
+        if (!firebaseUser || firebaseEmail !== cleanEmail) {
+          throw new Error('No verified Firebase session for the saved user');
+        }
         const storedEditors = getStoredEditors();
         const matchedEditor = storedEditors.find(ed => ed.email.trim().toLowerCase() === cleanEmail) ||
                               DEFAULT_EDITORS.find(ed => ed.email.trim().toLowerCase() === cleanEmail);
@@ -938,6 +944,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
         setIsLoggedIn(false);
         setCurrentUser(null);
       }
+      });
     }
 
     // Load Editors from Firestore cloud & local cache
@@ -1361,84 +1368,6 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     }, 800);
   };
 
-  // Secure login check
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError(null);
-
-    const cleanEmail = (loginEmail || '').trim().toLowerCase();
-    const cleanPassword = (loginPassword || '').trim();
-
-    if (!cleanEmail || !cleanPassword) {
-      setLoginError('נא למלא כתובת אימייל וסיסמה');
-      return;
-    }
-
-    // 1. Strict password validation
-    const ALLOWED_PASSWORDS = ['Arens2025!', 'ArensAdmin2025!', 'admin123', 'ArensSchool!'];
-    if (!ALLOWED_PASSWORDS.includes(cleanPassword)) {
-      setLoginError('סיסמת הגישה שגויה. הגישה מותרת לצוות מורשה בלבד.');
-      return;
-    }
-
-    // 2. Strict email validation against registered editors and school staff
-    const storedEditors = getStoredEditors();
-    let matched = editors.find(ed => ed.email.trim().toLowerCase() === cleanEmail) || 
-                  DEFAULT_EDITORS.find(ed => ed.email.trim().toLowerCase() === cleanEmail) ||
-                  storedEditors.find(ed => ed.email.trim().toLowerCase() === cleanEmail);
-    
-    // Also try matching in staff members list
-    if (!matched) {
-      const matchedStaff = staffMembers.find(s => s.email?.trim().toLowerCase() === cleanEmail);
-      if (matchedStaff) {
-        matched = {
-          email: cleanEmail,
-          name: matchedStaff.name,
-          role: matchedStaff.role || 'מורה'
-        };
-      }
-    }
-
-    // If not in registered editors or staff list, reject entry
-    if (!matched) {
-      setLoginError('כתובת אימייל זו אינה מורשית במערכת. הגישה מיועדת לצוות בית הספר בלבד.');
-      return;
-    }
-
-    const loggedUser = matched;
-
-    localStorage.setItem('arens_cms_token', 'simulated_jwt_token_12345');
-    localStorage.setItem('arens_cms_user', JSON.stringify(loggedUser));
-    setCurrentUser(loggedUser);
-    setIsLoggedIn(true);
-
-    // Automatically navigate to the appropriate tab based on role or initialStaffEmail
-    const userRole = loggedUser.role || '';
-    if (initialStaffEmail) {
-      setActiveTab('my-profile');
-    } else if (isFullSiteAdmin(userRole)) {
-      setActiveTab('homepage');
-    } else if (isTikshuvCoordinator(userRole, loggedUser.email)) {
-      setActiveTab('tikshuv');
-    } else if (isGradeCoordinator(userRole)) {
-      setActiveTab('my-grade');
-    } else if (isMajorCoordinator(userRole)) {
-      setActiveTab('majors');
-    } else if (isEnglishCoordinator(userRole)) {
-      setActiveTab('pages');
-    } else {
-      setActiveTab('my-profile');
-    }
-
-    // If editor list didn't include them, append them
-    if (matched && !editors.some(ed => ed.email === matched.email)) {
-      const updated = [...editors, matched];
-      setEditors(updated);
-      localStorage.setItem('arens_cms_editors', JSON.stringify(updated));
-      syncAdminConfigToCloud('editors', updated);
-    }
-  };
-
   const navigateAfterLogin = (user: Editor) => {
     const userRole = user.role || '';
     if (initialStaffEmail) {
@@ -1462,11 +1391,18 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     setLoginError(null);
     setIsGoogleSigningIn(true);
     try {
-      const profile = await requestGoogleSignInProfile();
-      const result = await processGoogleLoginResult(profile, editors, setEditors);
+      const profile = await signInWithGoogle();
+      let result;
+      try {
+        result = await processGoogleLoginResult(profile, editors, setEditors);
+      } catch (notAuthorized) {
+        // Verified Google account, but not on the staff or editors list: sign it out again
+        await signOutFirebase();
+        throw notAuthorized;
+      }
       const loggedUser = result.user;
 
-      localStorage.setItem('arens_cms_token', 'google_session_' + Date.now());
+      localStorage.setItem('arens_cms_token', 'firebase_auth');
       localStorage.setItem('arens_cms_user', JSON.stringify(loggedUser));
       setCurrentUser(loggedUser);
       setIsLoggedIn(true);
@@ -1487,42 +1423,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     }
   };
 
-  const handleManualGoogleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!manualGoogleEmail) return;
-    setLoginError(null);
-    setIsGoogleSigningIn(true);
-    try {
-      const clean = manualGoogleEmail.trim().toLowerCase();
-      const profile = {
-        email: clean,
-        name: clean.split('@')[0]
-      };
-      const result = await processGoogleLoginResult(profile, editors, setEditors);
-      const loggedUser = result.user;
-
-      localStorage.setItem('arens_cms_token', 'google_session_' + Date.now());
-      localStorage.setItem('arens_cms_user', JSON.stringify(loggedUser));
-      setCurrentUser(loggedUser);
-      setIsLoggedIn(true);
-      setIsManualGoogleLoginOpen(false);
-
-      if (result.updatedProfile) {
-        setSaveSuccess(`ברוך הבא ${loggedUser.name}! עודכן המייל הארגוני שלך במערכת (${loggedUser.email}).`);
-      } else {
-        setSaveSuccess(`שלום ${loggedUser.name}, התחברת בהצלחה!`);
-      }
-      setTimeout(() => setSaveSuccess(null), 4000);
-
-      navigateAfterLogin(loggedUser);
-    } catch (err: any) {
-      setLoginError(err.message || 'אימייל זה אינו מופיע ברשימת הצוות.');
-    } finally {
-      setIsGoogleSigningIn(false);
-    }
-  };
-
   const handleLogout = () => {
+    signOutFirebase();
     localStorage.removeItem('arens_cms_token');
     localStorage.removeItem('arens_cms_user');
     setIsLoggedIn(false);
@@ -2884,92 +2786,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                     {isGoogleSigningIn ? 'מתחבר עם חשבון Google...' : 'כניסה בלחיצה עם חשבון Google'}
                   </span>
                 </button>
-                <div className="flex items-center justify-between text-[10px] text-school-muted px-1">
-                  <span>כניסה ישירה לכל מורה עם Gmail או מייל ארגוני</span>
-                  <button
-                    type="button"
-                    onClick={() => setIsManualGoogleLoginOpen(!isManualGoogleLoginOpen)}
-                    className="text-school-cyan hover:underline transition-colors"
-                  >
-                    {isManualGoogleLoginOpen ? 'הסתר' : 'חיבור מהיר במייל'}
-                  </button>
-                </div>
+                <p className="text-[10px] text-school-muted px-1">כניסה עם חשבון Google של איש צוות הרשום במערכת</p>
               </div>
-
-              {/* Optional Fast Google Email Fallback if Popups Blocked */}
-              <AnimatePresence>
-                {isManualGoogleLoginOpen && (
-                  <motion.form
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    onSubmit={handleManualGoogleEmailSubmit}
-                    className="p-3 bg-[#080d19] border border-school-cyan/30 rounded-xl space-y-2 text-right"
-                  >
-                    <label className="text-[11px] text-school-cyan font-bold block">
-                      הזן את חשבון ה-Google שלך (למשל: ella.kreiczer@gmail.com או @taded.org.il):
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        type="email"
-                        required
-                        value={manualGoogleEmail}
-                        onChange={(e) => setManualGoogleEmail(e.target.value)}
-                        placeholder="your.email@gmail.com"
-                        className="flex-1 bg-[#101b33] border border-school-line/60 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-school-cyan"
-                      />
-                      <button
-                        type="submit"
-                        disabled={isGoogleSigningIn}
-                        className="px-3 py-1.5 bg-school-cyan text-school-bg rounded-lg text-xs font-bold hover:brightness-110"
-                      >
-                        התחבר
-                      </button>
-                    </div>
-                  </motion.form>
-                )}
-              </AnimatePresence>
-
-              <div className="relative flex items-center justify-center my-1">
-                <div className="border-t border-school-line/60 w-full" />
-                <span className="bg-[#101b33] px-3 text-[10px] text-school-muted whitespace-nowrap">
-                  או התחברות עם כתובת וסיסמת גישה
-                </span>
-                <div className="border-t border-school-line/60 w-full" />
-              </div>
-
-              <form onSubmit={handleLoginSubmit} className="space-y-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs text-white font-bold">כתובת אימייל מורשית</label>
-                  <input 
-                    type="email"
-                    required
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="name@arens.school"
-                    className="w-full bg-[#080d19] border border-school-line/60 rounded-xl py-2.5 px-4 text-xs text-white focus:outline-none focus:border-school-cyan transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs text-white font-bold">סיסמת גישה</label>
-                  <input 
-                    type="password"
-                    required
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full bg-[#080d19] border border-school-line/60 rounded-xl py-2.5 px-4 text-xs text-white focus:outline-none focus:border-school-cyan transition-colors"
-                  />
-                </div>
-
-                <button 
-                  type="submit"
-                  className="w-full btn py-3 rounded-xl font-bold bg-gradient-to-r from-school-cyan to-cyan-400 text-school-bg shadow-md hover:-translate-y-0.5 transition-all text-xs text-center"
-                >
-                  התחברות למערכת
-                </button>
-              </form>
 
               <div className="pt-2 border-t border-school-line/40 text-center space-y-2">
                 <a

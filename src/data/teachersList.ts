@@ -8,7 +8,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מנהלת שש שנתי",
     "email": "1002042738@taded.org.il",
     "bio": "מנהלת בית הספר השש-שנתי משה ארנס. מובילה את המוסד החינוכי למצוינות אקדמית, ערכית וחברתית.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/nava-shekel-sasson.jpeg",
     "isManagement": true
   },
   {

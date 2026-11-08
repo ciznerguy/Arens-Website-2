@@ -63,6 +63,18 @@ export default function EduVibrantHomePage({
   // Selected Staff Member for Full Profile Modal
   const [selectedStaffMember, setSelectedStaffMember] = useState<StaffMember | null>(null);
 
+  // Height of the sticky site header, so the opening photo fills exactly the screen below it
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
+  useEffect(() => {
+    const header = document.querySelector('header');
+    if (!header) return;
+    const measure = () => setHeaderHeight(header.getBoundingClientRect().height);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(header);
+    return () => observer.disconnect();
+  }, []);
+
   // Close modals on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -186,21 +198,24 @@ export default function EduVibrantHomePage({
       {/* ============================================================== */}
       {/* 1. HERO BANNER STATEMENT                                       */}
       {/* ============================================================== */}
-      <section className="flex flex-col gap-4 w-full">
-        {/* Blue Statement Container */}
-        <div className="bg-[#1D4ED8] text-white rounded-3xl p-6 sm:p-10 shadow-lg flex flex-col gap-6 relative overflow-hidden">
-          {/* School building photo behind a blue overlay that keeps the text readable */}
-          <img
-            src="/assets/school/arens-building.jpg"
-            srcSet="/assets/school/arens-building-800.jpg 800w, /assets/school/arens-building.jpg 1600w"
-            sizes="(min-width: 1280px) 1280px, 100vw"
-            alt="בניין שש-שנתי משה ארנס, פתח תקווה"
-            fetchPriority="high"
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          />
-          <div className="absolute inset-0 bg-gradient-to-l from-[#1D4ED8]/95 via-[#1D4ED8]/80 to-[#1D4ED8]/35 pointer-events-none" />
-          <div className="absolute -top-12 -left-12 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 right-0 w-64 h-64 bg-cyan-400/10 rounded-full blur-2xl pointer-events-none" />
+      {/* Full-screen opening: the school photo spans the whole width and fills the screen below the header */}
+      <section
+        className="relative w-screen mx-[calc(50%-50vw)] -mt-6 overflow-hidden text-white flex items-center"
+        style={{ minHeight: `calc(100svh - ${headerHeight}px)` }}
+      >
+        <img
+          src="/assets/school/arens-building.jpg"
+          srcSet="/assets/school/arens-building-800.jpg 800w, /assets/school/arens-building.jpg 1600w"
+          sizes="100vw"
+          alt="בניין שש-שנתי משה ארנס, פתח תקווה"
+          fetchPriority="high"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        />
+        {/* Dark overlay: stronger on the right where the text sits, lighter on the left to show the building */}
+        <div className="absolute inset-0 bg-[#0B1A3A]/55 md:bg-transparent md:bg-gradient-to-l md:from-[#0B1A3A]/85 md:via-[#0B1A3A]/45 md:to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent pointer-events-none" />
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col gap-6">
           
           <div className="flex items-center gap-2 text-[#FEA619] relative z-10">
             <Sparkles className="w-5 h-5" />
@@ -242,16 +257,6 @@ export default function EduVibrantHomePage({
               <span>מה מתרחש אצלנו?</span>
             </button>
 
-            {/* Mashov Link */}
-            <a 
-              href="https://web.mashov.info/students/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-[#FEA619] hover:bg-[#F59E0B] text-[#0F172A] font-black text-sm shadow-md active:scale-95 transition-all cursor-pointer mr-auto"
-            >
-              <LogIn className="w-4 h-4" />
-              <span>משו״ב תלמידים והורים</span>
-            </a>
           </div>
         </div>
       </section>
