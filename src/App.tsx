@@ -343,10 +343,10 @@ export default function App() {
       root.style.setProperty('--theme-font', '"Narkisim", "Narkiss", "Frank Ruhl Libre", "David Libre", "Heebo", system-ui, sans-serif');
     }
 
-    // Clean ?theme= for default cosmic-dark, or set it when another theme is selected
+    // Clean ?theme= for the default edu-playful-light, or set it when another theme is selected
     try {
       const url = new URL(window.location.href);
-      if (activeTheme === 'cosmic-dark') {
+      if (activeTheme === 'edu-playful-light') {
         if (url.searchParams.has('theme')) {
           url.searchParams.delete('theme');
           window.history.replaceState({}, '', url.toString());
