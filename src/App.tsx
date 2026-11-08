@@ -61,6 +61,7 @@ import {
 import { StaffMember } from './types';
 import { getHebrewInitials, getAvatarColor } from './utils/avatarUtils';
 import { TeacherAvatar } from './components/TeacherAvatar';
+import { EmailContactButton } from './components/EmailContactButton';
 import FloatingHeroBalls from './components/FloatingHeroBalls';
 import InternalPageViewer from './components/InternalPageViewer';
 import FloatingWhatsAppShare from './components/FloatingWhatsAppShare';
@@ -257,7 +258,7 @@ export default function App() {
         }
       } else {
         setSocials({
-          facebook: 'https://www.facebook.com/arens.pt',
+          facebook: 'https://www.facebook.com/arens.school',
           instagram: 'https://www.instagram.com/arens_school_pt',
           youtube: 'https://www.youtube.com/@ArensSchool'
         });
@@ -2317,7 +2318,7 @@ export default function App() {
           {/* Social media connections */}
           <div className="flex gap-4 justify-center">
             <a 
-              href="https://www.facebook.com/share/14JYrtChwMX/?mibextid=wwXIfr" 
+              href="https://www.facebook.com/arens.school" 
               target="_blank" 
               rel="noopener noreferrer"
               title="פייסבוק"
@@ -2541,16 +2542,12 @@ export default function App() {
                       </p>
                     )}
                     {selectedStaffForModal.email && (
-                      <div className="pt-2">
-                        <a 
-                          href={`mailto:${selectedStaffForModal.email}`}
-                          dir="ltr"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-school-cyan/10 hover:bg-school-cyan/20 border border-school-cyan/30 text-school-cyan text-xs font-semibold transition-colors font-mono"
-                          title="שלח אימייל ישיר למורה"
-                        >
-                          <Mail className="w-3.5 h-3.5" />
-                          <span dir="ltr">{selectedStaffForModal.email}</span>
-                        </a>
+                      <div className="pt-2 max-w-[220px]">
+                        <EmailContactButton
+                          email={selectedStaffForModal.email}
+                          name={selectedStaffForModal.name}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-school-cyan/10 hover:bg-school-cyan/20 border border-school-cyan/30 text-school-cyan text-xs font-semibold transition-colors cursor-pointer"
+                        />
                       </div>
                     )}
                   </div>

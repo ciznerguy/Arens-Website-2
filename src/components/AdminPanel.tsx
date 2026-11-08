@@ -987,7 +987,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
         console.error(e);
       }
     } else {
-      setSocialFacebook('https://www.facebook.com/arens.pt');
+      setSocialFacebook('https://www.facebook.com/arens.school');
       setSocialInstagram('https://www.instagram.com/arens_school_pt');
       setSocialYoutube('https://www.youtube.com/@ArensSchool');
     }

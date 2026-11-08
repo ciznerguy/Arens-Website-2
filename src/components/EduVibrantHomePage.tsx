@@ -35,6 +35,7 @@ import { SchoolMajor, StaffMember } from '../types';
 import { NewsArticle } from '../data';
 import { allTeachersList } from '../data/teachersList';
 import { TeacherAvatar } from './TeacherAvatar';
+import { EmailContactButton } from './EmailContactButton';
 
 interface EduVibrantHomePageProps {
   onNavigateToPage: (url: string) => void;
@@ -489,14 +490,11 @@ export default function EduVibrantHomePage({
 
               {member.email && (
                 <div className="w-full pt-3 mt-3 border-t border-slate-100" onClick={(e) => e.stopPropagation()}>
-                  <a 
-                    href={`mailto:${member.email}?subject=${encodeURIComponent(`פנייה אל ${member.name} - שש שנתי משה ארנס`)}`}
-                    className="w-full py-2 px-3 bg-[#EAEDFF] hover:bg-[#DAE2FD] rounded-full text-[#0037B0] font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-transform"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Mail className="w-3.5 h-3.5" />
-                    <span>פנייה במייל</span>
-                  </a>
+                  <EmailContactButton
+                    email={member.email}
+                    name={member.name}
+                    className="w-full py-2 px-3 bg-[#EAEDFF] hover:bg-[#DAE2FD] rounded-full text-[#0037B0] font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-transform cursor-pointer"
+                  />
                 </div>
               )}
             </div>
@@ -610,7 +608,7 @@ export default function EduVibrantHomePage({
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-[#0F172A]">עקבו אחרינו:</span>
           <a 
-            href="https://www.facebook.com/share/14JYrtChwMX/?mibextid=wwXIfr" 
+            href="https://www.facebook.com/arens.school" 
             target="_blank" 
             rel="noopener noreferrer" 
             className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-colors"
@@ -780,11 +778,6 @@ export default function EduVibrantHomePage({
                             <span>פתיחת כרטיס מלא</span>
                             <ChevronLeft className="w-3 h-3 group-hover:-translate-x-0.5 transition-transform" />
                           </span>
-                          {teacher.email && (
-                            <span className="text-slate-400 font-mono text-[10px]" dir="ltr">
-                              {teacher.email}
-                            </span>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -883,23 +876,13 @@ export default function EduVibrantHomePage({
                 {/* Email Contact (Official Email Only - No Phone Numbers) */}
                 {selectedStaffMember.email && (
                   <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-100 space-y-2.5">
-                    <div className="flex items-center justify-between text-xs font-bold text-[#0037B0]">
-                      <span className="flex items-center gap-1.5">
-                        <Mail className="w-4 h-4 text-[#1D4ED8]" />
-                        <span>דואר אלקטרוני רשמי:</span>
-                      </span>
-                      <span className="font-mono text-slate-600 text-xs select-all" dir="ltr">
-                        {selectedStaffMember.email}
-                      </span>
-                    </div>
-
-                    <a
-                      href={`mailto:${selectedStaffMember.email}?subject=${encodeURIComponent(`פנייה אל ${selectedStaffMember.name} - שש שנתי משה ארנס`)}`}
-                      className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-[#1D4ED8] hover:bg-blue-800 text-white font-black text-xs sm:text-sm shadow-md active:scale-95 transition-all"
-                    >
-                      <Mail className="w-4 h-4" />
-                      <span>שליחת פנייה ישירה בדוא״ל</span>
-                    </a>
+                    <EmailContactButton
+                      email={selectedStaffMember.email}
+                      name={selectedStaffMember.name}
+                      label="שליחת פנייה ישירה בדוא״ל"
+                      iconClassName="w-4 h-4"
+                      className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-[#1D4ED8] hover:bg-blue-800 text-white font-black text-xs sm:text-sm shadow-md active:scale-95 transition-all cursor-pointer"
+                    />
                   </div>
                 )}
               </div>
