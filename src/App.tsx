@@ -145,6 +145,12 @@ export default function App() {
   const [hoveredNavIndex, setHoveredNavIndex] = useState<number | null>(null);
   const navHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Every move to a different page starts at the top of the page.
+  // Links to a section inside a page (anchors) scroll there afterwards, so they still work.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+  }, [activeTab, selectedInternalPageUrl, selectedMajorId]);
+
   const handleNavMouseEnter = (idx: number) => {
     if (navHoverTimeoutRef.current) {
       clearTimeout(navHoverTimeoutRef.current);
