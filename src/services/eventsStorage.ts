@@ -540,6 +540,15 @@ export const registerTeacherForWorkshop = async (
     };
   }
 
+  // Visitors may only create registrations, not delete them, so a switch to another workshop
+  // would leave two registrations. Until switching is handled safely, it goes through the coordinator.
+  if (existingRegIndex >= 0) {
+    return {
+      success: false,
+      error: `הנך כבר רשום/ה לסדנה "${allRegistrations[existingRegIndex].workshopTitle}". להחלפת סדנה יש לפנות לרכז/ת האירוע.`
+    };
+  }
+
   const capacity = getWorkshopCapacity(workshop, event.id, allRegistrations);
   if (capacity.isFull) {
     return {

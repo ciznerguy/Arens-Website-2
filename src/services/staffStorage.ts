@@ -235,7 +235,8 @@ export const saveStoredStaffMembers = (staff: StaffMember[]): void => {
   }
 };
 
-export const saveStaffMember = async (member: StaffMember): Promise<void> => {
+// Returns true when the database accepted the save, false when it was refused (for example no permission).
+export const saveStaffMember = async (member: StaffMember): Promise<boolean> => {
   // If editing or saving Guy Tsizner, always route to staff-108
   let targetMember = member;
   if (isGuyTsizner(member)) {
@@ -253,7 +254,9 @@ export const saveStaffMember = async (member: StaffMember): Promise<void> => {
   try {
     await setDoc(doc(db, STAFF_COLLECTION_NAME, targetMember.id), targetMember);
   } catch (err) {
+    // Refused by the database (e.g. no permission): keep the local copy unchanged so the screen does not show a save that did not happen
     console.warn('Error saving staff member to Firestore:', err);
+    return false;
   }
 
   const current = getStoredStaffMembers();
@@ -263,6 +266,7 @@ export const saveStaffMember = async (member: StaffMember): Promise<void> => {
 
   const updated = consolidateStaff([...filtered, targetMember]);
   saveStoredStaffMembers(updated);
+  return true;
 };
 
 export const deleteStaffMember = async (id: string): Promise<void> => {

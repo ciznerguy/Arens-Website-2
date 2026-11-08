@@ -253,8 +253,8 @@ export const processGoogleLoginResult = async (
         email: cleanEmail,
         imageUrl: matchedMember.imageUrl || profile.picture || ''
       };
-      await saveStaffMember(updatedStaff);
-      updatedProfile = true;
+      // Only report the update when the database actually accepted it
+      updatedProfile = await saveStaffMember(updatedStaff);
     } else if (!matchedMember.imageUrl && profile.picture) {
       // Opportunistically save user photo from Google profile
       const updatedStaff: StaffMember = {

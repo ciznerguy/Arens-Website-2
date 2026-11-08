@@ -58,7 +58,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורת שילוב חט\"נ",
     "email": "1001980796@taded.org.il",
     "bio": "מורת שילוב בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-6.jpeg",
     "isManagement": false
   },
   {
@@ -428,7 +428,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "רכזת מגמת מידע ונתונים ומורה למידע ונתונים חט\"ע",
     "email": "1002360965@taded.org.il",
     "bio": "רכזת מגמת מידע ונתונים (דאטה אנליסט) ומורה למידע ונתונים בחטיבה העליונה.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-43.jpeg",
     "isManagement": false
   },
   {
@@ -448,7 +448,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לשל\"ח חט\"נ",
     "email": "nehorayha123@gmail.com",
     "bio": "מורה לשל\"ח בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-45.jpeg",
     "isManagement": false
   },
   {
@@ -842,16 +842,6 @@ export const allTeachersList: StaffMember[] = [
     "isManagement": false
   },
   {
-    "id": "staff-85",
-    "name": "מורג מסינגר",
-    "role": "מחנכת י'3 מורה לאנגלית וספרות חט\"ע",
-    "roleDescription": "מחנכת י'3 מורה לאנגלית וספרות חט\"ע",
-    "email": "moragmessinger@gmail.com",
-    "bio": "מורה לאנגלית וספרות בחטיבה העליונה.",
-    "imageUrl": "",
-    "isManagement": false
-  },
-  {
     "id": "staff-86",
     "name": "רעות משה דוזלי",
     "role": "מורה ללשון חט\"ע",
@@ -1188,7 +1178,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "רכז שכבה ז' ומחנך ראשי כתה תקשורתית ז 10 חט\"נ",
     "email": "1003361718@taded.org.il",
     "bio": "רכז שכבת ז' ומחנך ראשי כיתה תקשורתית ז10 בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-119.jpeg",
     "isManagement": false
   },
   {
@@ -1358,7 +1348,7 @@ export const allTeachersList: StaffMember[] = [
     "roleDescription": "מורה לשילוב חט\"נ",
     "email": "1002185637@taded.org.il",
     "bio": "מורת שילוב בחטיבת הנעורים.",
-    "imageUrl": "",
+    "imageUrl": "/assets/aistudio/staff-136.jpeg",
     "isManagement": false
   }
 ];

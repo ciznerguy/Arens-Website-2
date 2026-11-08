@@ -86,3 +86,163 @@ body::before {
   unicode-bidi: isolate;
 }
 
+
+/* ==========================================================================
+   Light admin panel (only when the site uses the light EduVibrant design).
+   The panel was built dark with hardcoded colors. Instead of editing hundreds
+   of class names, this block flips the colors inside .admin-light only:
+   white text becomes dark, the light slate grays become dark grays, and the
+   hardcoded dark backgrounds become light. No logic changes.
+   ========================================================================== */
+.admin-light {
+  --color-white: #0f172a;
+  --color-black: #ffffff;
+  --color-slate-50: #0f172a;
+  --color-slate-100: #1e293b;
+  --color-slate-200: #334155;
+  --color-slate-300: #475569;
+  --color-slate-400: #64748b;
+  --color-slate-500: #64748b;
+  --color-slate-600: #94a3b8;
+  --color-slate-700: #e2e8f0;
+  --color-slate-800: #f1f5f9;
+  --color-slate-900: #f8fafc;
+  --color-slate-950: #ffffff;
+  color: #0f172a;
+}
+
+/* Solid colored buttons and badges keep white text on their color */
+.admin-light :is(
+  .bg-school-cyan, [class*="from-school-cyan"],
+  .bg-blue-500, .bg-blue-600, .bg-blue-700, .bg-indigo-500, .bg-indigo-600, .bg-violet-500, .bg-violet-600,
+  .bg-purple-500, .bg-purple-600, .bg-emerald-500, .bg-emerald-600, .bg-green-500, .bg-green-600,
+  .bg-red-500, .bg-red-600, .bg-rose-500, .bg-rose-600, .bg-amber-500, .bg-amber-600, .bg-orange-500,
+  .bg-cyan-500, .bg-cyan-600, .bg-teal-500, .bg-teal-600, .bg-sky-500, .bg-sky-600
+) {
+  --color-white: #ffffff;
+  --color-slate-900: #ffffff;
+  --color-slate-950: #ffffff;
+}
+.admin-light .text-\[\#0a1122\] { color: #ffffff; }
+
+/* Light colored buttons and badges (yellow, amber, lime, light cyan) keep their dark text */
+.admin-light :is(
+  .bg-amber-300, .bg-amber-400, .bg-yellow-300, .bg-yellow-400, .bg-lime-300, .bg-lime-400,
+  .bg-cyan-300, .bg-cyan-400, .bg-emerald-300, .bg-emerald-400, .bg-orange-300, .bg-orange-400,
+  .bg-white
+) {
+  --color-slate-900: #0f172a;
+  --color-slate-950: #0f172a;
+}
+
+/* Hardcoded dark surfaces become light.
+   General rule first: any hardcoded hex background starting with #0 or #1 is a dark navy shade. */
+.admin-light [class*="bg-[#0"],
+.admin-light [class*="bg-[#1"] { background-color: #ffffff; }
+.admin-light [class*="from-[#0"],
+.admin-light [class*="from-[#1"] { --tw-gradient-from: #eef2ff; }
+.admin-light [class*="via-[#0"],
+.admin-light [class*="via-[#1"] { --tw-gradient-via: #f5f7ff; }
+.admin-light [class*="to-[#0"],
+.admin-light [class*="to-[#1"] { --tw-gradient-to: #ffffff; }
+.admin-light .bg-\[\#0d1527\] { background-color: #f1f5f9; }
+.admin-light .bg-\[\#080d19\] { background-color: #f8fafc; }
+.admin-light .bg-\[\#080d19\]\/30,
+.admin-light .bg-\[\#080d19\]\/40,
+.admin-light .bg-\[\#080d19\]\/60,
+.admin-light .bg-\[\#080d19\]\/80 { background-color: rgba(241, 245, 249, 0.85); }
+.admin-light .bg-\[\#101b33\],
+.admin-light .bg-\[\#121c32\],
+.admin-light .bg-\[\#121c33\],
+.admin-light .bg-\[\#111a2f\],
+.admin-light .bg-\[\#13223e\] { background-color: #ffffff; }
+.admin-light .bg-\[\#0b1222\],
+.admin-light .bg-\[\#0c1426\],
+.admin-light .bg-\[\#0a101f\],
+.admin-light .bg-\[\#090f1d\] { background-color: #f8fafc; }
+.admin-light .bg-\[\#0a101f\]\/50 { background-color: rgba(248, 250, 252, 0.9); }
+.admin-light .bg-\[\#150a10\] { background-color: #fff1f2; }
+.admin-light .border-\[\#080d19\] { border-color: #e2e8f0; }
+.admin-light :is(.from-\[\#142345\], .from-\[\#13203c\], .from-\[\#121f38\]) { --tw-gradient-from: #eef2ff; }
+.admin-light :is(.via-\[\#101b33\], .via-\[\#0f192f\]) { --tw-gradient-via: #f5f7ff; }
+.admin-light :is(.to-\[\#0c1424\], .to-\[\#122244\]) { --tw-gradient-to: #ffffff; }
+
+/* Native dropdown lists: dark text on a light list */
+.admin-light select,
+.admin-light option {
+  color: #0f172a;
+  background-color: #ffffff;
+}
+.admin-light input::placeholder,
+.admin-light textarea::placeholder { color: #94a3b8; }
+
+/* Pale colored text (shades 100-400) was made for a dark background; on light it gets the 700 shade */
+.admin-light [class*="text-red-100"],
+.admin-light [class*="text-red-200"],
+.admin-light [class*="text-red-300"],
+.admin-light [class*="text-red-400"] { color: var(--color-red-700); }
+.admin-light [class*="text-orange-100"],
+.admin-light [class*="text-orange-200"],
+.admin-light [class*="text-orange-300"],
+.admin-light [class*="text-orange-400"] { color: var(--color-orange-700); }
+.admin-light [class*="text-amber-100"],
+.admin-light [class*="text-amber-200"],
+.admin-light [class*="text-amber-300"],
+.admin-light [class*="text-amber-400"] { color: var(--color-amber-700); }
+.admin-light [class*="text-yellow-100"],
+.admin-light [class*="text-yellow-200"],
+.admin-light [class*="text-yellow-300"],
+.admin-light [class*="text-yellow-400"] { color: var(--color-yellow-700); }
+.admin-light [class*="text-lime-100"],
+.admin-light [class*="text-lime-200"],
+.admin-light [class*="text-lime-300"],
+.admin-light [class*="text-lime-400"] { color: var(--color-lime-700); }
+.admin-light [class*="text-green-100"],
+.admin-light [class*="text-green-200"],
+.admin-light [class*="text-green-300"],
+.admin-light [class*="text-green-400"] { color: var(--color-green-700); }
+.admin-light [class*="text-emerald-100"],
+.admin-light [class*="text-emerald-200"],
+.admin-light [class*="text-emerald-300"],
+.admin-light [class*="text-emerald-400"] { color: var(--color-emerald-700); }
+.admin-light [class*="text-teal-100"],
+.admin-light [class*="text-teal-200"],
+.admin-light [class*="text-teal-300"],
+.admin-light [class*="text-teal-400"] { color: var(--color-teal-700); }
+.admin-light [class*="text-cyan-100"],
+.admin-light [class*="text-cyan-200"],
+.admin-light [class*="text-cyan-300"],
+.admin-light [class*="text-cyan-400"] { color: var(--color-cyan-700); }
+.admin-light [class*="text-sky-100"],
+.admin-light [class*="text-sky-200"],
+.admin-light [class*="text-sky-300"],
+.admin-light [class*="text-sky-400"] { color: var(--color-sky-700); }
+.admin-light [class*="text-blue-100"],
+.admin-light [class*="text-blue-200"],
+.admin-light [class*="text-blue-300"],
+.admin-light [class*="text-blue-400"] { color: var(--color-blue-700); }
+.admin-light [class*="text-indigo-100"],
+.admin-light [class*="text-indigo-200"],
+.admin-light [class*="text-indigo-300"],
+.admin-light [class*="text-indigo-400"] { color: var(--color-indigo-700); }
+.admin-light [class*="text-violet-100"],
+.admin-light [class*="text-violet-200"],
+.admin-light [class*="text-violet-300"],
+.admin-light [class*="text-violet-400"] { color: var(--color-violet-700); }
+.admin-light [class*="text-purple-100"],
+.admin-light [class*="text-purple-200"],
+.admin-light [class*="text-purple-300"],
+.admin-light [class*="text-purple-400"] { color: var(--color-purple-700); }
+.admin-light [class*="text-fuchsia-100"],
+.admin-light [class*="text-fuchsia-200"],
+.admin-light [class*="text-fuchsia-300"],
+.admin-light [class*="text-fuchsia-400"] { color: var(--color-fuchsia-700); }
+.admin-light [class*="text-pink-100"],
+.admin-light [class*="text-pink-200"],
+.admin-light [class*="text-pink-300"],
+.admin-light [class*="text-pink-400"] { color: var(--color-pink-700); }
+.admin-light [class*="text-rose-100"],
+.admin-light [class*="text-rose-200"],
+.admin-light [class*="text-rose-300"],
+.admin-light [class*="text-rose-400"] { color: var(--color-rose-700); }
+.admin-light :is(.bg-school-cyan, [class*="from-school-cyan"], .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600, .bg-red-600, .bg-rose-600, .bg-violet-600, .bg-purple-600) [class*="text-"] { color: inherit; }

@@ -1,30 +1,83 @@
 rules_version = '2';
+
+// Stage 3A (2026-11-08): the public can read the site and create a workshop registration.
+// Only the admins listed in access/editors (emails) can change content.
+// A signed-in staff member can update a few fields of their own staff card.
+// These rules are published from the Firebase console; Netlify does not deploy them.
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /events/{eventId} {
-      allow read, write: if true;
+
+    function signedIn() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && request.auth.token.email_verified == true;
     }
-    match /registrations/{registrationId} {
-      allow read, write: if true;
+
+    function myEmail() {
+      return request.auth.token.email.lower();
     }
-    match /majors/{majorId} {
-      allow read, write: if true;
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/access/editors)
+        && myEmail() in get(/databases/$(database)/documents/access/editors).data.emails;
     }
-    match /news/{newsId} {
-      allow read, write: if true;
+
+    function shortString(v, maxLen) {
+      return v is string && v.size() <= maxLen;
     }
-    match /staff/{staffId} {
-      allow read, write: if true;
+
+    // A new registration from the public form: only the known fields, sensible sizes.
+    function validRegistration() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['id', 'eventId', 'workshopId', 'workshopTitle', 'fullName', 'phone', 'email',
+                               'roleOrSubject', 'notes', 'registeredAt', 'room', 'timeSlot', 'instructor',
+                               'syncedToGoogleSheet'])
+        && d.keys().hasAll(['eventId', 'workshopId', 'fullName', 'phone', 'email'])
+        && shortString(d.eventId, 100)
+        && shortString(d.workshopId, 100)
+        && shortString(d.fullName, 100) && d.fullName.size() > 1
+        && shortString(d.phone, 30)
+        && shortString(d.email, 120)
+        && (!('notes' in d) || shortString(d.notes, 1000))
+        && (!('roleOrSubject' in d) || shortString(d.roleOrSubject, 200))
+        && (!('syncedToGoogleSheet' in d) || d.syncedToGoogleSheet == false);
     }
-    match /settings/{settingId} {
-      allow read, write: if true;
+
+    // Admin list: readable only by admins, changed only from the Firebase console.
+    match /access/{docId} {
+      allow read: if isAdmin();
+      allow write: if false;
     }
-    match /pages/{pageId} {
-      allow read, write: if true;
+
+    // Workshop registrations. Reading stays open until stage 2 moves seat counting to a separate collection.
+    match /registrations/{regId} {
+      allow read: if true;
+      allow create: if validRegistration();
+      allow update, delete: if isAdmin();
     }
-    match /{document=**} {
-      allow read, write: if true;
+
+    // Staff cards: admins edit everything; a teacher edits only bio, photo and role description on their own card.
+    match /staff_v3/{staffId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (signedIn()
+            && resource.data.email is string
+            && resource.data.email.lower() == myEmail()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bio', 'imageUrl', 'roleDescription']));
     }
+
+    // All other site content: public read, admin write.
+    match /events/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /majors/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /news/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /settings/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /pages/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /staff/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /tikshuv_guides/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /tikshuv_settings/{docId} { allow read: if true; allow write: if isAdmin(); }
+
+    // Anything not listed above is closed.
   }
 }
-

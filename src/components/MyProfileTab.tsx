@@ -156,7 +156,11 @@ export const MyProfileTab: React.FC<MyProfileTabProps> = ({
         isManagement: isGuy ? false : isManagement
       };
 
-      await saveStaffMember(updatedMember);
+      const saved = await saveStaffMember(updatedMember);
+      if (!saved) {
+        setErrorMessage('השמירה נדחתה. ניתן לעדכן רק את התיאור, התמונה ותיאור התפקיד בכרטיס שלך, וההתחברות צריכה להיות עם המייל הרשום בכרטיס. לשינויים אחרים יש לפנות לרכז התקשוב.');
+        return;
+      }
       if (onProfileUpdated) {
         onProfileUpdated(updatedMember);
       }

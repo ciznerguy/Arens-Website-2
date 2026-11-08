@@ -2723,8 +2723,8 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   }, [allPagesMap, mainPageKey, cleanActiveGrade]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-school-bg/95 backdrop-blur-md p-0 text-right font-sans">
-      
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-school-bg/95 backdrop-blur-md p-0 text-right font-sans ${activeTheme === 'edu-playful-light' ? 'admin-light' : ''}`}>
+
       <div className="relative bg-[#0d1527] w-full h-full flex flex-col overflow-hidden shadow-2xl">
         
         {/* Header Block */}
