@@ -111,8 +111,37 @@ body::before {
   color: #0f172a;
 }
 
+/* Site layer: only white text turns dark. The slate scale is not flipped here, because some pages
+   (e.g. the major pages) were designed light and use slate-100 buttons; instead, pale slate text
+   darkens and dark slate surfaces lighten, class by class. */
+.site-light {
+  --color-white: #0f172a;
+  color: #0f172a;
+}
+.site-light [class*="text-slate-100"], .site-light [class*="text-gray-100"],
+.site-light [class*="text-slate-200"], .site-light [class*="text-gray-200"],
+.site-light [class*="text-slate-300"], .site-light [class*="text-gray-300"],
+.site-light [class*="text-slate-400"], .site-light [class*="text-gray-400"] { color: var(--color-slate-600); }
+.site-light [class~="bg-slate-700"], .site-light [class*="bg-slate-700/"],
+.site-light [class~="bg-slate-800"], .site-light [class*="bg-slate-800/"],
+.site-light [class~="bg-slate-900"], .site-light [class*="bg-slate-900/"],
+.site-light [class~="bg-slate-950"], .site-light [class*="bg-slate-950/"],
+.site-light [class~="bg-gray-700"], .site-light [class*="bg-gray-700/"],
+.site-light [class~="bg-gray-800"], .site-light [class*="bg-gray-800/"],
+.site-light [class~="bg-gray-900"], .site-light [class*="bg-gray-900/"],
+.site-light [class~="bg-gray-950"], .site-light [class*="bg-gray-950/"],
+.site-light [class~="bg-zinc-700"], .site-light [class*="bg-zinc-700/"],
+.site-light [class~="bg-zinc-800"], .site-light [class*="bg-zinc-800/"],
+.site-light [class~="bg-zinc-900"], .site-light [class*="bg-zinc-900/"],
+.site-light [class~="bg-zinc-950"], .site-light [class*="bg-zinc-950/"],
+.site-light [class~="bg-neutral-700"], .site-light [class*="bg-neutral-700/"],
+.site-light [class~="bg-neutral-800"], .site-light [class*="bg-neutral-800/"],
+.site-light [class~="bg-neutral-900"], .site-light [class*="bg-neutral-900/"],
+.site-light [class~="bg-neutral-950"], .site-light [class*="bg-neutral-950/"] { background-color: #f1f5f9; }
+.site-light [class*="border-slate-700"], .site-light [class*="border-slate-800"], .site-light [class*="border-slate-900"] { border-color: #e2e8f0; }
+
 /* Solid colored buttons and badges keep white text on their color */
-.admin-light :is(
+:is(.admin-light, .site-light) :is(
   .bg-school-cyan, [class*="from-school-cyan"],
   .bg-blue-500, .bg-blue-600, .bg-blue-700, .bg-indigo-500, .bg-indigo-600, .bg-violet-500, .bg-violet-600,
   .bg-purple-500, .bg-purple-600, .bg-emerald-500, .bg-emerald-600, .bg-green-500, .bg-green-600,
@@ -123,10 +152,10 @@ body::before {
   --color-slate-900: #ffffff;
   --color-slate-950: #ffffff;
 }
-.admin-light .text-\[\#0a1122\] { color: #ffffff; }
+:is(.admin-light, .site-light) .text-\[\#0a1122\] { color: #ffffff; }
 
 /* Light colored buttons and badges (yellow, amber, lime, light cyan) keep their dark text */
-.admin-light :is(
+:is(.admin-light, .site-light) :is(
   .bg-amber-300, .bg-amber-400, .bg-yellow-300, .bg-yellow-400, .bg-lime-300, .bg-lime-400,
   .bg-cyan-300, .bg-cyan-400, .bg-emerald-300, .bg-emerald-400, .bg-orange-300, .bg-orange-400,
   .bg-white
@@ -168,81 +197,244 @@ body::before {
 .admin-light :is(.to-\[\#0c1424\], .to-\[\#122244\]) { --tw-gradient-to: #ffffff; }
 
 /* Native dropdown lists: dark text on a light list */
-.admin-light select,
-.admin-light option {
+:is(.admin-light, .site-light) select,
+:is(.admin-light, .site-light) option {
   color: #0f172a;
   background-color: #ffffff;
 }
-.admin-light input::placeholder,
-.admin-light textarea::placeholder { color: #94a3b8; }
+:is(.admin-light, .site-light) input::placeholder,
+:is(.admin-light, .site-light) textarea::placeholder { color: #94a3b8; }
 
 /* Pale colored text (shades 100-400) was made for a dark background; on light it gets the 700 shade */
-.admin-light [class*="text-red-100"],
-.admin-light [class*="text-red-200"],
-.admin-light [class*="text-red-300"],
-.admin-light [class*="text-red-400"] { color: var(--color-red-700); }
-.admin-light [class*="text-orange-100"],
-.admin-light [class*="text-orange-200"],
-.admin-light [class*="text-orange-300"],
-.admin-light [class*="text-orange-400"] { color: var(--color-orange-700); }
-.admin-light [class*="text-amber-100"],
-.admin-light [class*="text-amber-200"],
-.admin-light [class*="text-amber-300"],
-.admin-light [class*="text-amber-400"] { color: var(--color-amber-700); }
-.admin-light [class*="text-yellow-100"],
-.admin-light [class*="text-yellow-200"],
-.admin-light [class*="text-yellow-300"],
-.admin-light [class*="text-yellow-400"] { color: var(--color-yellow-700); }
-.admin-light [class*="text-lime-100"],
-.admin-light [class*="text-lime-200"],
-.admin-light [class*="text-lime-300"],
-.admin-light [class*="text-lime-400"] { color: var(--color-lime-700); }
-.admin-light [class*="text-green-100"],
-.admin-light [class*="text-green-200"],
-.admin-light [class*="text-green-300"],
-.admin-light [class*="text-green-400"] { color: var(--color-green-700); }
-.admin-light [class*="text-emerald-100"],
-.admin-light [class*="text-emerald-200"],
-.admin-light [class*="text-emerald-300"],
-.admin-light [class*="text-emerald-400"] { color: var(--color-emerald-700); }
-.admin-light [class*="text-teal-100"],
-.admin-light [class*="text-teal-200"],
-.admin-light [class*="text-teal-300"],
-.admin-light [class*="text-teal-400"] { color: var(--color-teal-700); }
-.admin-light [class*="text-cyan-100"],
-.admin-light [class*="text-cyan-200"],
-.admin-light [class*="text-cyan-300"],
-.admin-light [class*="text-cyan-400"] { color: var(--color-cyan-700); }
-.admin-light [class*="text-sky-100"],
-.admin-light [class*="text-sky-200"],
-.admin-light [class*="text-sky-300"],
-.admin-light [class*="text-sky-400"] { color: var(--color-sky-700); }
-.admin-light [class*="text-blue-100"],
-.admin-light [class*="text-blue-200"],
-.admin-light [class*="text-blue-300"],
-.admin-light [class*="text-blue-400"] { color: var(--color-blue-700); }
-.admin-light [class*="text-indigo-100"],
-.admin-light [class*="text-indigo-200"],
-.admin-light [class*="text-indigo-300"],
-.admin-light [class*="text-indigo-400"] { color: var(--color-indigo-700); }
-.admin-light [class*="text-violet-100"],
-.admin-light [class*="text-violet-200"],
-.admin-light [class*="text-violet-300"],
-.admin-light [class*="text-violet-400"] { color: var(--color-violet-700); }
-.admin-light [class*="text-purple-100"],
-.admin-light [class*="text-purple-200"],
-.admin-light [class*="text-purple-300"],
-.admin-light [class*="text-purple-400"] { color: var(--color-purple-700); }
-.admin-light [class*="text-fuchsia-100"],
-.admin-light [class*="text-fuchsia-200"],
-.admin-light [class*="text-fuchsia-300"],
-.admin-light [class*="text-fuchsia-400"] { color: var(--color-fuchsia-700); }
-.admin-light [class*="text-pink-100"],
-.admin-light [class*="text-pink-200"],
-.admin-light [class*="text-pink-300"],
-.admin-light [class*="text-pink-400"] { color: var(--color-pink-700); }
-.admin-light [class*="text-rose-100"],
-.admin-light [class*="text-rose-200"],
-.admin-light [class*="text-rose-300"],
-.admin-light [class*="text-rose-400"] { color: var(--color-rose-700); }
-.admin-light :is(.bg-school-cyan, [class*="from-school-cyan"], .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600, .bg-red-600, .bg-rose-600, .bg-violet-600, .bg-purple-600) [class*="text-"] { color: inherit; }
+:is(.admin-light, .site-light) [class*="text-red-100"],
+:is(.admin-light, .site-light) [class*="text-red-200"],
+:is(.admin-light, .site-light) [class*="text-red-300"],
+:is(.admin-light, .site-light) [class*="text-red-400"] { color: var(--color-red-700); }
+:is(.admin-light, .site-light) [class*="text-orange-100"],
+:is(.admin-light, .site-light) [class*="text-orange-200"],
+:is(.admin-light, .site-light) [class*="text-orange-300"],
+:is(.admin-light, .site-light) [class*="text-orange-400"] { color: var(--color-orange-700); }
+:is(.admin-light, .site-light) [class*="text-amber-100"],
+:is(.admin-light, .site-light) [class*="text-amber-200"],
+:is(.admin-light, .site-light) [class*="text-amber-300"],
+:is(.admin-light, .site-light) [class*="text-amber-400"] { color: var(--color-amber-700); }
+:is(.admin-light, .site-light) [class*="text-yellow-100"],
+:is(.admin-light, .site-light) [class*="text-yellow-200"],
+:is(.admin-light, .site-light) [class*="text-yellow-300"],
+:is(.admin-light, .site-light) [class*="text-yellow-400"] { color: var(--color-yellow-700); }
+:is(.admin-light, .site-light) [class*="text-lime-100"],
+:is(.admin-light, .site-light) [class*="text-lime-200"],
+:is(.admin-light, .site-light) [class*="text-lime-300"],
+:is(.admin-light, .site-light) [class*="text-lime-400"] { color: var(--color-lime-700); }
+:is(.admin-light, .site-light) [class*="text-green-100"],
+:is(.admin-light, .site-light) [class*="text-green-200"],
+:is(.admin-light, .site-light) [class*="text-green-300"],
+:is(.admin-light, .site-light) [class*="text-green-400"] { color: var(--color-green-700); }
+:is(.admin-light, .site-light) [class*="text-emerald-100"],
+:is(.admin-light, .site-light) [class*="text-emerald-200"],
+:is(.admin-light, .site-light) [class*="text-emerald-300"],
+:is(.admin-light, .site-light) [class*="text-emerald-400"] { color: var(--color-emerald-700); }
+:is(.admin-light, .site-light) [class*="text-teal-100"],
+:is(.admin-light, .site-light) [class*="text-teal-200"],
+:is(.admin-light, .site-light) [class*="text-teal-300"],
+:is(.admin-light, .site-light) [class*="text-teal-400"] { color: var(--color-teal-700); }
+:is(.admin-light, .site-light) [class*="text-cyan-100"],
+:is(.admin-light, .site-light) [class*="text-cyan-200"],
+:is(.admin-light, .site-light) [class*="text-cyan-300"],
+:is(.admin-light, .site-light) [class*="text-cyan-400"] { color: var(--color-cyan-700); }
+:is(.admin-light, .site-light) [class*="text-sky-100"],
+:is(.admin-light, .site-light) [class*="text-sky-200"],
+:is(.admin-light, .site-light) [class*="text-sky-300"],
+:is(.admin-light, .site-light) [class*="text-sky-400"] { color: var(--color-sky-700); }
+:is(.admin-light, .site-light) [class*="text-blue-100"],
+:is(.admin-light, .site-light) [class*="text-blue-200"],
+:is(.admin-light, .site-light) [class*="text-blue-300"],
+:is(.admin-light, .site-light) [class*="text-blue-400"] { color: var(--color-blue-700); }
+:is(.admin-light, .site-light) [class*="text-indigo-100"],
+:is(.admin-light, .site-light) [class*="text-indigo-200"],
+:is(.admin-light, .site-light) [class*="text-indigo-300"],
+:is(.admin-light, .site-light) [class*="text-indigo-400"] { color: var(--color-indigo-700); }
+:is(.admin-light, .site-light) [class*="text-violet-100"],
+:is(.admin-light, .site-light) [class*="text-violet-200"],
+:is(.admin-light, .site-light) [class*="text-violet-300"],
+:is(.admin-light, .site-light) [class*="text-violet-400"] { color: var(--color-violet-700); }
+:is(.admin-light, .site-light) [class*="text-purple-100"],
+:is(.admin-light, .site-light) [class*="text-purple-200"],
+:is(.admin-light, .site-light) [class*="text-purple-300"],
+:is(.admin-light, .site-light) [class*="text-purple-400"] { color: var(--color-purple-700); }
+:is(.admin-light, .site-light) [class*="text-fuchsia-100"],
+:is(.admin-light, .site-light) [class*="text-fuchsia-200"],
+:is(.admin-light, .site-light) [class*="text-fuchsia-300"],
+:is(.admin-light, .site-light) [class*="text-fuchsia-400"] { color: var(--color-fuchsia-700); }
+:is(.admin-light, .site-light) [class*="text-pink-100"],
+:is(.admin-light, .site-light) [class*="text-pink-200"],
+:is(.admin-light, .site-light) [class*="text-pink-300"],
+:is(.admin-light, .site-light) [class*="text-pink-400"] { color: var(--color-pink-700); }
+:is(.admin-light, .site-light) [class*="text-rose-100"],
+:is(.admin-light, .site-light) [class*="text-rose-200"],
+:is(.admin-light, .site-light) [class*="text-rose-300"],
+:is(.admin-light, .site-light) [class*="text-rose-400"] { color: var(--color-rose-700); }
+:is(.admin-light, .site-light) :is(.bg-school-cyan, [class*="from-school-cyan"], .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600, .bg-red-600, .bg-rose-600, .bg-violet-600, .bg-purple-600) [class*="text-"] { color: inherit; }
+
+/* ==========================================================================
+   Site light layer (2026-11-08). Most public pages were built for the dark theme.
+   Inside .site-light (the page content area in the light theme) the shared rules above
+   darken pale text and white text, and the generated rules below turn hardcoded dark
+   hex backgrounds light. Bright hex buttons keep their color and their white text.
+   Generated by measuring each hex color's brightness; no page content changes.
+   ========================================================================== */
+.site-light [class~="bg-[#050811]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#050914]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#050b18]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#060a14]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#070c18]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#080d19]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#080d19]/30"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#080d19]/40"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#080d19]/50"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#080d19]/60"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#080d19]/80"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#080d19]/90"] { background-color: rgba(248, 250, 252, 0.9); }
+.site-light [class~="bg-[#090f1d]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#090f1e]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0B1A3A]/55"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#0F172A]/70"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#0a0508]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0a0f1d]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0a101e]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0a101f]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0a101f]/50"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#0a1122]/20"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#0a1424]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0b101d]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0b1222]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0b1224]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0b1324]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0b1325]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0b1329]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0c1426]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0c1426]/60"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#0c1426]/70"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#0d1527]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0d1629]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0e1626]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0e1628]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0e162b]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0e172a]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0e172c]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#0f172a]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#101b33]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#101b33]/60"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#111a2e]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#111a2f]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#111b31]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#121a2c]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#121c32]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#121c33]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#121c33]/70"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#122143]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#13223e]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#142038]/60"] { background-color: rgba(248, 250, 252, 0.85); }
+.site-light [class~="bg-[#14223d]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#150a10]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#1D4ED8]"] { --color-white: #ffffff; --color-slate-900: #ffffff; }
+.site-light [class~="bg-[#2a4563]"] { background-color: #f8fafc; }
+.site-light [class~="bg-[#9bb865]"] { --color-white: #ffffff; --color-slate-900: #ffffff; }
+.site-light [class~="bg-[#F59E0B]"] { --color-white: #ffffff; --color-slate-900: #ffffff; }
+.site-light [class~="bg-[#de6953]"] { --color-white: #ffffff; --color-slate-900: #ffffff; }
+.site-light [class~="border-[#080d19]"] { border-color: #e2e8f0; }
+.site-light [class~="border-[#0F172A]/06"] { border-color: #e2e8f0; }
+.site-light [class~="border-[#0F172A]/08"] { border-color: #e2e8f0; }
+.site-light [class~="from-[#090f1e]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#0b1324]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#0e1628]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#0f2847]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#101b33]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#111f38]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#120d2a]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#121c33]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#121f38]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#121f3a]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#131f38]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#13203c]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#14213d]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#142345]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#162340]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#181133]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#1a1b32]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#1b153b]"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="from-[#1b153b]/80"] { --tw-gradient-from: #eef2ff; }
+.site-light [class~="text-[#CAD3FF]"] { color: color-mix(in oklab, #CAD3FF 40%, #0f172a); }
+.site-light [class~="text-[#FEA619]"] { color: color-mix(in oklab, #FEA619 40%, #0f172a); }
+.site-light [class~="to-[#050912]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#070c18]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#080d19]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#0a1020]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#0b1329]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#0c1424]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#0c1426]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#0d1424]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#0d1628]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#0f172a]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#0f182c]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#102b42]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#12203a]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#122244]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#122344]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="to-[#122347]"] { --tw-gradient-to: #ffffff; }
+.site-light [class~="via-[#0b1329]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#0d1527]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#0d1629]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#0d172a]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#0d1c38]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#0d213d]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#0e1628]/45"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#0e2238]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#0f192f]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#101b33]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#101c38]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#121c33]"] { --tw-gradient-via: #f5f7ff; }
+.site-light [class~="via-[#191d34]"] { --tw-gradient-via: #f5f7ff; }
+
+/* Areas that sit on a photo or a deliberately dark background keep their original colors */
+.site-light .keep-dark {
+  --color-white: #ffffff;
+  --color-black: #000000;
+}
+.site-light .keep-dark[class],
+.site-light .keep-dark [class] {
+  color: revert-layer;
+  background-color: revert-layer;
+  border-color: revert-layer;
+  --tw-gradient-from: revert-layer;
+  --tw-gradient-via: revert-layer;
+  --tw-gradient-to: revert-layer;
+}
+
+/* Semi-transparent colored badges (e.g. bg-purple-500/80, 50% opacity or more) keep white text */
+.site-light :is([class~="bg-red-500/50"], [class~="bg-red-500/60"], [class~="bg-red-500/70"], [class~="bg-red-500/75"], [class~="bg-red-500/80"], [class~="bg-red-500/85"], [class~="bg-red-500/90"], [class~="bg-red-500/95"], [class~="bg-red-600/50"], [class~="bg-red-600/60"], [class~="bg-red-600/70"], [class~="bg-red-600/75"], [class~="bg-red-600/80"], [class~="bg-red-600/85"], [class~="bg-red-600/90"], [class~="bg-red-600/95"], [class~="bg-red-700/50"], [class~="bg-red-700/60"], [class~="bg-red-700/70"], [class~="bg-red-700/75"], [class~="bg-red-700/80"], [class~="bg-red-700/85"], [class~="bg-red-700/90"], [class~="bg-red-700/95"], [class~="bg-red-800/50"], [class~="bg-red-800/60"], [class~="bg-red-800/70"], [class~="bg-red-800/75"], [class~="bg-red-800/80"], [class~="bg-red-800/85"], [class~="bg-red-800/90"], [class~="bg-red-800/95"], [class~="bg-orange-500/50"], [class~="bg-orange-500/60"], [class~="bg-orange-500/70"], [class~="bg-orange-500/75"], [class~="bg-orange-500/80"], [class~="bg-orange-500/85"], [class~="bg-orange-500/90"], [class~="bg-orange-500/95"], [class~="bg-orange-600/50"], [class~="bg-orange-600/60"], [class~="bg-orange-600/70"], [class~="bg-orange-600/75"], [class~="bg-orange-600/80"], [class~="bg-orange-600/85"], [class~="bg-orange-600/90"], [class~="bg-orange-600/95"], [class~="bg-orange-700/50"], [class~="bg-orange-700/60"], [class~="bg-orange-700/70"], [class~="bg-orange-700/75"], [class~="bg-orange-700/80"], [class~="bg-orange-700/85"], [class~="bg-orange-700/90"], [class~="bg-orange-700/95"], [class~="bg-orange-800/50"], [class~="bg-orange-800/60"], [class~="bg-orange-800/70"], [class~="bg-orange-800/75"], [class~="bg-orange-800/80"], [class~="bg-orange-800/85"], [class~="bg-orange-800/90"], [class~="bg-orange-800/95"], [class~="bg-amber-500/50"], [class~="bg-amber-500/60"], [class~="bg-amber-500/70"], [class~="bg-amber-500/75"], [class~="bg-amber-500/80"], [class~="bg-amber-500/85"], [class~="bg-amber-500/90"], [class~="bg-amber-500/95"], [class~="bg-amber-600/50"], [class~="bg-amber-600/60"], [class~="bg-amber-600/70"], [class~="bg-amber-600/75"], [class~="bg-amber-600/80"], [class~="bg-amber-600/85"], [class~="bg-amber-600/90"], [class~="bg-amber-600/95"], [class~="bg-amber-700/50"], [class~="bg-amber-700/60"], [class~="bg-amber-700/70"], [class~="bg-amber-700/75"], [class~="bg-amber-700/80"], [class~="bg-amber-700/85"], [class~="bg-amber-700/90"], [class~="bg-amber-700/95"], [class~="bg-amber-800/50"], [class~="bg-amber-800/60"], [class~="bg-amber-800/70"], [class~="bg-amber-800/75"], [class~="bg-amber-800/80"], [class~="bg-amber-800/85"], [class~="bg-amber-800/90"], [class~="bg-amber-800/95"], [class~="bg-yellow-500/50"], [class~="bg-yellow-500/60"], [class~="bg-yellow-500/70"], [class~="bg-yellow-500/75"], [class~="bg-yellow-500/80"], [class~="bg-yellow-500/85"], [class~="bg-yellow-500/90"], [class~="bg-yellow-500/95"], [class~="bg-yellow-600/50"], [class~="bg-yellow-600/60"], [class~="bg-yellow-600/70"], [class~="bg-yellow-600/75"], [class~="bg-yellow-600/80"], [class~="bg-yellow-600/85"], [class~="bg-yellow-600/90"], [class~="bg-yellow-600/95"], [class~="bg-yellow-700/50"], [class~="bg-yellow-700/60"], [class~="bg-yellow-700/70"], [class~="bg-yellow-700/75"], [class~="bg-yellow-700/80"], [class~="bg-yellow-700/85"], [class~="bg-yellow-700/90"], [class~="bg-yellow-700/95"], [class~="bg-yellow-800/50"], [class~="bg-yellow-800/60"], [class~="bg-yellow-800/70"], [class~="bg-yellow-800/75"], [class~="bg-yellow-800/80"], [class~="bg-yellow-800/85"], [class~="bg-yellow-800/90"], [class~="bg-yellow-800/95"], [class~="bg-lime-500/50"], [class~="bg-lime-500/60"], [class~="bg-lime-500/70"], [class~="bg-lime-500/75"], [class~="bg-lime-500/80"], [class~="bg-lime-500/85"], [class~="bg-lime-500/90"], [class~="bg-lime-500/95"], [class~="bg-lime-600/50"], [class~="bg-lime-600/60"], [class~="bg-lime-600/70"], [class~="bg-lime-600/75"], [class~="bg-lime-600/80"], [class~="bg-lime-600/85"], [class~="bg-lime-600/90"], [class~="bg-lime-600/95"], [class~="bg-lime-700/50"], [class~="bg-lime-700/60"], [class~="bg-lime-700/70"], [class~="bg-lime-700/75"], [class~="bg-lime-700/80"], [class~="bg-lime-700/85"], [class~="bg-lime-700/90"], [class~="bg-lime-700/95"], [class~="bg-lime-800/50"], [class~="bg-lime-800/60"], [class~="bg-lime-800/70"], [class~="bg-lime-800/75"], [class~="bg-lime-800/80"], [class~="bg-lime-800/85"], [class~="bg-lime-800/90"], [class~="bg-lime-800/95"], [class~="bg-green-500/50"], [class~="bg-green-500/60"], [class~="bg-green-500/70"], [class~="bg-green-500/75"], [class~="bg-green-500/80"], [class~="bg-green-500/85"], [class~="bg-green-500/90"], [class~="bg-green-500/95"], [class~="bg-green-600/50"], [class~="bg-green-600/60"], [class~="bg-green-600/70"], [class~="bg-green-600/75"], [class~="bg-green-600/80"], [class~="bg-green-600/85"], [class~="bg-green-600/90"], [class~="bg-green-600/95"], [class~="bg-green-700/50"], [class~="bg-green-700/60"], [class~="bg-green-700/70"], [class~="bg-green-700/75"], [class~="bg-green-700/80"], [class~="bg-green-700/85"], [class~="bg-green-700/90"], [class~="bg-green-700/95"], [class~="bg-green-800/50"], [class~="bg-green-800/60"], [class~="bg-green-800/70"], [class~="bg-green-800/75"], [class~="bg-green-800/80"], [class~="bg-green-800/85"], [class~="bg-green-800/90"], [class~="bg-green-800/95"], [class~="bg-emerald-500/50"], [class~="bg-emerald-500/60"], [class~="bg-emerald-500/70"], [class~="bg-emerald-500/75"], [class~="bg-emerald-500/80"], [class~="bg-emerald-500/85"], [class~="bg-emerald-500/90"], [class~="bg-emerald-500/95"], [class~="bg-emerald-600/50"], [class~="bg-emerald-600/60"], [class~="bg-emerald-600/70"], [class~="bg-emerald-600/75"], [class~="bg-emerald-600/80"], [class~="bg-emerald-600/85"], [class~="bg-emerald-600/90"], [class~="bg-emerald-600/95"], [class~="bg-emerald-700/50"], [class~="bg-emerald-700/60"], [class~="bg-emerald-700/70"], [class~="bg-emerald-700/75"], [class~="bg-emerald-700/80"], [class~="bg-emerald-700/85"], [class~="bg-emerald-700/90"], [class~="bg-emerald-700/95"], [class~="bg-emerald-800/50"], [class~="bg-emerald-800/60"], [class~="bg-emerald-800/70"], [class~="bg-emerald-800/75"], [class~="bg-emerald-800/80"], [class~="bg-emerald-800/85"], [class~="bg-emerald-800/90"], [class~="bg-emerald-800/95"], [class~="bg-teal-500/50"], [class~="bg-teal-500/60"], [class~="bg-teal-500/70"], [class~="bg-teal-500/75"], [class~="bg-teal-500/80"], [class~="bg-teal-500/85"], [class~="bg-teal-500/90"], [class~="bg-teal-500/95"], [class~="bg-teal-600/50"], [class~="bg-teal-600/60"], [class~="bg-teal-600/70"], [class~="bg-teal-600/75"], [class~="bg-teal-600/80"], [class~="bg-teal-600/85"], [class~="bg-teal-600/90"], [class~="bg-teal-600/95"], [class~="bg-teal-700/50"], [class~="bg-teal-700/60"], [class~="bg-teal-700/70"], [class~="bg-teal-700/75"], [class~="bg-teal-700/80"], [class~="bg-teal-700/85"], [class~="bg-teal-700/90"], [class~="bg-teal-700/95"], [class~="bg-teal-800/50"], [class~="bg-teal-800/60"], [class~="bg-teal-800/70"], [class~="bg-teal-800/75"], [class~="bg-teal-800/80"], [class~="bg-teal-800/85"], [class~="bg-teal-800/90"], [class~="bg-teal-800/95"], [class~="bg-cyan-500/50"], [class~="bg-cyan-500/60"], [class~="bg-cyan-500/70"], [class~="bg-cyan-500/75"], [class~="bg-cyan-500/80"], [class~="bg-cyan-500/85"], [class~="bg-cyan-500/90"], [class~="bg-cyan-500/95"], [class~="bg-cyan-600/50"], [class~="bg-cyan-600/60"], [class~="bg-cyan-600/70"], [class~="bg-cyan-600/75"], [class~="bg-cyan-600/80"], [class~="bg-cyan-600/85"], [class~="bg-cyan-600/90"], [class~="bg-cyan-600/95"], [class~="bg-cyan-700/50"], [class~="bg-cyan-700/60"], [class~="bg-cyan-700/70"], [class~="bg-cyan-700/75"], [class~="bg-cyan-700/80"], [class~="bg-cyan-700/85"], [class~="bg-cyan-700/90"], [class~="bg-cyan-700/95"], [class~="bg-cyan-800/50"], [class~="bg-cyan-800/60"], [class~="bg-cyan-800/70"], [class~="bg-cyan-800/75"], [class~="bg-cyan-800/80"], [class~="bg-cyan-800/85"], [class~="bg-cyan-800/90"], [class~="bg-cyan-800/95"], [class~="bg-sky-500/50"], [class~="bg-sky-500/60"], [class~="bg-sky-500/70"], [class~="bg-sky-500/75"], [class~="bg-sky-500/80"], [class~="bg-sky-500/85"], [class~="bg-sky-500/90"], [class~="bg-sky-500/95"], [class~="bg-sky-600/50"], [class~="bg-sky-600/60"], [class~="bg-sky-600/70"], [class~="bg-sky-600/75"], [class~="bg-sky-600/80"], [class~="bg-sky-600/85"], [class~="bg-sky-600/90"], [class~="bg-sky-600/95"], [class~="bg-sky-700/50"], [class~="bg-sky-700/60"], [class~="bg-sky-700/70"], [class~="bg-sky-700/75"], [class~="bg-sky-700/80"], [class~="bg-sky-700/85"], [class~="bg-sky-700/90"], [class~="bg-sky-700/95"], [class~="bg-sky-800/50"], [class~="bg-sky-800/60"], [class~="bg-sky-800/70"], [class~="bg-sky-800/75"], [class~="bg-sky-800/80"], [class~="bg-sky-800/85"], [class~="bg-sky-800/90"], [class~="bg-sky-800/95"], [class~="bg-blue-500/50"], [class~="bg-blue-500/60"], [class~="bg-blue-500/70"], [class~="bg-blue-500/75"], [class~="bg-blue-500/80"], [class~="bg-blue-500/85"], [class~="bg-blue-500/90"], [class~="bg-blue-500/95"], [class~="bg-blue-600/50"], [class~="bg-blue-600/60"], [class~="bg-blue-600/70"], [class~="bg-blue-600/75"], [class~="bg-blue-600/80"], [class~="bg-blue-600/85"], [class~="bg-blue-600/90"], [class~="bg-blue-600/95"], [class~="bg-blue-700/50"], [class~="bg-blue-700/60"], [class~="bg-blue-700/70"], [class~="bg-blue-700/75"], [class~="bg-blue-700/80"], [class~="bg-blue-700/85"], [class~="bg-blue-700/90"], [class~="bg-blue-700/95"], [class~="bg-blue-800/50"], [class~="bg-blue-800/60"], [class~="bg-blue-800/70"], [class~="bg-blue-800/75"], [class~="bg-blue-800/80"], [class~="bg-blue-800/85"], [class~="bg-blue-800/90"], [class~="bg-blue-800/95"], [class~="bg-indigo-500/50"], [class~="bg-indigo-500/60"], [class~="bg-indigo-500/70"], [class~="bg-indigo-500/75"], [class~="bg-indigo-500/80"], [class~="bg-indigo-500/85"], [class~="bg-indigo-500/90"], [class~="bg-indigo-500/95"], [class~="bg-indigo-600/50"], [class~="bg-indigo-600/60"], [class~="bg-indigo-600/70"], [class~="bg-indigo-600/75"], [class~="bg-indigo-600/80"], [class~="bg-indigo-600/85"], [class~="bg-indigo-600/90"], [class~="bg-indigo-600/95"], [class~="bg-indigo-700/50"], [class~="bg-indigo-700/60"], [class~="bg-indigo-700/70"], [class~="bg-indigo-700/75"], [class~="bg-indigo-700/80"], [class~="bg-indigo-700/85"], [class~="bg-indigo-700/90"], [class~="bg-indigo-700/95"], [class~="bg-indigo-800/50"], [class~="bg-indigo-800/60"], [class~="bg-indigo-800/70"], [class~="bg-indigo-800/75"], [class~="bg-indigo-800/80"], [class~="bg-indigo-800/85"], [class~="bg-indigo-800/90"], [class~="bg-indigo-800/95"], [class~="bg-violet-500/50"], [class~="bg-violet-500/60"], [class~="bg-violet-500/70"], [class~="bg-violet-500/75"], [class~="bg-violet-500/80"], [class~="bg-violet-500/85"], [class~="bg-violet-500/90"], [class~="bg-violet-500/95"], [class~="bg-violet-600/50"], [class~="bg-violet-600/60"], [class~="bg-violet-600/70"], [class~="bg-violet-600/75"], [class~="bg-violet-600/80"], [class~="bg-violet-600/85"], [class~="bg-violet-600/90"], [class~="bg-violet-600/95"], [class~="bg-violet-700/50"], [class~="bg-violet-700/60"], [class~="bg-violet-700/70"], [class~="bg-violet-700/75"], [class~="bg-violet-700/80"], [class~="bg-violet-700/85"], [class~="bg-violet-700/90"], [class~="bg-violet-700/95"], [class~="bg-violet-800/50"], [class~="bg-violet-800/60"], [class~="bg-violet-800/70"], [class~="bg-violet-800/75"], [class~="bg-violet-800/80"], [class~="bg-violet-800/85"], [class~="bg-violet-800/90"], [class~="bg-violet-800/95"], [class~="bg-purple-500/50"], [class~="bg-purple-500/60"], [class~="bg-purple-500/70"], [class~="bg-purple-500/75"], [class~="bg-purple-500/80"], [class~="bg-purple-500/85"], [class~="bg-purple-500/90"], [class~="bg-purple-500/95"], [class~="bg-purple-600/50"], [class~="bg-purple-600/60"], [class~="bg-purple-600/70"], [class~="bg-purple-600/75"], [class~="bg-purple-600/80"], [class~="bg-purple-600/85"], [class~="bg-purple-600/90"], [class~="bg-purple-600/95"], [class~="bg-purple-700/50"], [class~="bg-purple-700/60"], [class~="bg-purple-700/70"], [class~="bg-purple-700/75"], [class~="bg-purple-700/80"], [class~="bg-purple-700/85"], [class~="bg-purple-700/90"], [class~="bg-purple-700/95"], [class~="bg-purple-800/50"], [class~="bg-purple-800/60"], [class~="bg-purple-800/70"], [class~="bg-purple-800/75"], [class~="bg-purple-800/80"], [class~="bg-purple-800/85"], [class~="bg-purple-800/90"], [class~="bg-purple-800/95"], [class~="bg-fuchsia-500/50"], [class~="bg-fuchsia-500/60"], [class~="bg-fuchsia-500/70"], [class~="bg-fuchsia-500/75"], [class~="bg-fuchsia-500/80"], [class~="bg-fuchsia-500/85"], [class~="bg-fuchsia-500/90"], [class~="bg-fuchsia-500/95"], [class~="bg-fuchsia-600/50"], [class~="bg-fuchsia-600/60"], [class~="bg-fuchsia-600/70"], [class~="bg-fuchsia-600/75"], [class~="bg-fuchsia-600/80"], [class~="bg-fuchsia-600/85"], [class~="bg-fuchsia-600/90"], [class~="bg-fuchsia-600/95"], [class~="bg-fuchsia-700/50"], [class~="bg-fuchsia-700/60"], [class~="bg-fuchsia-700/70"], [class~="bg-fuchsia-700/75"], [class~="bg-fuchsia-700/80"], [class~="bg-fuchsia-700/85"], [class~="bg-fuchsia-700/90"], [class~="bg-fuchsia-700/95"], [class~="bg-fuchsia-800/50"], [class~="bg-fuchsia-800/60"], [class~="bg-fuchsia-800/70"], [class~="bg-fuchsia-800/75"], [class~="bg-fuchsia-800/80"], [class~="bg-fuchsia-800/85"], [class~="bg-fuchsia-800/90"], [class~="bg-fuchsia-800/95"], [class~="bg-pink-500/50"], [class~="bg-pink-500/60"], [class~="bg-pink-500/70"], [class~="bg-pink-500/75"], [class~="bg-pink-500/80"], [class~="bg-pink-500/85"], [class~="bg-pink-500/90"], [class~="bg-pink-500/95"], [class~="bg-pink-600/50"], [class~="bg-pink-600/60"], [class~="bg-pink-600/70"], [class~="bg-pink-600/75"], [class~="bg-pink-600/80"], [class~="bg-pink-600/85"], [class~="bg-pink-600/90"], [class~="bg-pink-600/95"], [class~="bg-pink-700/50"], [class~="bg-pink-700/60"], [class~="bg-pink-700/70"], [class~="bg-pink-700/75"], [class~="bg-pink-700/80"], [class~="bg-pink-700/85"], [class~="bg-pink-700/90"], [class~="bg-pink-700/95"], [class~="bg-pink-800/50"], [class~="bg-pink-800/60"], [class~="bg-pink-800/70"], [class~="bg-pink-800/75"], [class~="bg-pink-800/80"], [class~="bg-pink-800/85"], [class~="bg-pink-800/90"], [class~="bg-pink-800/95"], [class~="bg-rose-500/50"], [class~="bg-rose-500/60"], [class~="bg-rose-500/70"], [class~="bg-rose-500/75"], [class~="bg-rose-500/80"], [class~="bg-rose-500/85"], [class~="bg-rose-500/90"], [class~="bg-rose-500/95"], [class~="bg-rose-600/50"], [class~="bg-rose-600/60"], [class~="bg-rose-600/70"], [class~="bg-rose-600/75"], [class~="bg-rose-600/80"], [class~="bg-rose-600/85"], [class~="bg-rose-600/90"], [class~="bg-rose-600/95"], [class~="bg-rose-700/50"], [class~="bg-rose-700/60"], [class~="bg-rose-700/70"], [class~="bg-rose-700/75"], [class~="bg-rose-700/80"], [class~="bg-rose-700/85"], [class~="bg-rose-700/90"], [class~="bg-rose-700/95"], [class~="bg-rose-800/50"], [class~="bg-rose-800/60"], [class~="bg-rose-800/70"], [class~="bg-rose-800/75"], [class~="bg-rose-800/80"], [class~="bg-rose-800/85"], [class~="bg-rose-800/90"], [class~="bg-rose-800/95"], [class~="bg-slate-500/50"], [class~="bg-slate-500/60"], [class~="bg-slate-500/70"], [class~="bg-slate-500/75"], [class~="bg-slate-500/80"], [class~="bg-slate-500/85"], [class~="bg-slate-500/90"], [class~="bg-slate-500/95"], [class~="bg-slate-600/50"], [class~="bg-slate-600/60"], [class~="bg-slate-600/70"], [class~="bg-slate-600/75"], [class~="bg-slate-600/80"], [class~="bg-slate-600/85"], [class~="bg-slate-600/90"], [class~="bg-slate-600/95"], [class~="bg-slate-700/50"], [class~="bg-slate-700/60"], [class~="bg-slate-700/70"], [class~="bg-slate-700/75"], [class~="bg-slate-700/80"], [class~="bg-slate-700/85"], [class~="bg-slate-700/90"], [class~="bg-slate-700/95"], [class~="bg-slate-800/50"], [class~="bg-slate-800/60"], [class~="bg-slate-800/70"], [class~="bg-slate-800/75"], [class~="bg-slate-800/80"], [class~="bg-slate-800/85"], [class~="bg-slate-800/90"], [class~="bg-slate-800/95"], [class~="bg-gray-500/50"], [class~="bg-gray-500/60"], [class~="bg-gray-500/70"], [class~="bg-gray-500/75"], [class~="bg-gray-500/80"], [class~="bg-gray-500/85"], [class~="bg-gray-500/90"], [class~="bg-gray-500/95"], [class~="bg-gray-600/50"], [class~="bg-gray-600/60"], [class~="bg-gray-600/70"], [class~="bg-gray-600/75"], [class~="bg-gray-600/80"], [class~="bg-gray-600/85"], [class~="bg-gray-600/90"], [class~="bg-gray-600/95"], [class~="bg-gray-700/50"], [class~="bg-gray-700/60"], [class~="bg-gray-700/70"], [class~="bg-gray-700/75"], [class~="bg-gray-700/80"], [class~="bg-gray-700/85"], [class~="bg-gray-700/90"], [class~="bg-gray-700/95"], [class~="bg-gray-800/50"], [class~="bg-gray-800/60"], [class~="bg-gray-800/70"], [class~="bg-gray-800/75"], [class~="bg-gray-800/80"], [class~="bg-gray-800/85"], [class~="bg-gray-800/90"], [class~="bg-gray-800/95"]) {
+  --color-white: #ffffff;
+  --color-slate-900: #ffffff;
+}
+
+/* Dark translucent boxes on photos keep their original light text color */
+.site-light [class*="bg-black/"][class*="text-"] { color: revert-layer; --color-white: #ffffff; }
+
+/* The light theme accent "school-violet" is amber; as text on a light background it gets the darker amber */
+.site-light .text-school-violet { color: #b45309; }
+
+/* White surfaces stay white: the shared rules turn the white color variable dark for white text,
+   which would also darken bg-white cards. These keep surfaces, borders and gradients truly white. */
+.site-light [class~="bg-white"] { background-color: #ffffff; }
+.site-light [class~="bg-white/10"] { background-color: rgba(255, 255, 255, 0.1); }
+.site-light [class~="bg-white/15"] { background-color: rgba(255, 255, 255, 0.15); }
+.site-light [class~="bg-white/20"] { background-color: rgba(255, 255, 255, 0.2); }
+.site-light [class~="bg-white/5"] { background-color: rgba(255, 255, 255, 0.05); }
+.site-light [class~="bg-white/80"] { background-color: rgba(255, 255, 255, 0.8); }
+.site-light [class~="border-white"] { border-color: #ffffff; }
+.site-light [class~="border-white/10"] { border-color: rgba(255, 255, 255, 0.1); }
+.site-light [class~="border-white/15"] { border-color: rgba(255, 255, 255, 0.15); }
+.site-light [class~="border-white/20"] { border-color: rgba(255, 255, 255, 0.2); }
+.site-light [class~="border-white/30"] { border-color: rgba(255, 255, 255, 0.3); }
+.site-light [class~="border-white/5"] { border-color: rgba(255, 255, 255, 0.05); }
+.site-light [class~="from-white"] { --tw-gradient-from: #ffffff; }

@@ -98,7 +98,7 @@ import { CounselorHubSimulator } from './CounselorHubSimulator';
 import { schoolNewsArticles, NewsArticle, defaultStaffMembers, gradesData } from '../data';
 import { StaffMember, QuickLink } from '../types';
 import { getHebrewInitials, getAvatarColor } from '../utils/avatarUtils';
-import { SITE_THEMES, DESIGN_TRENDS } from '../data/themes';
+import { SITE_THEMES, DESIGN_TRENDS, THEME_PICKER_ENABLED } from '../data/themes';
 import { getQuickLinks, saveQuickLink, deleteQuickLink } from '../data/quickLinks';
 import { TeacherAvatar } from './TeacherAvatar';
 import { compressImage } from '../utils/imageCompressor';
@@ -3084,6 +3084,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         </span>
                       </button>
 
+                      {THEME_PICKER_ENABLED && (
                       <button 
                         onClick={() => { setActiveTab('theme'); setEditingNewsIdx(null); }}
                         className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
@@ -3097,6 +3098,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                           <span>עיצוב ותמות האתר</span>
                         </span>
                       </button>
+                      )}
 
                       <button 
                         onClick={() => { setActiveTab('staff'); setEditingStaffId(null); }}
@@ -7426,7 +7428,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
               )}
 
               {/* 4. DESIGN AND THEME MANAGEMENT WORKSPACE */}
-              {activeTab === 'theme' && isFullSiteAdmin(effectiveRole) && (
+              {THEME_PICKER_ENABLED && activeTab === 'theme' && isFullSiteAdmin(effectiveRole) && (
                 <div className="space-y-6 animate-fade-in">
                   {/* Top header and sub-tabs selector */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-school-line/30 pb-4">

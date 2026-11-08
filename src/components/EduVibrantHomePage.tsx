@@ -202,7 +202,7 @@ export default function EduVibrantHomePage({
       {/* Full-screen opening: the school photo spans the whole width and the whole screen,
           continuing under the semi-transparent sticky header. The top padding keeps the text clear of the header. */}
       <section
-        className="relative w-screen mx-[calc(50%-50vw)] overflow-hidden text-white flex items-center"
+        className="keep-dark relative w-screen mx-[calc(50%-50vw)] overflow-hidden text-white flex items-center"
         style={{ minHeight: '100svh', marginTop: `-${headerHeight + 24}px`, paddingTop: `${headerHeight}px` }}
       >
         <img

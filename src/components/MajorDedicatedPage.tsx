@@ -12,6 +12,7 @@ import { SchoolMajor } from '../types';
 import { getStoredMajors, subscribeToMajors } from '../services/majorsStorage';
 import { allTeachersList } from '../data/teachersList';
 import { TeacherAvatar } from './TeacherAvatar';
+import { sendMajorInquiry } from '../services/majorInquiry';
 
 interface MajorDedicatedPageProps {
   majorId: string;
@@ -32,6 +33,9 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
   const [inquiryContact, setInquiryContact] = useState('');
   const [inquiryMessage, setInquiryMessage] = useState('');
   const [inquirySent, setInquirySent] = useState(false);
+  const [inquirySending, setInquirySending] = useState(false);
+  const [inquiryError, setInquiryError] = useState(false);
+  const [inquiryTrap, setInquiryTrap] = useState('');
 
   const [activePdfPreview, setActivePdfPreview] = useState<{
     name: string;
@@ -166,8 +170,27 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
     }
   };
 
-  const handleSendInquiry = (e: React.FormEvent) => {
+  const handleSendInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (inquirySending) {
+      return;
+    }
+    setInquirySending(true);
+    setInquiryError(false);
+    const sent = await sendMajorInquiry({
+      to: coordinatorDisplayEmail || '',
+      majorTitle: major ? major.title : '',
+      name: inquiryName,
+      grade: inquiryGrade,
+      contact: inquiryContact,
+      message: inquiryMessage,
+      website: inquiryTrap,
+    });
+    setInquirySending(false);
+    if (!sent) {
+      setInquiryError(true);
+      return;
+    }
     setInquirySent(true);
     setTimeout(() => {
       setInquirySent(false);
@@ -268,29 +291,29 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
       </div>
 
       {/* ============================================================== */}
-      {/* 2. HERO STATEMENT CARD (Cobalt Blue #1D4ED8)                   */}
+      {/* 2. HERO STATEMENT CARD (light, blue accent stripe on the right)   */}
       {/* ============================================================== */}
-      <section className="bg-[#1D4ED8] text-white rounded-3xl p-6 sm:p-10 shadow-xl flex flex-col gap-6 relative overflow-hidden">
+      <section className="bg-[#F5F8FF] text-[#0F172A] border border-[#1D4ED8]/15 border-r-4 border-r-[#1D4ED8] rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col gap-6 relative overflow-hidden">
         {/* Subtle Ambient Glows */}
-        <div className="absolute -top-12 -left-12 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-cyan-400/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-12 -left-12 w-64 h-64 bg-[#1D4ED8]/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#FEA619]/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Real Badges */}
         <div className="flex flex-wrap items-center gap-2 relative z-10">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#F59E0B] text-[#0F172A] text-xs font-black shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-[#0F172A]/70" />
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#F59E0B]/40 text-xs font-black">
+            <span className="w-2 h-2 rounded-full bg-[#F59E0B]" />
             <span>{major.division === 'middle_school' ? 'חטיבת ביניים' : 'חטיבה עליונה'}</span>
           </span>
 
           {major.hoursPerWeek && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold border border-white/20">
-              <GraduationCap className="w-3.5 h-3.5 text-[#FEA619]" />
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#1D4ED8]/10 text-[#1D4ED8] text-xs font-bold border border-[#1D4ED8]/20">
+              <GraduationCap className="w-3.5 h-3.5 text-[#1D4ED8]" />
               <span>{major.hoursPerWeek}</span>
             </span>
           )}
 
           {major.targetGrades && (
-            <span className="px-3 py-1 rounded-full bg-blue-900/50 text-blue-100 text-xs font-medium border border-white/15">
+            <span className="px-3 py-1 rounded-full bg-[#FFFFFF] text-[#334155] text-xs font-medium border border-[#0F172A]/10">
               {major.targetGrades}
             </span>
           )}
@@ -299,15 +322,15 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
         {/* Real Title & Description */}
         <div className="space-y-3 relative z-10 max-w-4xl">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white shrink-0 shadow-inner">
+            <div className="w-12 h-12 rounded-2xl bg-[#1D4ED8] flex items-center justify-center text-white shrink-0 shadow-sm">
               {getMajorIcon(major.icon || (major as any).iconName)}
             </div>
-            <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-black text-[#0F172A] tracking-tight leading-tight">
               {major.title}
             </h1>
           </div>
 
-          <p className="text-base sm:text-lg text-white/95 font-normal leading-relaxed max-w-3xl">
+          <p className="text-base sm:text-lg text-[#334155] font-normal leading-relaxed max-w-3xl">
             {major.shortDescription || major.fullDescription}
           </p>
         </div>
@@ -325,9 +348,9 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
           {rawPdfs.length > 0 && (
             <button
               onClick={() => setActivePdfPreview(rawPdfs[0])}
-              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-sm border border-white/20 active:scale-95 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-[#FFFFFF] hover:bg-[#EEF2FF] text-[#1D4ED8] font-bold text-sm border border-[#1D4ED8]/25 active:scale-95 transition-all cursor-pointer"
             >
-              <Download className="w-4 h-4 text-[#FEA619]" />
+              <Download className="w-4 h-4 text-[#d98205]" />
               <span>{rawPdfs[0].name} (PDF)</span>
             </button>
           )}
@@ -335,9 +358,9 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
           {coordinatorDisplayEmail && (
             <a
               href={`mailto:${coordinatorDisplayEmail}?subject=${encodeURIComponent(`פנייה בנושא ${major.title}`)}`}
-              className="inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-xs sm:text-sm border border-white/15 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-full bg-[#FFFFFF] hover:bg-[#EEF2FF] text-[#1D4ED8] font-medium text-xs sm:text-sm border border-[#1D4ED8]/25 transition-all"
             >
-              <Mail className="w-4 h-4 text-cyan-300" />
+              <Mail className="w-4 h-4 text-[#1D4ED8]" />
               <span>מייל לרכז/ת</span>
             </a>
           )}
@@ -847,6 +870,7 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
                     <label className="block text-xs font-bold text-[#0F172A] mb-1">שאלה או פנייה לרכז/ת המגמה:</label>
                     <textarea
                       rows={3}
+                      required
                       value={inquiryMessage}
                       onChange={(e) => setInquiryMessage(e.target.value)}
                       placeholder="הודעתכם לרכז/ת המגמה..."
@@ -854,13 +878,48 @@ export const MajorDedicatedPage: React.FC<MajorDedicatedPageProps> = ({
                     />
                   </div>
 
+                  {/* Hidden trap field: people never see it, bots fill it */}
+                  <input
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    value={inquiryTrap}
+                    onChange={(e) => setInquiryTrap(e.target.value)}
+                    className="hidden"
+                  />
+
+                  {inquiryError && (
+                    <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 space-y-1">
+                      <p className="font-bold">הפנייה לא נשלחה.</p>
+                      {coordinatorDisplayEmail ? (
+                        <p>
+                          אפשר לשלוח מייל ישירות לרכז/ת:{' '}
+                          <a
+                            href={`mailto:${coordinatorDisplayEmail}?subject=${encodeURIComponent(`פנייה בנושא מגמת ${major.title}`)}`}
+                            className="underline font-bold"
+                          >
+                            {coordinatorDisplayEmail}
+                          </a>
+                        </p>
+                      ) : (
+                        <p>לא נמצאה כתובת מייל לרכז/ת המגמה. אפשר לפנות למזכירות בית הספר.</p>
+                      )}
+                    </div>
+                  )}
+
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full py-3 rounded-full bg-[#F59E0B] hover:bg-[#d98205] text-[#0F172A] font-black text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                      disabled={inquirySending}
+                      className="w-full py-3 rounded-full bg-[#F59E0B] hover:bg-[#d98205] disabled:opacity-60 disabled:cursor-wait text-[#0F172A] font-black text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
                       <Send className="w-4 h-4" />
-                      <span>שליחת פנייה ישירה לרכז/ת</span>
+                      {inquirySending ? (
+                        <span>שולח...</span>
+                      ) : (
+                        <span>שליחת פנייה ישירה לרכז/ת</span>
+                      )}
                     </button>
                   </div>
                 </form>

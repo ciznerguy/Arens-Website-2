@@ -17,6 +17,12 @@ export interface SiteTheme {
   colors: ThemeColors;
 }
 
+// Archive (2026-11-08): the site runs only on the light theme "edu-playful-light".
+// The other themes below are kept in the code but are not offered to visitors or in the admin panel.
+// To bring the theme picker back, set THEME_PICKER_ENABLED to true.
+export const THEME_PICKER_ENABLED = false;
+export const ACTIVE_SITE_THEME = "edu-playful-light";
+
 export const SITE_THEMES: SiteTheme[] = [
   {
     id: "cosmic-dark",

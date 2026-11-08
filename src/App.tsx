@@ -78,7 +78,7 @@ import { NewsletterViewer } from './components/NewsletterViewer';
 import EduVibrantHomePage from './components/EduVibrantHomePage';
 import { getStoredMajors } from './services/majorsStorage';
 import { getUpcomingTeacherEvents } from './services/eventsStorage';
-import { SITE_THEMES } from './data/themes';
+import { SITE_THEMES, THEME_PICKER_ENABLED, ACTIVE_SITE_THEME } from './data/themes';
 import SEOMeta from './components/SEOMeta';
 import { getQuickLinks } from './data/quickLinks';
 import { INTERNAL_PAGES, getInternalPageOverrides, getAllPagesMap, getInternalPage } from './data/internalPages';
@@ -112,6 +112,10 @@ const GRADES = [
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('home');
   const [activeTheme, setActiveTheme] = useState<string>(() => {
+    // Theme picker is archived: every visitor gets the light theme, regardless of old saved choices or ?theme= links
+    if (!THEME_PICKER_ENABLED) {
+      return ACTIVE_SITE_THEME;
+    }
     if (typeof window !== 'undefined') {
       try {
         const params = new URLSearchParams(window.location.search);
@@ -405,6 +409,9 @@ export default function App() {
   // Handle case when user updates URL manually (or via sharing/links)
   useEffect(() => {
     const handleUrlThemeSync = () => {
+      if (!THEME_PICKER_ENABLED) {
+        return;
+      }
       try {
         const params = new URLSearchParams(window.location.search);
         const urlTheme = params.get('theme');
@@ -1021,7 +1028,8 @@ export default function App() {
 
           {/* Action Buttons Header */}
           <div className="flex items-center gap-2">
-            {/* Theme Selector Dropdown */}
+            {/* Theme Selector Dropdown (archived, hidden while THEME_PICKER_ENABLED is false) */}
+            {THEME_PICKER_ENABLED && (
             <div className="relative">
               <button 
                 type="button"
@@ -1118,8 +1126,10 @@ export default function App() {
                 )}
               </AnimatePresence>
             </div>
+            )}
 
-            {/* Dark / Light Mode Toggle Button */}
+            {/* Dark / Light Mode Toggle Button (archived, hidden while THEME_PICKER_ENABLED is false) */}
+            {THEME_PICKER_ENABLED && (
             <button 
               onClick={toggleDarkMode}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-school-line bg-school-panel/40 text-school-text hover:text-white hover:border-school-cyan/40 hover:bg-school-cyan/10 transition-all cursor-pointer shadow-sm group"
@@ -1138,6 +1148,7 @@ export default function App() {
                 </>
               )}
             </button>
+            )}
 
             <button 
               onClick={() => {
@@ -1266,7 +1277,7 @@ export default function App() {
       </header>
 
       {/* --- MAIN PAGE ROUTER --- */}
-      <div className="flex-grow">
+      <div className={`flex-grow ${activeTheme === 'edu-playful-light' ? 'site-light' : ''}`}>
         <AnimatePresence mode="wait">
           
           {/* TAB 1: HOMEPAGE (EduVibrant or Cosmic Dark) */}
