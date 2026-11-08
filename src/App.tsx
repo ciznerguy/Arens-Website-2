@@ -151,6 +151,41 @@ export default function App() {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
   }, [activeTab, selectedInternalPageUrl, selectedMajorId]);
 
+  // While the header sits over the full-screen opening photo (EduVibrant homepage, near the top),
+  // it is almost transparent so the photo shows under it. After scrolling past the photo it returns to normal.
+  const [isHeaderOverHero, setIsHeaderOverHero] = useState<boolean>(true);
+  useEffect(() => {
+    const check = () => setIsHeaderOverHero(window.scrollY < window.innerHeight * 0.6);
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
+  }, []);
+  const headerTransparent = activeTheme === 'edu-playful-light' && activeTab === 'home' && !selectedInternalPageUrl && isHeaderOverHero;
+  // Over the photo: light text so the menu bar stays readable on the dark parts of the image
+  const headerOverHeroStyle = headerTransparent
+    ? ({
+        '--color-school-text': '#ffffff',
+        '--color-school-muted': '#e2e8f0',
+        '--color-school-cyan': '#bae6fd',
+        // Used in the bar only as the text color of the secretary button, which sits on the light cyan
+        '--color-school-bg': '#0B1A3A'
+      } as React.CSSProperties)
+    : undefined;
+  // The dropdown panels open on a white card, so they get the theme's normal colors back
+  const headerDropdownStyle = headerTransparent
+    ? ({
+        '--color-school-text': '#0f172a',
+        '--color-school-muted': '#434655',
+        '--color-school-cyan': '#1d4ed8',
+        '--color-school-bg': '#faf8ff',
+        textShadow: 'none'
+      } as React.CSSProperties)
+    : undefined;
+
   const handleNavMouseEnter = (idx: number) => {
     if (navHoverTimeoutRef.current) {
       clearTimeout(navHoverTimeoutRef.current);
@@ -840,7 +875,13 @@ export default function App() {
       <SEOMeta activeTab={activeTab} selectedInternalPageUrl={selectedInternalPageUrl} />
       
       {/* GLOWING HEADER */}
-      <header className="sticky top-0 right-0 left-0 z-50 transition-all duration-300 border-b border-school-line/30 bg-school-bg/75 backdrop-blur-xl">
+      <header className={`sticky top-0 right-0 left-0 z-50 transition-all duration-300 ${
+        headerTransparent
+          ? 'border-b border-transparent bg-transparent [text-shadow:0_1px_3px_rgba(0,0,0,0.55)]'
+          : 'border-b border-school-line/30 bg-school-bg/75 backdrop-blur-xl'
+      }`}
+        style={headerOverHeroStyle}
+      >
         <div className="max-w-7xl mx-auto px-4 md:px-6 min-h-[5.5rem] py-2 flex items-center justify-between">
           
           {/* Logo, Brand & Socials Column */}
@@ -944,6 +985,7 @@ export default function App() {
                 {item.sub && hoveredNavIndex === idx && (
                   <div 
                     className="absolute top-full right-0 pt-2 min-w-[280px] max-w-[340px] z-50 animate-fade-in"
+                    style={headerDropdownStyle}
                     onMouseEnter={() => handleNavMouseEnter(idx)}
                     onMouseLeave={handleNavMouseLeave}
                   >
@@ -1006,6 +1048,7 @@ export default function App() {
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
                       className="absolute left-0 mt-2 w-72 rounded-2xl bg-school-panel border border-school-line shadow-2xl p-2 z-50 space-y-1 text-right select-none backdrop-blur-md"
+                      style={headerDropdownStyle}
                       dir="rtl"
                     >
                       <div className="px-3 py-2 border-b border-school-line/60 flex items-center justify-between">
@@ -1139,6 +1182,7 @@ export default function App() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="lg:hidden bg-school-bg/95 border-b border-school-line backdrop-blur-lg overflow-y-auto max-h-[calc(100vh-80px)] pointer-events-auto"
+              style={headerDropdownStyle}
             >
               <div className="p-4 space-y-4">
                 {currentNavItems.map((item, idx) => (

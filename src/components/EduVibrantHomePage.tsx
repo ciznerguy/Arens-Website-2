@@ -199,10 +199,11 @@ export default function EduVibrantHomePage({
       {/* ============================================================== */}
       {/* 1. HERO BANNER STATEMENT                                       */}
       {/* ============================================================== */}
-      {/* Full-screen opening: the school photo spans the whole width and fills the screen below the header */}
+      {/* Full-screen opening: the school photo spans the whole width and the whole screen,
+          continuing under the semi-transparent sticky header. The top padding keeps the text clear of the header. */}
       <section
-        className="relative w-screen mx-[calc(50%-50vw)] -mt-6 overflow-hidden text-white flex items-center"
-        style={{ minHeight: `calc(100svh - ${headerHeight}px)` }}
+        className="relative w-screen mx-[calc(50%-50vw)] overflow-hidden text-white flex items-center"
+        style={{ minHeight: '100svh', marginTop: `-${headerHeight + 24}px`, paddingTop: `${headerHeight}px` }}
       >
         <img
           src="/assets/school/arens-building.jpg"
