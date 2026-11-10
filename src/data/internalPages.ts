@@ -2091,26 +2091,23 @@ export function getDeletedPageKeys(): string[] {
   }
 }
 
-export function saveInternalPageOverride(key: string, page: InternalPage) {
-  if (typeof window === 'undefined') return;
+// Returns a promise that resolves to true only when the database accepted the save
+export function saveInternalPageOverride(key: string, page: InternalPage): Promise<boolean> {
+  if (typeof window === 'undefined') return Promise.resolve(false);
   try {
     const overrides = getInternalPageOverrides();
     const canonKey = toCanonicalPageKey(key, page);
     const cleanKey = key.replace(/^\/+|\/+$/g, "");
-    const grade = detectGradeFromKey(key) || (page.title ? detectGradeFromKey(page.title) : null);
-    const normTitle = page.title ? page.title.trim().replace(/['"״]/g, '') : '';
 
-    // Remove any previous keys that match this page (by canonical key, clean key, title or grade)
+    // Remove previous keys of this same page only.
+    // (2026-11-10: matching by grade or title was removed. It made saving a grade's counselor page
+    // delete that grade's main page, since both belong to the same grade.)
     Object.keys(overrides).forEach(existingKey => {
       const existingCanon = toCanonicalPageKey(existingKey, overrides[existingKey]);
-      const existingTitle = overrides[existingKey]?.title ? overrides[existingKey].title.trim().replace(/['"״]/g, '') : '';
-      
       if (
-        existingCanon === canonKey || 
-        existingKey === cleanKey || 
-        existingKey === `${cleanKey}/` ||
-        (normTitle && existingTitle === normTitle) ||
-        (grade && detectGradeFromKey(existingKey) === grade)
+        existingCanon === canonKey ||
+        existingKey === cleanKey ||
+        existingKey === `${cleanKey}/`
       ) {
         delete overrides[existingKey];
       }
@@ -2135,12 +2132,13 @@ export function saveInternalPageOverride(key: string, page: InternalPage) {
       localStorage.setItem('internal_pages_deleted', JSON.stringify(updatedDeleted));
     } catch (e) {}
 
-    // Cloud sync to Firestore
-    syncPageOverrideToCloud(overrides, updatedDeleted).catch(console.warn);
-
     window.dispatchEvent(new Event('internal_pages_updated'));
+
+    // Cloud sync to Firestore
+    return syncPageOverrideToCloud(overrides, updatedDeleted);
   } catch (e) {
     console.error('Failed to save override', e);
+    return Promise.resolve(false);
   }
 }
 
@@ -2157,8 +2155,7 @@ export function deleteInternalPageOverride(key: string) {
       if (
         existingCanon === canonKey || 
         existingKey === cleanKey || 
-        existingKey === `${cleanKey}/` ||
-        (grade && detectGradeFromKey(existingKey) === grade)
+        existingKey === `${cleanKey}/`
       ) {
         delete overrides[existingKey];
       }
@@ -2200,8 +2197,7 @@ export function deleteInternalPagePermanently(key: string) {
       if (
         existingCanon === canonKey || 
         existingKey === cleanKey || 
-        existingKey === `${cleanKey}/` ||
-        (grade && detectGradeFromKey(existingKey) === grade)
+        existingKey === `${cleanKey}/`
       ) {
         delete overrides[existingKey];
       }
@@ -2385,8 +2381,9 @@ export function getGradeClassesOverrides(): Record<string, any[]> {
   }
 }
 
-export function saveGradeClassesOverride(grade: string, classes: any[]) {
-  if (typeof window === 'undefined') return;
+// Returns a promise that resolves to true only when the database accepted the save
+export function saveGradeClassesOverride(grade: string, classes: any[]): Promise<boolean> {
+  if (typeof window === 'undefined') return Promise.resolve(false);
   try {
     const overrides = getGradeClassesOverrides();
     // Normalize grade key e.g. "ז'", "ז", "י'", "י"
@@ -2395,9 +2392,10 @@ export function saveGradeClassesOverride(grade: string, classes: any[]) {
     try {
       localStorage.setItem('grade_classes_overrides', JSON.stringify(overrides));
     } catch (e) {}
-    syncGradeClassesToCloud(overrides).catch(console.warn);
     window.dispatchEvent(new Event('grade_classes_updated'));
+    return syncGradeClassesToCloud(overrides);
   } catch (e) {
     console.error('Failed to save grade classes override', e);
+    return Promise.resolve(false);
   }
 }

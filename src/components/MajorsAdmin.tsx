@@ -151,7 +151,12 @@ export const MajorsAdmin: React.FC<MajorsAdminProps> = ({
       ...major,
       isActive: newActive
     };
-    await updateMajor(updatedObj);
+    try {
+      await updateMajor(updatedObj);
+    } catch (err) {
+      showToast('השמירה נכשלה והשינוי לא נשמר. ייתכן שאין לך הרשאה למגמה הזו.', 'error');
+      return;
+    }
     setMajors(getStoredMajors());
     showToast(`המגמה "${major.title}" הוגדרה כ${newActive ? 'פעילה' : 'לא פעילה (בקרוב)'}`);
   };
@@ -247,7 +252,7 @@ export const MajorsAdmin: React.FC<MajorsAdminProps> = ({
       }
     } catch (err) {
       console.error('Failed saving major:', err);
-      showToast('אירעה שגיאה בשמירת המגמה', 'error');
+      showToast('השמירה נכשלה והשינויים לא נשמרו. ייתכן שאין לך הרשאה למגמה הזו, או שאין חיבור לאינטרנט.', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -255,7 +260,12 @@ export const MajorsAdmin: React.FC<MajorsAdminProps> = ({
 
   const handleDelete = async (id: string, title: string) => {
     if (confirm(`האם אתה בטוח שברצונך למחוק את מגמת "${title}"?`)) {
-      await deleteMajor(id);
+      try {
+        await deleteMajor(id);
+      } catch (err) {
+        showToast('המחיקה נכשלה. ייתכן שאין לך הרשאה.', 'error');
+        return;
+      }
       setMajors(getStoredMajors());
       showToast(`המגמה "${title}" נמחקה.`);
     }

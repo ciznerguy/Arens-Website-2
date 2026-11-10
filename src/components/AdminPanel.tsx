@@ -102,6 +102,7 @@ import { SITE_THEMES, DESIGN_TRENDS, THEME_PICKER_ENABLED } from '../data/themes
 import { getQuickLinks, saveQuickLink, deleteQuickLink } from '../data/quickLinks';
 import { TeacherAvatar } from './TeacherAvatar';
 import { compressImage } from '../utils/imageCompressor';
+import { STAFF_PERMISSIONS, StaffPermissions, getPermissionsForEmail, getPermissionsForRoleText, ENGLISH_PAGE_KEY } from '../data/permissions';
 
 // Initial default editors
 const DEFAULT_EDITORS = [
@@ -400,6 +401,20 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const [counselorPdfFiles, setCounselorPdfFiles] = useState<any[]>([]);
   const [counselorSaveSuccess, setCounselorSaveSuccess] = useState<boolean>(false);
 
+  // Stage 3B (2026-11-10): what the signed-in person (or the simulated role) may edit comes from
+  // the table in src/data/permissions.ts, not from words in the role text.
+  // The text-based checks below are kept only for other people's roles (e.g. the editors list).
+  const currentRoleText = impersonatedRole || currentUser?.role || '';
+  const myPermissions: StaffPermissions = impersonatedRole
+    ? getPermissionsForRoleText(impersonatedRole)
+    : getPermissionsForEmail(currentUser?.email || loginEmail);
+  const permsForRole = (role: string): StaffPermissions | null => {
+    if (role === currentRoleText) {
+      return myPermissions;
+    }
+    return null;
+  };
+
   // Role detection helpers
   const isSuperAdmin = (role: string) => {
     const userMail = (currentUser?.email || loginEmail || '').toLowerCase().trim();
@@ -457,11 +472,19 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   const isCounselor = (role: string) => {
+    const p = permsForRole(role);
+    if (p) {
+      return p.counselorGrades.length > 0;
+    }
     const r = (role || '').toLowerCase();
     return r.includes('יועצת') || r.includes('יועץ') || r.includes('ייעוץ');
   };
 
   const getGradesFromCounselorRole = (role: string): string[] => {
+    const p = permsForRole(role);
+    if (p) {
+      return p.counselorGrades;
+    }
     if (!isCounselor(role)) return [];
     const r = role.toLowerCase();
     const grades: string[] = [];
@@ -480,16 +503,28 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   const isGradeCoordinator = (role: string) => {
+    const p = permsForRole(role);
+    if (p) {
+      return p.grades.length > 0;
+    }
     const r = (role || '').toLowerCase();
     return r.includes('שכבה') || r.includes('שכבת') || r.startsWith('רכז שכבה') || r.startsWith('רכז/ת שכבה') || r.includes('אורלי רז');
   };
 
   const isMajorCoordinator = (role: string) => {
+    const p = permsForRole(role);
+    if (p) {
+      return p.majors.length > 0;
+    }
     const r = (role || '').toLowerCase();
     return r.includes('רכז מגמת') || r.includes('רכז/ת מגמת') || r.includes('רכז מגמה') || r.includes('רכז מדעי המחשב') || r.includes('רכז הנדסת תוכנה') || r.startsWith('רכז מגמת') || r.includes('מידע ונתונים') || r.includes('דאטה');
   };
 
   const isEnglishCoordinator = (role: string) => {
+    const p = permsForRole(role);
+    if (p) {
+      return p.pages.includes(ENGLISH_PAGE_KEY);
+    }
     const r = (role || '').toLowerCase();
     const hasEnglish = r.includes('אנגלית') || r.includes('english');
     const isCoordinator = r.includes('רכז') || r.includes('רכזת') || r.includes('מוביל') || r.includes('מובילת') || r.includes('ראש צוות');
@@ -525,6 +560,13 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   const getMajorIdFromCoordinatorRole = (role: string): string | null => {
+    const p = permsForRole(role);
+    if (p) {
+      if (p.majors.length > 0) {
+        return p.majors[0];
+      }
+      return null;
+    }
     if (!isMajorCoordinator(role)) return null;
     const r = role.toLowerCase();
     if (r.includes('דאטה') || r.includes('data') || r.includes('מידע ונתונים') || r.includes('נתונים') || r.includes('מידע')) return 'major-data-analyst';
@@ -542,6 +584,13 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   const getGradeFromCoordinatorRole = (role: string): string | null => {
+    const p = permsForRole(role);
+    if (p) {
+      if (p.grades.length > 0) {
+        return p.grades[0];
+      }
+      return null;
+    }
     if (!isGradeCoordinator(role)) return null;
     if (role.includes("יא'") || role.includes("שכבת יא") || role.includes("שכבה יא") || role.includes('יא')) return "יא";
     if (role.includes("יב'") || role.includes("שכבת יב") || role.includes("שכבה יב") || role.includes('יב') || role.includes('אורלי רז')) return "יב";
@@ -635,6 +684,24 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       }
     }
 
+    const tablePerms = permsForRole(role);
+    if (tablePerms) {
+      const canon = toCanonicalPageKey(url, page);
+      const cleanUrl = url.replace(/^\/+|\/+$/g, '');
+      const allowedKeys: string[] = [...tablePerms.pages];
+      tablePerms.grades.forEach(g => {
+        if (GRADE_MAIN_KEYS[g]) {
+          allowedKeys.push(GRADE_MAIN_KEYS[g]);
+        }
+      });
+      tablePerms.counselorGrades.forEach(g => {
+        if (COUNSELOR_CANONICAL_KEYS[g]) {
+          allowedKeys.push(COUNSELOR_CANONICAL_KEYS[g]);
+        }
+      });
+      return allowedKeys.includes(canon) || allowedKeys.includes(cleanUrl);
+    }
+
     const assignedGrade = getGradeFromCoordinatorRole(role);
     const hasEnglish = isEnglishCoordinator(role);
     const hasMajor = isMajorCoordinator(role);
@@ -718,6 +785,12 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   const simulatedStaffMember = useMemo((): StaffMember | null => {
     if (!impersonatedRole || !staffMembers.length) return null;
     const r = impersonatedRole.toLowerCase();
+
+    // People from the permissions table: match by their email
+    if (myPermissions.emails.length > 0) {
+      const byEmail = staffMembers.find(s => s.email && myPermissions.emails.includes(s.email.toLowerCase()));
+      if (byEmail) return byEmail;
+    }
 
     // 0. Eli Levin - Junior High Director
     if (r.includes('אלי לוין') || r.includes('מנהל חטיבת נעורים') || r.includes('מנהל חטיבת הביניים') || r.includes('אלי מנהל')) {
@@ -901,6 +974,21 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
 
   // Save feedback state
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+  const [saveFailure, setSaveFailure] = useState<string | null>(null);
+
+  // Shows the result of a database save. Returns true when it was saved.
+  const reportSaveResult = (ok: boolean, successMessage: string): boolean => {
+    if (ok) {
+      setSaveFailure(null);
+      setSaveSuccess(successMessage);
+      setTimeout(() => setSaveSuccess(null), 3000);
+      return true;
+    }
+    setSaveSuccess(null);
+    setSaveFailure('השמירה נכשלה והשינויים לא נשמרו. ייתכן שאין לך הרשאה לדף הזה, או שאין חיבור לאינטרנט.');
+    setTimeout(() => setSaveFailure(null), 8000);
+    return false;
+  };
   const [pageSaveError, setPageSaveError] = useState<string | null>(null);
   const [classSaveStatus, setClassSaveStatus] = useState<boolean>(false);
 
@@ -1503,7 +1591,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   // --- Grade Layer Management Handlers ---
-  const handleSaveGradeMainPage = () => {
+  const handleSaveGradeMainPage = async () => {
     const cleanActiveGrade = (isGradeCoordinator(effectiveRole) 
       ? (getGradeFromCoordinatorRole(effectiveRole) || 'ז') 
       : adminSelectedGrade).replace(/'/g, '').trim();
@@ -1545,19 +1633,14 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       pdfFiles: cleanPdfs.length > 0 ? cleanPdfs : undefined
     };
 
-    saveInternalPageOverride(mainPageKey, updatedPage);
-    syncPageOverrideToCloud(mainPageKey, updatedPage);
-    saveGradeClassesOverride(cleanActiveGrade, gradeClassesList);
-    syncGradeClassesToCloud(cleanActiveGrade, gradeClassesList);
+    const pageOk = await saveInternalPageOverride(mainPageKey, updatedPage);
+    const classesOk = await saveGradeClassesOverride(cleanActiveGrade, gradeClassesList);
     refreshPagesMap();
-    window.dispatchEvent(new CustomEvent('internal_pages_updated'));
-    window.dispatchEvent(new CustomEvent('grade_classes_updated'));
-    setSaveSuccess(`דף הבית והכיתות של שכבת ${cleanActiveGrade} עודכנו בהצלחה!`);
-    setTimeout(() => setSaveSuccess(null), 3000);
+    reportSaveResult(pageOk && classesOk, `דף הבית והכיתות של שכבת ${cleanActiveGrade} עודכנו בהצלחה!`);
   };
 
   // --- Layer Counselor Management Handlers ---
-  const handleSaveCounselorPage = () => {
+  const handleSaveCounselorPage = async () => {
     const counselorPageKey = COUNSELOR_CANONICAL_KEYS[cleanActiveCounselorGrade];
     if (!counselorPageKey) return;
 
@@ -1597,16 +1680,13 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
       pdfFiles: cleanPdfs.length > 0 ? cleanPdfs : undefined
     };
 
-    saveInternalPageOverride(counselorPageKey, updatedPage);
-    syncPageOverrideToCloud(counselorPageKey, updatedPage);
+    const ok = await saveInternalPageOverride(counselorPageKey, updatedPage);
     refreshPagesMap();
-    window.dispatchEvent(new CustomEvent('internal_pages_updated'));
+    if (!reportSaveResult(ok, `דף יועצת שכבה ${cleanActiveCounselorGrade}' נשמר בהצלחה!`)) {
+      return;
+    }
     setCounselorSaveSuccess(true);
-    setSaveSuccess(`דף יועצת שכבה ${cleanActiveCounselorGrade}' נשמר בהצלחה!`);
-    setTimeout(() => {
-      setCounselorSaveSuccess(false);
-      setSaveSuccess(null);
-    }, 3000);
+    setTimeout(() => setCounselorSaveSuccess(false), 3000);
   };
 
   const handleStartCreateGradeSubPage = () => {
@@ -1632,7 +1712,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     setIsCreatingSubPage(false);
   };
 
-  const handleSaveGradeSubPage = () => {
+  const handleSaveGradeSubPage = async () => {
     if (!subPageTitle.trim()) {
       setPageSaveError('נא להזין כותרת לדף');
       setTimeout(() => setPageSaveError(null), 4000);
@@ -1663,10 +1743,11 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     };
 
     setPageSaveError(null);
-    saveInternalPageOverride(targetUrl, pageObj);
+    const ok = await saveInternalPageOverride(targetUrl, pageObj);
     refreshPagesMap();
-    setSaveSuccess(isCreatingSubPage ? 'דף משנה חדש נוצר בהצלחה!' : 'השינויים נשמרו בהצלחה!');
-    setTimeout(() => setSaveSuccess(null), 3000);
+    if (!reportSaveResult(ok, isCreatingSubPage ? 'דף משנה חדש נוצר בהצלחה!' : 'השינויים נשמרו בהצלחה!')) {
+      return;
+    }
 
     // Keep active editor open with newly saved data
     setSubPageUrl(targetUrl);
@@ -1767,20 +1848,17 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     setGradeClassesList(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSaveGradeClasses = () => {
+  const handleSaveGradeClasses = async () => {
     const cleanActiveGrade = (isGradeCoordinator(effectiveRole) 
       ? (getGradeFromCoordinatorRole(effectiveRole) || 'ז') 
       : adminSelectedGrade).replace(/'/g, '').trim();
 
-    saveGradeClassesOverride(cleanActiveGrade, gradeClassesList);
-    syncGradeClassesToCloud(cleanActiveGrade, gradeClassesList);
-    window.dispatchEvent(new CustomEvent('grade_classes_updated'));
+    const ok = await saveGradeClassesOverride(cleanActiveGrade, gradeClassesList);
+    if (!reportSaveResult(ok, `הרכב הכיתות ומסלולי הלימוד של שכבת ${cleanActiveGrade} נשמרו בהצלחה!`)) {
+      return;
+    }
     setClassSaveStatus(true);
-    setSaveSuccess(`הרכב הכיתות ומסלולי הלימוד של שכבת ${cleanActiveGrade} נשמרו בהצלחה!`);
-    setTimeout(() => {
-      setSaveSuccess(null);
-      setClassSaveStatus(false);
-    }, 3500);
+    setTimeout(() => setClassSaveStatus(false), 3500);
   };
 
   const handleQuickInviteCoordinator = (e: React.FormEvent) => {
@@ -2172,7 +2250,7 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
   };
 
   // SAVE ACTION
-  const handleSavePage = () => {
+  const handleSavePage = async () => {
     setSaveSuccess(null);
     let targetKey = isCreatingNewPage ? newPageKey : selectedPageKey;
     if (!targetKey) {
@@ -2245,7 +2323,11 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
     }
 
     // Save
-    saveInternalPageOverride(targetKey, finalPageObj);
+    const saveOk = await saveInternalPageOverride(targetKey, finalPageObj);
+    if (!saveOk) {
+      reportSaveResult(false, '');
+      return;
+    }
     
     // Refresh lists
     refreshPagesMap();
@@ -2884,37 +2966,19 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                         </optgroup>
                         <optgroup label="סימולציית תפקידים מיוחדים">
                           <option value="רכז תקשוב וטכנו-פדגוגיה">גיא ציזנר (רכז תקשוב וטכנו-פדגוגיה)</option>
-                          <option value="רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1">אורלי רז (רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1)</option>
                         </optgroup>
-                        <optgroup label="רכזי שכבות (פרופיל + שכבה)">
-                          <option value="רכז שכבה ז'">רכז שכבה ז' (פרופיל + שכבה ז')</option>
-                          <option value="רכז שכבה ח'">רכז שכבה ח' (פרופיל + שכבה ח')</option>
-                          <option value="רכז שכבה ט'">רכז שכבה ט' (פרופיל + שכבה ט')</option>
-                          <option value="רכז שכבה י'">רכז שכבה י' (פרופיל + שכבה י')</option>
-                          <option value="רכז שכבה יא'">רכז שכבה יא' (פרופיל + שכבה יא')</option>
-                          <option value="רכזת שכבה יב', רכזת אנגלית ומחנכת יב'1">רכז שכבה יב' (אורלי רז - שכבה יב' + מקצוע אנגלית + מחנכת יב'1)</option>
-                        </optgroup>
-                        <optgroup label="יועצות שכבה (פרופיל + דף יועצת שכבה)">
-                          <option value="ענבל ממן - יועצת שכבה ז'">ענבל ממן (יועצת שכבה ז')</option>
-                          <option value="אורית הדר לבהר - יועצת שכבה ז' ומחנכת ז'2">אורית הדר לבהר (יועצת שכבה ז' ומחנכת ז'2)</option>
-                          <option value="רינת שטקל - יועצת שכבה ח' ומחנכת ח'3">רינת שטקל (יועצת שכבה ח' ומחנכת ח'3)</option>
-                          <option value="סמדר קקון - יועצת שכבה ט'">סמדר קקון (יועצת שכבה ט')</option>
-                          <option value="ענבל ישראלי לונדין - יועצת שכבות י' ו-יא'">ענבל ישראלי לונדין (יועצת שכבות י' ו-יא')</option>
-                          <option value="עופרי טל לובינסקי - יועצת שכבה יב' ומחנכת יב'5">עופרי טל לובינסקי (יועצת שכבה יב' ומחנכת יב'5)</option>
-                        </optgroup>
-                        <optgroup label="רכזי 11 המגמות (פרופיל + מגמה)">
-                          <option value="רכז מגמת מידע ונתונים">רכז מגמת מידע ונתונים (דאטה אנליסט)</option>
-                          <option value="רכז מגמת תיאטרון ומחזות זמר">רכז מגמת תיאטרון ומחזות זמר</option>
-                          <option value="רכז מגמת פיזיקה">רכז מגמת פיזיקה</option>
-                          <option value="רכז מגמת סייבר גיאוגרפיה">רכז מגמת סייבר גיאוגרפיה</option>
-                          <option value="רכז מגמת מנהל וכלכלה">רכז מגמת מנהל וכלכלה</option>
-                          <option value="רכז מגמת ערבית">רכז מגמת ערבית</option>
-                          <option value="רכז מגמת מדעי החברה">רכז מגמת מדעי החברה</option>
-                          <option value="רכז מגמת כימיה">רכז מגמת כימיה</option>
-                          <option value="רכז מגמת מדעי המחשב והנדסת תוכנה ורכז תקשוב">גיא ציזנר (רכז מגמת מדעי המחשב והנדסת תוכנה ורכז תקשוב)</option>
-                          <option value="רכז מגמת מדעי המחשב והנדסת תוכנה">רכז מגמת מדעי המחשב והנדסת תוכנה</option>
-                          <option value="רכז מגמת חנ&quot;ג">רכז מגמת חנ"ג</option>
-                          <option value="רכז מגמת ביולוגיה">רכז מגמת ביולוגיה</option>
+                        <optgroup label="בעלי תפקידים (לפי טבלת ההרשאות)">
+                          {STAFF_PERMISSIONS.map(p => {
+                            const parts: string[] = [];
+                            p.grades.forEach(g => parts.push(`רכז/ת שכבה ${g}'`));
+                            p.counselorGrades.forEach(g => parts.push(`יועצת שכבה ${g}'`));
+                            p.majors.forEach(m => parts.push(`מגמה: ${m.replace('major-', '')}`));
+                            if (p.pages.includes(ENGLISH_PAGE_KEY)) {
+                              parts.push('אנגלית');
+                            }
+                            const label = `${p.name} - ${parts.join(', ')}`;
+                            return <option key={p.name} value={label}>{label}</option>;
+                          })}
                         </optgroup>
                       </select>
                     </div>
@@ -3313,24 +3377,26 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                       )}
 
                       {/* Layer Counselor Tab */}
-                      {isCounselor(effectiveRole) && (
-                        <button 
-                          onClick={() => { setActiveTab('counselor-workspace'); }}
+                      {/* One tab per counselor page (a counselor of two grades gets two tabs) */}
+                      {isCounselor(effectiveRole) && getGradesFromCounselorRole(effectiveRole).map(g => (
+                        <button
+                          key={`counselor-tab-${g}`}
+                          onClick={() => { setCounselorSelectedGrade(g); setActiveTab('counselor-workspace'); }}
                           className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                            activeTab === 'counselor-workspace' 
-                              ? 'bg-purple-500/20 text-white border border-purple-500/40 shadow-sm' 
+                            activeTab === 'counselor-workspace' && cleanActiveCounselorGrade === g
+                              ? 'bg-purple-500/20 text-white border border-purple-500/40 shadow-sm'
                               : 'text-school-muted hover:text-white hover:bg-white/5 border border-transparent'
                           }`}
                         >
                           <span className="flex items-center gap-2">
                             <Heart className="w-4 h-4 text-purple-400" />
-                            <span>ניהול דף יועצת שכבה {getGradeFromCounselorRole(effectiveRole)}'</span>
+                            <span>ניהול דף יועצת שכבה {g}'</span>
                           </span>
                           <span className="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold">
                             יועצת שכבה
                           </span>
                         </button>
-                      )}
+                      ))}
 
                       {/* English Department / Coordinator Tab */}
                       {isEnglishCoordinator(effectiveRole) && (
@@ -3417,6 +3483,22 @@ export default function AdminPanel({ onClose, onNavigateToPage, activeTheme, onT
                       <span>{saveSuccess}</span>
                     </div>
                     <button onClick={() => setSaveSuccess(null)} className="hover:text-white">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </motion.div>
+                )}
+                {saveFailure && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                    className="absolute top-4 left-6 right-6 z-20 p-4 bg-red-50 border border-red-300 rounded-2xl flex items-center justify-between shadow-lg text-red-700 text-xs"
+                  >
+                    <div className="flex items-center gap-2 font-bold">
+                      <AlertTriangle className="w-5 h-5 shrink-0" />
+                      <span>{saveFailure}</span>
+                    </div>
+                    <button onClick={() => setSaveFailure(null)} className="hover:text-red-900">
                       <X className="w-4 h-4" />
                     </button>
                   </motion.div>

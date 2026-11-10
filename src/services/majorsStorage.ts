@@ -482,6 +482,7 @@ export const addMajor = async (major: Omit<SchoolMajor, 'id'>): Promise<SchoolMa
     await setDoc(doc(db, 'majors', newMajor.id), cleaned);
   } catch (err) {
     console.warn('Failed saving major to Firestore:', err);
+    throw err;
   }
 
   return newMajor;
@@ -503,6 +504,7 @@ export const updateMajor = async (major: SchoolMajor): Promise<boolean> => {
     await setDoc(doc(db, 'majors', major.id), cleaned, { merge: true });
   } catch (err) {
     console.warn('Failed updating major in Firestore:', err);
+    throw err;
   }
 
   return true;
@@ -517,6 +519,7 @@ export const deleteMajor = async (majorId: string): Promise<boolean> => {
     await deleteDoc(doc(db, 'majors', majorId));
   } catch (err) {
     console.warn('Failed deleting major in Firestore:', err);
+    throw err;
   }
 
   return true;

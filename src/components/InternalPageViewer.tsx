@@ -730,8 +730,18 @@ export default function InternalPageViewer({
                     </div>
 
                     <div className="space-y-4">
-                      {coordinatorsList.map((coord, cIdx) => (
-                        <div key={cIdx} className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-school-bg/40 border border-school-line/50">
+                      {coordinatorsList.map((coord, cIdx) => {
+                        // A counselor's card opens the grade counselor page
+                        const counselorUrl = (coord.role || '').includes('יועצ') ? COUNSELOR_CANONICAL_KEYS[cleanGradeKey] : undefined;
+                        return (
+                        <div
+                          key={cIdx}
+                          role={counselorUrl ? 'link' : undefined}
+                          tabIndex={counselorUrl ? 0 : undefined}
+                          onClick={counselorUrl ? () => onNavigateToPage(counselorUrl) : undefined}
+                          onKeyDown={counselorUrl ? (e) => { if (e.key === 'Enter') { onNavigateToPage(counselorUrl); } } : undefined}
+                          className={`flex flex-col items-center gap-2 p-3 rounded-2xl bg-school-bg/40 border border-school-line/50 ${counselorUrl ? 'cursor-pointer hover:border-purple-400/60 hover:shadow-md transition-all' : ''}`}
+                        >
                           {/* Avatar with Hebrew initials or uploaded photo */}
                           <TeacherAvatar
                             name={coord.name}
@@ -745,11 +755,18 @@ export default function InternalPageViewer({
                             <h3 className="font-black text-sm text-school-text">{coord.name}</h3>
                             <p className="text-[11px] text-school-cyan font-bold">{coord.role || `רכז/ת שכבה ${currentGrade}`}</p>
                             {coord.staff?.email && (
-                              <p className="text-[10px] text-school-muted mt-1 select-all hover:text-white transition-colors font-mono inline-block" dir="ltr">{coord.staff.email}</p>
+                              <p onClick={(e) => e.stopPropagation()} className="text-[10px] text-school-muted mt-1 select-all hover:text-white transition-colors font-mono inline-block" dir="ltr">{coord.staff.email}</p>
+                            )}
+                            {counselorUrl && (
+                              <p className="text-[11px] font-bold text-purple-600 pt-1 flex items-center justify-center gap-1">
+                                <span>לדף היועצת</span>
+                                <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
+                              </p>
                             )}
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 );

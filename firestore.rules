@@ -3,6 +3,9 @@ rules_version = '2';
 // Stage 3A (2026-11-08): the public can read the site and create a workshop registration.
 // Only the admins listed in access/editors (emails) can change content.
 // A signed-in staff member can update a few fields of their own staff card.
+// Stage 3B (2026-11-10): coordinators and counselors can also save their own major, grade page,
+// grade class list or counselor page. Who may edit what comes from src/data/permissions.ts:
+// the block between GENERATED markers is rewritten by "node scripts/gen-rules.mjs".
 // These rules are published from the Firebase console; Netlify does not deploy them.
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -70,13 +73,90 @@ service cloud.firestore {
 
     // All other site content: public read, admin write.
     match /events/{docId} { allow read: if true; allow write: if isAdmin(); }
-    match /majors/{docId} { allow read: if true; allow write: if isAdmin(); }
     match /news/{docId} { allow read: if true; allow write: if isAdmin(); }
     match /settings/{docId} { allow read: if true; allow write: if isAdmin(); }
     match /pages/{docId} { allow read: if true; allow write: if isAdmin(); }
     match /staff/{docId} { allow read: if true; allow write: if isAdmin(); }
     match /tikshuv_guides/{docId} { allow read: if true; allow write: if isAdmin(); }
     match /tikshuv_settings/{docId} { allow read: if true; allow write: if isAdmin(); }
+
+    // BEGIN GENERATED (node scripts/gen-rules.mjs, do not edit by hand)
+    function majorEditors() {
+      return {
+        'major-arabic': ['1002106184@taded.org.il', 'nniirraa@gmail.com'],
+        'major-biology': ['1002219714@taded.org.il', 'gil.davidovitz@gmail.com'],
+        'major-business-econ': ['1004920898@taded.org.il', 'razkyk007@gmail.com'],
+        'major-chemistry': ['1002112929@taded.org.il', 'niritrdt@gmail.com'],
+        'major-cyber-geo': ['1004263270@taded.org.il', 'shahar.tzur1@gmail.com', 'orna.gindy@gmail.com'],
+        'major-data-analyst': ['1002360965@taded.org.il', 'ayelet.daniel@gmail.com', 'moligi.m@gmail.com'],
+        'major-pe': ['tomertna19922@gmail.com'],
+        'major-physics': ['1002052761@taded.org.il', 't.berghaus@gmail.com'],
+        'major-social-sciences': ['1002192548@taded.org.il', 'ayalabronstein@gmail.com', '1005339870@taded.org.il'],
+        'major-theater': ['1002446924@taded.org.il', 'motyhova@gmail.com', '1002286027@taded.org.il']
+      };
+    }
+    function classEditors() {
+      return {
+        'י': ['1002112929@taded.org.il', 'niritrdt@gmail.com'],
+        'ז': ['1003361718@taded.org.il'],
+        'ח': ['1002011426@taded.org.il'],
+        'ט': ['1002185618@taded.org.il'],
+        'יא': ['nirmalka6@gmail.com'],
+        'יב': ['1002641566@taded.org.il', 'orly.raz.1010@gmail.com']
+      };
+    }
+    function pageEditors() {
+      return {
+        'course%2F%25d7%2597%25d7%2598%25d7%25a2-2%2F%25d7%25a4%25d7%2595%25d7%25a1%25d7%2598-%25d7%2590%25d7%2591%25d7%2590-%25d7%25a9%25d7%259b%25d7%2591%25d7%25aa-%25d7%2599': {'key': 'course/%d7%97%d7%98%d7%a2-2/%d7%a4%d7%95%d7%a1%d7%98-%d7%90%d7%91%d7%90-%d7%a9%d7%9b%d7%91%d7%aa-%d7%99', 'emails': ['1002112929@taded.org.il', 'niritrdt@gmail.com']},
+        'course%2F%25d7%2597%25d7%2598%25d7%2591%2F%25d7%25a9%25d7%259b%25d7%2591%25d7%25aa-%25d7%2596-%25d7%2594%25d7%25a6%25d7%25a2%25d7%2593-%25d7%2594%25d7%25a8%25d7%2590%25d7%25a9%25d7%2595%25d7%259f-%25d7%2591%25d7%2593%25d7%25a8%25d7%259a-%25d7%2594%25d7%2597%25d7%2593%25d7%25a9%25d7%2594': {'key': 'course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%96-%d7%94%d7%a6%d7%a2%d7%93-%d7%94%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%91%d7%93%d7%a8%d7%9a-%d7%94%d7%97%d7%93%d7%a9%d7%94', 'emails': ['1003361718@taded.org.il']},
+        'course%2F%25d7%2597%25d7%2598%25d7%2591%2F%25d7%25a9%25d7%259b%25d7%2591%25d7%25aa-%25d7%2597-%25d7%25a6%25d7%259e%25d7%2599%25d7%2597%25d7%2594-%25d7%2595%25d7%2594%25d7%25a2%25d7%259e%25d7%25a7%25d7%2594-%25d7%259e%25d7%2592%25d7%259c%25d7%2599%25d7%259d-%25d7%2590%25d7%25aa-%25d7%2594%25d7%259b%25d7%2595%25d7%2597%25d7%2595%25d7%25aa-%25d7%25a9': {'key': 'course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%97-%d7%a6%d7%9e%d7%99%d7%97%d7%94-%d7%95%d7%94%d7%a2%d7%9e%d7%a7%d7%94-%d7%9e%d7%92%d7%9c%d7%99%d7%9d-%d7%90%d7%aa-%d7%94%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a9', 'emails': ['1002011426@taded.org.il']},
+        'course%2F%25d7%2597%25d7%2598%25d7%2591%2F%25d7%25a9%25d7%259b%25d7%2591%25d7%25aa-%25d7%2598-%25d7%2591%25d7%2597%25d7%2599%25d7%25a8%25d7%2595%25d7%25aa-%25d7%25a2%25d7%25a6%25d7%259e%25d7%2590%25d7%2595%25d7%25aa-%25d7%2595%25d7%2590%25d7%2597%25d7%25a8%25d7%2599%25d7%2595%25d7%25aa': {'key': 'course/%d7%97%d7%98%d7%91/%d7%a9%d7%9b%d7%91%d7%aa-%d7%98-%d7%91%d7%97%d7%99%d7%a8%d7%95%d7%aa-%d7%a2%d7%a6%d7%9e%d7%90%d7%95%d7%aa-%d7%95%d7%90%d7%97%d7%a8%d7%99%d7%95%d7%aa', 'emails': ['1002185618@taded.org.il']},
+        'course%2F%25d7%2597%25d7%2598%25d7%25a2-2%2F%25d7%2590%25d7%2591%25d7%2590-%25d7%25a9%25d7%259b%25d7%2591%25d7%25aa-%25d7%2599%25d7%2590': {'key': 'course/%d7%97%d7%98%d7%a2-2/%d7%90%d7%91%d7%90-%d7%a9%d7%9b%d7%91%d7%aa-%d7%99%d7%90', 'emails': ['nirmalka6@gmail.com']},
+        'course%2F%25d7%2597%25d7%2598%25d7%25a2-2%2F%25d7%25a9%25d7%259b%25d7%2591%25d7%25aa-%25d7%2599%25d7%2591': {'key': 'course/%d7%97%d7%98%d7%a2-2/%d7%a9%d7%9b%d7%91%d7%aa-%d7%99%d7%91', 'emails': ['1002641566@taded.org.il', 'orly.raz.1010@gmail.com']},
+        'course%2Fenglish-department': {'key': 'course/english-department', 'emails': ['1002641566@taded.org.il', 'orly.raz.1010@gmail.com']},
+        'course%2Fcounseling%2Fgrade-7': {'key': 'course/counseling/grade-7', 'emails': ['1002209480@taded.org.il', '1004148827@taded.org.il']},
+        'course%2Fcounseling%2Fgrade-8': {'key': 'course/counseling/grade-8', 'emails': ['1002153760@taded.org.il']},
+        'course%2Fcounseling%2Fgrade-9': {'key': 'course/counseling/grade-9', 'emails': ['1002084284@taded.org.il']},
+        'course%2Fcounseling%2Fgrade-10': {'key': 'course/counseling/grade-10', 'emails': ['buli1774@gmail.com', '1002127608@taded.org.il']},
+        'course%2Fcounseling%2Fgrade-11': {'key': 'course/counseling/grade-11', 'emails': ['buli1774@gmail.com']},
+        'course%2Fcounseling%2Fgrade-12': {'key': 'course/counseling/grade-12', 'emails': ['1002127608@taded.org.il']}
+      };
+    }
+    // END GENERATED
+
+    function editorOf(table, id) {
+      return signedIn() && id in table && myEmail() in table[id];
+    }
+
+    // Majors: admins do everything; a major coordinator may update their own major.
+    match /majors/{majorId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || editorOf(majorEditors(), majorId);
+    }
+
+    // One document per page (id = encoded page key). The key inside must be the page the id belongs to.
+    match /page_overrides/{docId} {
+      allow read: if true;
+      allow delete: if isAdmin();
+      allow create, update: if isAdmin()
+        || (signedIn()
+            && docId in pageEditors()
+            && myEmail() in pageEditors()[docId].emails
+            && request.resource.data.key == pageEditors()[docId].key
+            && request.resource.data.keys().hasOnly(['key', 'pageJson', 'removed', 'updatedAt'])
+            && (!('pageJson' in request.resource.data) || shortString(request.resource.data.pageJson, 600000)));
+    }
+
+    // One document per grade with its class list.
+    match /grade_classes/{grade} {
+      allow read: if true;
+      allow delete: if isAdmin();
+      allow create, update: if isAdmin()
+        || (editorOf(classEditors(), grade)
+            && request.resource.data.keys().hasOnly(['classesJson', 'updatedAt'])
+            && shortString(request.resource.data.classesJson, 200000));
+    }
 
     // Anything not listed above is closed.
   }
