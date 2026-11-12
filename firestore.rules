@@ -53,9 +53,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Workshop registrations. Reading stays open until stage 2 moves seat counting to a separate collection.
+    // Workshop registrations (security stage 1, 2026-11-12): the workshop event is archived, so the list
+    // of registrants (names, phones, emails) is readable by admins only. A new registration can still be
+    // created. If a new workshop event opens, the seat-counter version saved in
+    // arens-backup/shelved-2026-11-12-workshop-counters replaces this, so seats and duplicates are checked again.
     match /registrations/{regId} {
-      allow read: if true;
+      allow read: if isAdmin();
       allow create: if validRegistration();
       allow update, delete: if isAdmin();
     }
